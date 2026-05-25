@@ -7,6 +7,8 @@
 Tagline:
 
 > Give your helper pocket money, not your wallet.
+>
+> Independent individuals should be able to tell their bot how much it may spend, what it may spend on, when it must ask first, and what receipt it must leave behind.
 
 The product should use a compact 2D game scene to make helper allowances visible, bounded, understandable, and reviewable.
 
@@ -63,6 +65,8 @@ The interface problem is to make these checks visible without forcing the user t
 Pocket Bot explores how Nimiq could provide a **self-custodied prepaid allowance for software helpers**.
 
 This mini app is motivated by a practical control problem already visible in agent products and developer reports: software helpers can prepare purchase-adjacent actions, call paid APIs, and spend metered compute. Users need a clear way to decide what the helper may spend before the action happens, not only a dashboard after money has already been used.
+
+Detailed infrastructure context for x402-like payment rails, Nimiq-to-x402 compatibility levels, and product boundaries lives in `docs/product/infrastructure_context.md`. Pitch wording lives in `docs/product/pitch.md`.
 
 The system should not claim to validate a robot's or AI agent's inner intention. Instead, it should validate whether a proposed action is an allowed continuation of a user-declared rule set and a bounded prepaid allowance.
 
@@ -279,6 +283,7 @@ These may be considered future features after the first milestone demonstrates t
 - Controls should be obvious without requiring a long tutorial.
 - Simulated payment behavior must be clearly distinguishable from real payment behavior.
 - The prototype should avoid making real financial claims before Nimiq integration exists.
+- Payment-specific behavior must be isolated behind adapters. MVP uses `SimulatedPaymentAdapter`. Future milestones may add `X402PaymentAdapter` and `NimiqNativePaymentAdapter`.
 - Code should be organized so that rule checks, allowance state, and receipt creation can later be separated from scene rendering.
 - Future Nimiq integration should not require rewriting the whole scene.
 - The tone should feel playful but trustworthy.
@@ -441,6 +446,7 @@ The first milestone is complete when:
 - How explicit should the simulated nature of NIM payments be in the first UI?
 - Which Nimiq Mini App SDK or wallet APIs should be targeted in a later milestone?
 - Should the later real-product path target AI API usage, paid web tools, Nimiq-native mini app services, or another type of helper action first?
+- Which later compatibility route should be explored first: EVM-token x402 adapter via Nimiq Pay where available, native Nimiq bridge/facilitator, or backend gateway for paid API/tool calls?
 
 ## 18. Suggested Next Implementation Steps
 
