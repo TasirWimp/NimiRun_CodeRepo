@@ -6,6 +6,7 @@ This folder keeps project documentation grouped by purpose. Avoid placing new Ma
 
 - `product/` - product requirements, product scope, user-facing behavior, MVP acceptance criteria.
 - `process/` - development workflow, agent workflow, coding conventions.
+- `planning/` - milestone plans, feature breakdowns, implementation plans.
 - `testing/` - test strategy, test plans, acceptance checklists.
 
 ## Planned Structure
