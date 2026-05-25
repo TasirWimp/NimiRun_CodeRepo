@@ -8,9 +8,9 @@ export default class SideScrollerScene extends Phaser.Scene {
   preload() {
     console.log('Preload started');
     // Load your ground texture
-    this.load.image('ground', 'assets/African_Street_Ground.png');
-    this.load.image('player', 'assets/player.png');
-    this.load.image('house', 'assets/recording_studio_house.png'); // Load the house texture
+    this.load.image('ground', 'assets/backgrounds/African_Street_Ground.png');
+    this.load.image('player', 'assets/sprites/player.png');
+    this.load.image('house', 'assets/props/recording_studio_house.png');
 
     this.load.on('complete', () => {
       console.log('Assets loaded successfully');

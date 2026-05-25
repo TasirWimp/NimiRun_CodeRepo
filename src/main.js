@@ -1,5 +1,5 @@
 
-import SideScrollerScene from './scenes/Street';
+import SideScrollerScene from './scenes/Street.js';
 
 const config = {
     type: Phaser.AUTO,
