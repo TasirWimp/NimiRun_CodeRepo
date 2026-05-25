@@ -30,6 +30,29 @@ Every feature should follow this loop:
 
 Do not start feature implementation before the feature and test plan are clear.
 
+## Plan Change Protocol
+
+Codex agents coordinate through source-of-truth documents, commits, and completion summaries. They do not automatically report changes to each other outside the repository.
+
+If implementation reveals that the current plan is wrong, incomplete, or risky:
+
+1. Stop expanding the implementation beyond the smallest needed investigation.
+2. State the discovered issue clearly.
+3. Classify the change as one or more of:
+   - product requirement change,
+   - implementation sequence change,
+   - test strategy change,
+   - architecture concern,
+   - scope or MVP-boundary risk.
+4. Update the relevant document before or in the same commit as the code change:
+   - product behavior or MVP scope -> `docs/product/requirements.md`,
+   - implementation order or slice boundary -> `docs/planning/mvp_implementation_plan.md`,
+   - test approach or required checks -> `docs/testing/test_strategy.md`,
+   - development process -> `docs/process/development_workflow.md`,
+   - technical structure or cross-module design -> `docs/architecture/`.
+5. Mention affected agent roles in the completion report when another role should adjust future work.
+6. Ask the user before continuing if the change materially alters user-visible behavior, competition framing, real-payment boundaries, or MVP scope.
+
 ## TDD Rules
 
 - Prefer tests before implementation for domain behavior.

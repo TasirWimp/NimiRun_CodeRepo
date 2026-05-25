@@ -31,6 +31,24 @@ Follow this loop for implementation tasks:
 
 Do not start feature implementation before the feature and test plan are clear. If the user asks only for planning, review, or brainstorming, do not edit code.
 
+## Plan Change Protocol
+
+Agents do not report to each other directly. They coordinate through repository docs, commits, and completion summaries.
+
+If implementation shows that the current plan is wrong, incomplete, or risky:
+
+1. Stop expanding the implementation beyond the smallest needed investigation.
+2. State the discovered issue clearly.
+3. Classify the change as one or more of:
+   - product requirement change,
+   - implementation sequence change,
+   - test strategy change,
+   - architecture concern,
+   - scope or MVP-boundary risk.
+4. Update the relevant source-of-truth document before or in the same commit as the code change.
+5. Mention affected agent roles in the completion report when another role should adjust future work.
+6. If the change would materially alter user-visible behavior or MVP scope, ask the user before continuing implementation.
+
 ## TDD Rules
 
 - Prefer tests before implementation for domain behavior.
