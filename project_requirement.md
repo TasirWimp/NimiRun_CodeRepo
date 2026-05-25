@@ -62,6 +62,8 @@ The interface problem is to make these checks visible without forcing the user t
 
 Pocket Bot explores how Nimiq could provide a **self-custodied prepaid allowance for software helpers**.
 
+This mini app is motivated by a practical control problem already visible in agent products and developer reports: software helpers can prepare purchase-adjacent actions, call paid APIs, and spend metered compute. Users need a clear way to decide what the helper may spend before the action happens, not only a dashboard after money has already been used.
+
 The system should not claim to validate a robot's or AI agent's inner intention. Instead, it should validate whether a proposed action is an allowed continuation of a user-declared rule set and a bounded prepaid allowance.
 
 The core product loop is:
@@ -102,34 +104,62 @@ The MVP should be understandable to a non-enterprise user. It should not require
 
 ## 7. Core Use Case
 
-The initial use case is a single robot helper operating with a small prepaid allowance.
+The initial use case is a single robot helper operating with a small prepaid allowance for paid helper-tool calls.
+
+### Source-Backed Motivation
+
+Public examples show that this is a real product problem, not only a speculative crypto scenario:
+
+- Browser and shopping agents already prepare purchase-adjacent actions. OpenAI Operator describes user confirmation before significant actions such as submitting orders, and takeover mode for payment information. SayToBuy describes an AI shopping assistant that builds a grocery cart, then hands the user off to the store checkout.
+- Developers report agents getting stuck in loops and spending real API money. Public LangChain/agent posts describe incidents such as agents burning hundreds of dollars through repeated OpenAI or third-party API calls before a human noticed.
+- Recent research on agentic coding tasks reports that AI-agent token usage can be highly variable across runs, which makes spend hard to predict from the user's original task alone.
+
+These sources support the core question for Pocket Bot:
+
+> Can a Nimiq mini app make a helper's prepaid allowance visible, require each paid action to pass a clear rule gate, and leave a receipt the user can understand later?
+
+Reference sources:
+
+- [OpenAI Operator announcement](https://openai.com/index/introducing-operator/)
+- [OpenAI Operator system card](https://cdn.openai.com/operator_system_card.pdf)
+- [SayToBuy AI shopping assistant](https://www.saytobuy.com/)
+- [Reddit report: AI agent burned API spend overnight](https://www.reddit.com/r/SaaS/comments/1s8h2j5/my_ai_agent_silently_burned_800_in_api_calls/)
+- [Reddit report: per-agent spending caps for production agents](https://www.reddit.com/r/LangChain/comments/1sx9b4n/psa_peragent_spending_caps_changed_how_we_think/)
+- [arXiv: How Do AI Agents Spend Your Money?](https://arxiv.org/abs/2604.22750)
+
+### First-Class MVP Scenario
+
+Pocket Bot helps the user prepare a reviewable grocery cart from a short shopping request. It may spend a small simulated NIM amount to use an approved paid helper tool that searches products and drafts the cart.
+
+The helper does **not** complete checkout, submit an order, enter payment information, or move money from the user's wallet. The only simulated spend in the MVP is the helper-tool cost paid from the prepaid allowance.
 
 User rule:
 
-> Pocket Bot may spend from the AI Tools allowance, max 1 NIM per action, only on approved helper tools.
+> Pocket Bot may spend from the AI Tools allowance, max 1 NIM per action, only on approved cart-prep helper tools. Pocket Bot may prepare a cart draft, but may not complete checkout.
 
 Robot proposal:
 
-> I want to use Quick Summarizer. Cost: 0.4 NIM. Envelope: AI Tools. Reason: summarize this long note.
+> I want to use Cart Scout. Cost: 0.4 NIM. Allowance: AI Tools. Reason: find matching grocery items and prepare a reviewable cart draft. Outcome: cart draft only, no checkout.
 
 System checks:
 
-- Is Quick Summarizer an approved helper tool?
+- Is Cart Scout an approved cart-prep helper tool?
 - Is 0.4 NIM at or below the 1 NIM max-per-action limit?
 - Does the AI Tools allowance have enough remaining balance?
+- Is the requested action limited to cart preparation rather than checkout or payment?
 - Does the rule allow auto-approval, or does this require user approval?
 
 Possible outcomes:
 
-- **Auto-approved:** the action is within all rules and below the approval threshold.
-- **Needs approval:** the action is allowed but requires explicit user confirmation.
-- **Rejected/blocked:** the action violates rule or allowance constraints.
+- **Auto-approved:** the paid helper-tool call is approved, below the per-action limit, and limited to cart preparation.
+- **Needs approval:** the action is allowed but sensitive enough to require explicit user confirmation, such as a higher cost, unfamiliar tool, or ambiguous shopping request.
+- **Rejected/blocked:** the action violates rule or allowance constraints, tries to complete checkout, uses an unapproved tool, or exceeds the allowance.
 
 After execution, a receipt card records the action, decision, rule result, and outcome.
 
 Important MVP note:
 
-The paid helper tool is simulated. The purpose of the first milestone is to demonstrate the allowance and control interface, not to integrate a real AI API or real Nimiq payment.
+The paid helper tool is simulated. The purpose of the first milestone is to demonstrate the allowance and control interface, not to integrate a real AI API, real shopping service, real checkout flow, or real Nimiq payment.
 
 ## 8. MVP Scope
 
@@ -160,6 +190,7 @@ The MVP should not include:
 - Nimiq Mini App SDK integration,
 - real wallet-funded allowances,
 - real AI API execution,
+- real grocery ordering or checkout,
 - multiple robots,
 - multiple budget envelopes,
 - persistent backend storage,
@@ -203,7 +234,7 @@ These may be considered future features after the first milestone demonstrates t
 ### Paid Helper Tool Stall
 
 - The scene must include one paid helper tool stall.
-- The initial stall should represent **Quick Summarizer** or a similar approved helper tool.
+- The initial stall should represent **Cart Scout** or a similar approved cart-prep helper tool.
 - The stall must have a visible cost in simulated NIM.
 - The stall must be treated as a paid service, not as a generic collectible.
 
@@ -211,7 +242,8 @@ These may be considered future features after the first milestone demonstrates t
 
 - The gate must check the proposal against the active rules and allowance.
 - The gate must provide one of three decisions: auto-approved, needs approval, or rejected/blocked.
-- For the initial happy path, Quick Summarizer at 0.4 NIM should pass the max-per-action and approved-tool checks.
+- For the initial happy path, Cart Scout at 0.4 NIM should pass the max-per-action and approved-tool checks.
+- A request to complete checkout or enter payment information must be blocked in the MVP.
 - If user approval is required in a scenario, the UI must provide approve and reject choices.
 
 ### Execution
@@ -369,10 +401,10 @@ Required scene areas:
 
 Minimum first loop:
 
-1. Scene loads with Pocket Bot, AI Tools allowance, Quick Summarizer stall, approval gate, and receipt archive.
+1. Scene loads with Pocket Bot, AI Tools allowance, Cart Scout stall, approval gate, and receipt archive.
 2. UI shows the user rule and AI Tools allowance balance.
-3. Pocket Bot proposes using Quick Summarizer for 0.4 NIM.
-4. Gate checks approved tool, cost threshold, and allowance balance.
+3. Pocket Bot proposes using Cart Scout for 0.4 NIM to prepare a reviewable cart draft.
+4. Gate checks approved tool, cost threshold, allowance balance, and no-checkout boundary.
 5. Action is auto-approved or presented for approval depending on the selected first milestone behavior.
 6. On execution, balance decreases by 0.4 NIM.
 7. A receipt card appears in the receipt archive.
@@ -387,8 +419,8 @@ The first milestone is complete when:
 - The scene includes the robot, allowance pocket, paid helper tool stall, approval gate, receipt archive, and UI overlay.
 - The user rule is visible in the UI.
 - The UI clearly communicates that the helper has a limited allowance, not full wallet access.
-- The user can trigger or observe a proposal for Quick Summarizer costing 0.4 NIM.
-- The rule check evaluates tool approval, max cost per action, and allowance balance.
+- The user can trigger or observe a proposal for Cart Scout costing 0.4 NIM.
+- The rule check evaluates tool approval, max cost per action, allowance balance, and the no-checkout boundary.
 - The action produces a clear decision: auto-approved, needs approval, or blocked.
 - Approved execution reduces the AI Tools allowance balance.
 - Execution creates a receipt card with the required receipt fields.
