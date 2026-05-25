@@ -1,22 +1,27 @@
-# Robot Ledger Project Requirements
+# Pocket Bot Project Requirements
 
 ## 1. Project Title
 
-**Robot Ledger** is the working title for a playful Nimiq mini app prototype about independent individuals keeping control when software helpers are allowed to propose or perform small payment-related actions.
+**Pocket Bot** is a playful Nimiq mini app prototype about giving software helpers a small, self-custodied prepaid allowance instead of broad access to a user's wallet.
 
-The product should use a compact 2D game scene to make delegated payments visible, bounded, understandable, and reviewable.
+Tagline:
 
-The project is intentionally framed around **personal control**, not enterprise automation. The robot is a personal helper, not a corporate autonomous agent.
+> Give your helper pocket money, not your wallet.
+
+The product should use a compact 2D game scene to make helper allowances visible, bounded, understandable, and reviewable.
+
+The project is intentionally framed around **personal control for independent individuals**, not enterprise automation. The robot is a personal helper with a small allowance, not a corporate autonomous agent with broad spending authority.
 
 ## 2. Project Reason
 
 This project is being developed for the **Nimiq Mini Apps Competition**.
 
-Nimiq publicly frames itself as **"Universal Money for Independent Individuals"** and emphasizes accessible, intuitive apps that put people back in control. Robot Ledger should align with that framing by showing how a wallet-adjacent mini app can help an individual understand and control what a software helper may do with their money.
+Nimiq publicly frames itself as **"Universal Money for Independent Individuals"** and emphasizes accessible, intuitive apps that put people back in control. Pocket Bot should align with that framing by exploring how Nimiq could provide a self-custodied prepaid allowance for software helpers.
 
 The goal is not to build a full autonomous agent economy. The goal is to create a small, playful, competition-ready prototype that demonstrates:
 
-- simple delegated payment rules,
+- a user-funded helper allowance,
+- simple spending rules,
 - visible spending boundaries,
 - human approval before sensitive actions,
 - automatic receipts,
@@ -26,24 +31,25 @@ The current repository already contains a Phaser 3 + Vite game foundation. The r
 
 ## 3. Competition Context
 
-Robot Ledger should be suitable as a Nimiq mini app competition entry.
+Pocket Bot should be suitable as a Nimiq mini app competition entry.
 
-The competition-relevant idea is that Nimiq can provide the wallet and payment layer, while the game world provides the human interface layer. The prototype should demonstrate how abstract wallet actions can become guided, understandable, and human-controlled interactions in a mini app.
+The competition-relevant idea is that Nimiq can provide the wallet and payment layer, while the game world provides the human interface layer. The prototype should demonstrate how a wallet-funded allowance can become an understandable, guided interaction in a mini app.
 
-For the MVP, Nimiq integration can be simulated. Real testnet, mainnet, SDK, or payment request integration belongs to a later milestone.
+For the MVP, Nimiq integration can be simulated. Real testnet, mainnet, Mini App SDK, wallet, or payment request integration belongs to a later milestone.
 
 The project should avoid heavy enterprise language. It should feel closer to:
 
-> A playful Nimiq mini app where an independent individual gives a small robot helper a tiny budget, sets simple spending rules, approves actions, and sees clear receipts.
+> A playful Nimiq mini app where an independent individual gives a small robot helper a prepaid allowance, sets simple spending rules, approves actions, and sees clear receipts.
 
 ## 4. Problem Statement
 
-As digital money becomes more programmable, people may increasingly allow software helpers to propose or prepare payments. But users should not need to trust a helper blindly.
+As digital money becomes more programmable, people may increasingly allow software helpers to propose or prepare paid actions. But users should not need to give a helper broad wallet access or trust it blindly.
 
 Users need to understand:
 
-- what the helper is allowed to do,
-- which budget envelope the action will use,
+- how much allowance the helper has,
+- what the helper is allowed to spend on,
+- which budget envelope an action will use,
 - whether the cost fits the rules,
 - whether the tool or service is allowed,
 - whether the action needs approval,
@@ -54,25 +60,28 @@ The interface problem is to make these checks visible without forcing the user t
 
 ## 5. Product Thesis
 
-Robot Ledger should help independent individuals keep control over delegated payment behavior.
+Pocket Bot explores how Nimiq could provide a **self-custodied prepaid allowance for software helpers**.
 
-The system should not claim to validate a robot's or AI agent's inner intention. Instead, it should validate whether a proposed action is an allowed continuation of a user-declared rule set.
+The system should not claim to validate a robot's or AI agent's inner intention. Instead, it should validate whether a proposed action is an allowed continuation of a user-declared rule set and a bounded prepaid allowance.
 
 The core product loop is:
 
-1. user sets a simple rule,
-2. user assigns a bounded budget envelope,
-3. robot helper proposes a small paid action,
-4. system checks the proposal against the rule,
-5. action is auto-approved, sent for approval, or blocked,
-6. approved action executes in simulation,
-7. receipt is created,
-8. user can inspect and classify the receipt,
-9. trace can be replayed or reviewed.
+1. user gives the helper a small allowance,
+2. user sets a simple rule,
+3. user assigns a bounded budget envelope,
+4. robot helper proposes a small paid action,
+5. system checks the proposal against the rule and allowance,
+6. action is auto-approved, sent for approval, or blocked,
+7. approved action executes in simulation,
+8. receipt is created,
+9. user can inspect and classify the receipt,
+10. trace can be replayed or reviewed.
 
-Product principle:
+Product principles:
 
 > Delegation should never mean losing control.
+>
+> A helper gets pocket money, not the user's wallet.
 
 ## 6. Target Users
 
@@ -81,57 +90,62 @@ Primary target users:
 - Nimiq Mini Apps Competition judges evaluating usefulness, clarity, playfulness, and fit with wallet/payment interactions.
 - Crypto-curious individuals who understand payments but may not understand autonomous or delegated software actions.
 - Nimiq users who value simple, accessible, self-controlled money tools.
+- Users curious about letting software help with small paid tasks without exposing their full wallet.
 
 Secondary target users:
 
 - Builders exploring human-in-the-loop controls for wallets and AI helpers.
 - Product designers exploring wallet UX for delegated payments.
-- Developers who need a simple prototype to extend toward Nimiq SDK integration.
+- Developers who need a simple prototype to extend toward Nimiq Mini App SDK integration.
 
 The MVP should be understandable to a non-enterprise user. It should not require knowledge of AI governance, enterprise procurement, or agent-economy theory.
 
 ## 7. Core Use Case
 
-The initial use case is a single robot helper operating under a simple personal rule.
+The initial use case is a single robot helper operating with a small prepaid allowance.
 
 User rule:
 
-> TestBot may spend from the Testing envelope, max 1 NIM per action, only on approved helper tools.
+> Pocket Bot may spend from the AI Tools allowance, max 1 NIM per action, only on approved helper tools.
 
 Robot proposal:
 
-> I want to use BugTriage API. Cost: 0.4 NIM. Envelope: Testing. Reason: analyze a bug report.
+> I want to use Quick Summarizer. Cost: 0.4 NIM. Envelope: AI Tools. Reason: summarize this long note.
 
 System checks:
 
-- Is BugTriage API an approved helper tool?
+- Is Quick Summarizer an approved helper tool?
 - Is 0.4 NIM at or below the 1 NIM max-per-action limit?
-- Does the Testing envelope have enough remaining balance?
+- Does the AI Tools allowance have enough remaining balance?
 - Does the rule allow auto-approval, or does this require user approval?
 
 Possible outcomes:
 
 - **Auto-approved:** the action is within all rules and below the approval threshold.
 - **Needs approval:** the action is allowed but requires explicit user confirmation.
-- **Rejected/blocked:** the action violates policy or budget constraints.
+- **Rejected/blocked:** the action violates rule or allowance constraints.
 
 After execution, a receipt card records the action, decision, rule result, and outcome.
+
+Important MVP note:
+
+The paid helper tool is simulated. The purpose of the first milestone is to demonstrate the allowance and control interface, not to integrate a real AI API or real Nimiq payment.
 
 ## 8. MVP Scope
 
 The MVP is a small Phaser scene, not a large RPG.
 
-The required first scene is **Robot Workshop**.
+The required first scene is **Pocket Bot Workshop**.
 
 The MVP must include:
 
 - one robot helper,
-- one budget envelope,
-- one paid tool/service stall,
+- one prepaid allowance / budget envelope,
+- one paid helper tool stall,
 - one approval gate,
 - one receipt archive,
 - one simple task/action loop,
-- one visible UI overlay for budget, rule, and current action state,
+- one visible UI overlay for allowance, rule, and current action state,
 - simulated NIM amounts,
 - simulated approval and receipt behavior.
 
@@ -144,10 +158,11 @@ The MVP should not include:
 - real Nimiq wallet connection,
 - real Nimiq testnet or mainnet payments,
 - Nimiq Mini App SDK integration,
+- real wallet-funded allowances,
+- real AI API execution,
 - multiple robots,
 - multiple budget envelopes,
 - persistent backend storage,
-- real AI-agent execution,
 - user authentication,
 - exportable audit logs,
 - complex policy editor,
@@ -157,45 +172,47 @@ The MVP should not include:
 - combat, quests, or unrelated game mechanics,
 - enterprise procurement or compliance workflows.
 
-These may be considered future features after the first milestone demonstrates the core action loop.
+These may be considered future features after the first milestone demonstrates the core allowance loop.
 
 ## 10. Functional Requirements
 
-### Rule / Mandate
+### Rule / Allowance
 
 - The app must display the active user rule in concise language.
-- The MVP rule must include a helper name, envelope name, max cost per action, and allowed tool category.
+- The MVP rule must include a helper name, allowance/envelope name, max cost per action, and allowed tool category.
 - The app must represent the rule boundary visually as an approval gate.
 - The app must distinguish allowed, approval-required, and blocked actions.
-- The language should use simple terms such as **rule**, **budget**, **helper**, **approval**, and **receipt** before introducing advanced terms like mandate or policy.
+- The language should use simple terms such as **rule**, **allowance**, **helper**, **approval**, and **receipt** before introducing advanced terms like mandate or policy.
+- The UI must communicate that the helper has limited pocket money, not full wallet access.
 
-### Budget Envelope
+### Prepaid Allowance / Budget Envelope
 
-- The app must show one visible budget envelope named **Testing**.
-- The envelope must have a simulated NIM balance.
+- The app must show one visible prepaid allowance named **AI Tools**.
+- The allowance must have a simulated NIM balance.
 - The balance must decrease only after an approved action executes.
-- The UI must show remaining balance after each executed action.
+- The UI must show remaining allowance after each executed action.
+- The allowance should be visually represented as a pouch, pocket, backpack, or small fund controlled by the user.
 
 ### Robot Helper
 
-- The app must show one robot helper, provisionally named **TestBot**.
+- The app must show one robot helper, provisionally named **Pocket Bot**.
 - The robot must be presented as a personal helper acting under user rules.
 - The robot must be able to enter or approach the action flow in the scene.
 - The robot must present a concrete action proposal to the user or system.
 
-### Paid Tool / Service Stall
+### Paid Helper Tool Stall
 
-- The scene must include one paid tool/service stall.
-- The initial stall should represent **BugTriage API** or a similar approved helper tool.
+- The scene must include one paid helper tool stall.
+- The initial stall should represent **Quick Summarizer** or a similar approved helper tool.
 - The stall must have a visible cost in simulated NIM.
 - The stall must be treated as a paid service, not as a generic collectible.
 
 ### Approval Gate
 
-- The gate must check the proposal against the active rules.
+- The gate must check the proposal against the active rules and allowance.
 - The gate must provide one of three decisions: auto-approved, needs approval, or rejected/blocked.
-- For the initial happy path, BugTriage API at 0.4 NIM should pass the max-per-action and approved-tool checks.
-- If human approval is required in a scenario, the UI must provide approve and reject choices.
+- For the initial happy path, Quick Summarizer at 0.4 NIM should pass the max-per-action and approved-tool checks.
+- If user approval is required in a scenario, the UI must provide approve and reject choices.
 
 ### Execution
 
@@ -206,7 +223,7 @@ These may be considered future features after the first milestone demonstrates t
 ### Receipts
 
 - Every executed spend/action must create a receipt card.
-- Each receipt must include tool, cost, envelope, rule result, reason, decision, and outcome.
+- Each receipt must include tool, cost, allowance/envelope, rule result, reason, decision, and outcome.
 - Receipts must appear in or near the receipt archive.
 - The user must be able to inspect the latest receipt.
 - The MVP should allow the user to classify a receipt as one of:
@@ -230,13 +247,14 @@ These may be considered future features after the first milestone demonstrates t
 - Controls should be obvious without requiring a long tutorial.
 - Simulated payment behavior must be clearly distinguishable from real payment behavior.
 - The prototype should avoid making real financial claims before Nimiq integration exists.
-- Code should be organized so that rule checks, budget state, and receipt creation can later be separated from scene rendering.
+- Code should be organized so that rule checks, allowance state, and receipt creation can later be separated from scene rendering.
 - Future Nimiq integration should not require rewriting the whole scene.
 - The tone should feel playful but trustworthy.
 
 ## 12. UX Principles
 
 - Make boundaries visible.
+- Make allowance limits visible before spending.
 - Make spending legible before it happens.
 - Make approvals feel deliberate, not accidental.
 - Make receipts easy to inspect.
@@ -246,16 +264,17 @@ These may be considered future features after the first milestone demonstrates t
 - Show the current action state at all times.
 - Treat the user as the final authority for ambiguous or rule-changing decisions.
 - Align with Nimiq's accessible, non-jargon product style.
+- Reinforce the central message: the helper has pocket money, not full wallet access.
 
 ## 13. Game Metaphor
 
-The game metaphor is a compact 2D workshop where delegated payments become spatial.
+The game metaphor is a compact 2D workshop where prepaid helper allowances become spatial.
 
 Suggested mapping:
 
 - Robot = personal software helper.
-- Budget envelope = pouch, backpack, crate, or resource container.
-- Paid tool/service = stall, vending machine, lab bench, or service counter.
+- Prepaid allowance = pocket, pouch, backpack, crate, or resource container.
+- Paid helper tool = stall, vending machine, lab bench, or service counter.
 - Approval rule = gate, checkpoint, scanner, or safety barrier.
 - Receipt archive = filing cabinet, ledger desk, wall board, or card stack.
 - Action trace = path the robot took plus receipt records.
@@ -279,18 +298,19 @@ The first implementation should be able to represent these objects, even if they
 - `id`
 - `helperId`
 - `summary`
-- `allowedEnvelopeIds`
+- `allowedAllowanceIds`
 - `allowedToolCategories`
 - `maxCostPerAction`
 - `approvalRule`
 
-### Budget Envelope
+### Allowance
 
 - `id`
 - `name`
 - `balance`
 - `currency`
 - `reservedAmount`
+- `fundingMode`
 
 ### Tool / Service
 
@@ -306,7 +326,7 @@ The first implementation should be able to represent these objects, even if they
 - `id`
 - `helperId`
 - `toolId`
-- `envelopeId`
+- `allowanceId`
 - `cost`
 - `reason`
 - `createdAt`
@@ -327,7 +347,7 @@ The first implementation should be able to represent these objects, even if they
 - `toolName`
 - `cost`
 - `currency`
-- `envelopeName`
+- `allowanceName`
 - `reason`
 - `decision`
 - `outcome`
@@ -336,23 +356,23 @@ The first implementation should be able to represent these objects, even if they
 
 ## 15. First Scene Requirements
 
-Scene name: **Robot Workshop**
+Scene name: **Pocket Bot Workshop**
 
 Required scene areas:
 
 - **Workshop start:** the robot begins here.
-- **Testing envelope area:** shows the current budget and remaining balance.
-- **API Market or Testing Lab stall:** represents the paid service.
+- **Allowance pocket area:** shows the current allowance and remaining balance.
+- **Tool stall:** represents the paid helper service.
 - **Approval gate:** checks whether the proposed action can proceed.
 - **Receipt archive:** stores the generated receipt card.
-- **UI overlay:** displays budget, user rule, proposal, and decision state.
+- **UI overlay:** displays allowance, user rule, proposal, and decision state.
 
 Minimum first loop:
 
-1. Scene loads with TestBot, Testing envelope, BugTriage API stall, approval gate, and receipt archive.
-2. UI shows the user rule and Testing envelope balance.
-3. TestBot proposes using BugTriage API for 0.4 NIM.
-4. Gate checks approved tool, cost threshold, and envelope balance.
+1. Scene loads with Pocket Bot, AI Tools allowance, Quick Summarizer stall, approval gate, and receipt archive.
+2. UI shows the user rule and AI Tools allowance balance.
+3. Pocket Bot proposes using Quick Summarizer for 0.4 NIM.
+4. Gate checks approved tool, cost threshold, and allowance balance.
 5. Action is auto-approved or presented for approval depending on the selected first milestone behavior.
 6. On execution, balance decreases by 0.4 NIM.
 7. A receipt card appears in the receipt archive.
@@ -363,55 +383,58 @@ Minimum first loop:
 The first milestone is complete when:
 
 - The app runs locally through the existing Vite workflow.
-- The first visible scene is Robot Workshop or an intentionally renamed equivalent.
-- The scene includes the robot, budget envelope, paid tool/service stall, approval gate, receipt archive, and UI overlay.
+- The first visible scene is Pocket Bot Workshop or an intentionally renamed equivalent.
+- The scene includes the robot, allowance pocket, paid helper tool stall, approval gate, receipt archive, and UI overlay.
 - The user rule is visible in the UI.
-- The user can trigger or observe a proposal for BugTriage API costing 0.4 NIM.
-- The rule check evaluates tool approval, max cost per action, and envelope balance.
+- The UI clearly communicates that the helper has a limited allowance, not full wallet access.
+- The user can trigger or observe a proposal for Quick Summarizer costing 0.4 NIM.
+- The rule check evaluates tool approval, max cost per action, and allowance balance.
 - The action produces a clear decision: auto-approved, needs approval, or blocked.
-- Approved execution reduces the Testing envelope balance.
+- Approved execution reduces the AI Tools allowance balance.
 - Execution creates a receipt card with the required receipt fields.
 - The latest receipt can be inspected.
 - The user can classify the receipt using the four MVP classification options.
 - No real wallet or payment action occurs.
 - Existing Phaser/Vite foundation remains intact.
-- The wording and UI framing emphasize user control and independent individuals, not enterprise agent governance.
+- The wording and UI framing emphasize user control, prepaid allowances, and independent individuals.
 
 ## 17. Open Questions
 
 - Should the first playable loop be user-triggered by keyboard/controller input, UI button input, or automatic scene progression?
 - Should the first milestone use auto-approval only, or include an explicit approval choice for the happy path?
-- What initial Testing envelope balance should be shown?
+- What initial AI Tools allowance balance should be shown?
 - Should the robot movement remain side-scroller style, or shift toward a top-down workshop layout?
-- Should `src/scenes/Street.js` be renamed later, or should a new scene be added and wired as the active scene?
-- What visual style should be used for the robot, envelope, stall, gate, and receipt archive before final art exists?
+- Should `src/scenes/Street.js` be renamed later, or should a new Pocket Bot Workshop scene be added and wired as the active scene?
+- What visual style should be used for the robot, allowance pocket, tool stall, gate, and receipt archive before final art exists?
 - How explicit should the simulated nature of NIM payments be in the first UI?
 - Which Nimiq Mini App SDK or wallet APIs should be targeted in a later milestone?
-- What final product name best aligns with Nimiq's independent-individual framing: Robot Ledger, Pocket Robot, Nimiq Buddy, or another name?
+- Should the later real-product path target AI API usage, paid web tools, Nimiq-native mini app services, or another type of helper action first?
 
 ## 18. Suggested Next Implementation Steps
 
 Recommended next task:
 
-1. Review and approve this revised requirements document.
+1. Review and approve this revised Pocket Bot requirements document.
 2. Decide the first interaction model: automatic loop, keyboard-triggered loop, or UI-button-triggered loop.
-3. Decide whether the first milestone starts by adapting `src/scenes/Street.js` or by adding a new `RobotWorkshop` scene.
-4. Define the initial in-memory data objects for rule, envelope, tool, proposal, decision, and receipt.
-5. Implement the Robot Workshop scene using existing Phaser/Vite structure.
-6. Add the UI overlay for rule, budget, proposal, decision, and receipt state.
+3. Decide whether the first milestone starts by adapting `src/scenes/Street.js` or by adding a new `PocketBotWorkshop` scene.
+4. Define the initial in-memory data objects for rule, allowance, tool, proposal, decision, and receipt.
+5. Implement the Pocket Bot Workshop scene using existing Phaser/Vite structure.
+6. Add the UI overlay for rule, allowance, proposal, decision, and receipt state.
 7. Add a minimal receipt archive interaction.
 8. Test locally through Vite and document any follow-up requirements.
 
 Future ideas after MVP:
 
 - multiple robot helpers,
-- multiple envelopes,
+- multiple allowances,
 - trust levels,
 - simulated spending mode,
 - Nimiq testnet integration,
 - real payment request flow,
+- wallet-funded prepaid allowance,
 - Nimiq Mini App SDK integration,
 - helper action replay,
 - receipt sorting mini-game,
 - simple rule editor,
-- exportable personal receipt history.
+- exportable personal receipt history,
+- backend gateway for real paid API/tool calls.
