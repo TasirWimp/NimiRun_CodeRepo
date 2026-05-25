@@ -2,10 +2,32 @@ import { describe, expect, it } from 'vitest';
 
 import {
   createAllowanceCheck,
+  executeAllowanceSpend,
   getAvailableBalance,
   hasSufficientBalance,
 } from '../../src/domain/allowance.js';
+import { DECISIONS, evaluateRuleDecision } from '../../src/domain/rules.js';
 import { createMvpScenario } from '../../src/game/mvpScenario.js';
+
+function createCartScoutDecision(overrides = {}) {
+  const scenario = createMvpScenario();
+  const allowance = { ...scenario.allowance, ...overrides.allowance };
+  const proposal = { ...scenario.proposals.cartScout, ...overrides.proposal };
+  const tool = { ...scenario.tools.cartScout, ...overrides.tool };
+  const rule = { ...scenario.rule, ...overrides.rule };
+
+  return {
+    scenario,
+    allowance,
+    proposal,
+    decision: evaluateRuleDecision({
+      rule,
+      allowance,
+      tool,
+      proposal,
+    }),
+  };
+}
 
 describe('allowance checks', () => {
   it('calculates available balance after reserved amount', () => {
@@ -32,6 +54,83 @@ describe('allowance checks', () => {
       availableBalance: 5,
       requiredAmount: 0.4,
       currency: 'NIM',
+    });
+  });
+});
+
+describe('allowance spend execution', () => {
+  it('reduces the allowance balance for an approved 0.4 NIM spend', () => {
+    const { allowance, proposal, decision } = createCartScoutDecision();
+
+    const result = executeAllowanceSpend({ allowance, proposal, decision });
+
+    expect(result).toMatchObject({
+      applied: true,
+      amount: 0.4,
+      currency: 'NIM',
+      allowance: {
+        id: 'allowance-ai-tools',
+        balance: 4.6,
+      },
+    });
+    expect(allowance.balance).toBe(5);
+    expect(result.allowance).not.toBe(allowance);
+  });
+
+  it('does not change the balance for a blocked proposal', () => {
+    const { allowance, proposal, decision } = createCartScoutDecision({
+      proposal: { checkoutRequested: true },
+    });
+
+    const result = executeAllowanceSpend({ allowance, proposal, decision });
+
+    expect(decision.decision).toBe(DECISIONS.BLOCKED);
+    expect(result).toMatchObject({
+      applied: false,
+      allowance: {
+        balance: 5,
+      },
+    });
+    expect(result.reason).toContain('not approved');
+  });
+
+  it('does not let an approved spend make the allowance negative', () => {
+    const { proposal } = createCartScoutDecision();
+    const allowance = {
+      id: 'allowance-ai-tools',
+      name: 'AI Tools',
+      balance: 0.2,
+      currency: 'NIM',
+      reservedAmount: 0,
+    };
+    const approvedDecision = { decision: DECISIONS.AUTO_APPROVED };
+
+    const result = executeAllowanceSpend({ allowance, proposal, decision: approvedDecision });
+
+    expect(result).toMatchObject({
+      applied: false,
+      allowance: {
+        balance: 0.2,
+      },
+    });
+    expect(result.reason).toContain('Insufficient');
+  });
+
+  it('applies repeated approved spends with stable money math', () => {
+    const { allowance, proposal, decision } = createCartScoutDecision();
+
+    const firstSpend = executeAllowanceSpend({ allowance, proposal, decision });
+    const secondSpend = executeAllowanceSpend({
+      allowance: firstSpend.allowance,
+      proposal,
+      decision,
+    });
+
+    expect(secondSpend).toMatchObject({
+      applied: true,
+      allowance: {
+        balance: 4.2,
+      },
     });
   });
 });

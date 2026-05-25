@@ -139,7 +139,16 @@ Expected automated tests:
 - receipt records tool, cost, allowance, reason, decision, and outcome,
 - receipt classification can be set to one of the four MVP options.
 
-### PB-003 Pocket Bot Workshop Scene Shell
+### PB-003 Allowance Spend Execution
+
+Expected automated tests:
+
+- approved 0.4 NIM spend reduces the AI Tools allowance balance,
+- blocked proposal does not change the allowance balance,
+- insufficient allowance cannot go negative,
+- repeated approved spends produce the expected remaining balance.
+
+### PB-004 Pocket Bot Workshop Scene Shell
 
 Expected checks:
 
@@ -148,7 +157,7 @@ Expected checks:
 - Pocket Bot Workshop scene loads,
 - allowance, tool stall, approval gate, receipt archive, and overlay are visible.
 
-### PB-004 Proposal And Approval Flow
+### PB-005 Proposal And Approval Flow
 
 Expected checks:
 
@@ -157,7 +166,15 @@ Expected checks:
 - allowed proposal can execute,
 - blocked proposal does not spend allowance.
 
-### PB-005 Receipt Inspection
+### PB-006 Simulated Spend And Receipt Archive
+
+Expected checks:
+
+- allowed proposal execution reduces the displayed allowance balance,
+- receipt appears after simulated spend,
+- receipt records tool, cost, allowance, rule result, reason, decision, and outcome.
+
+### PB-007 Receipt Inspection And Classification
 
 Expected checks:
 
