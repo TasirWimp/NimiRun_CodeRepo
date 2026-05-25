@@ -25,6 +25,7 @@ Pocket Bot gameplay has not been implemented yet.
 ```bash
 npm install
 npm run dev
+npm run test
 npm run build
 ```
 

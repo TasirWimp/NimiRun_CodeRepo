@@ -9,11 +9,11 @@ The first goal is not broad test coverage. The first goal is to keep the core sp
 The repository currently has:
 
 - Phaser 3 + Vite app structure,
-- `npm run build` as the only automated verification command,
-- no configured unit test runner,
+- Vitest configured through `npm run test`,
+- `npm run build` for production build verification,
 - no configured browser or end-to-end test runner.
 
-Until a test runner is added, implementation plans must still describe the intended tests for each feature slice.
+Implementation plans must describe the intended tests for each feature slice before implementation starts.
 
 ## Testing Principles
 
@@ -43,7 +43,7 @@ Primary targets:
 
 These tests should not import Phaser.
 
-Recommended future runner: **Vitest**, because it fits Vite and ES modules with low setup cost.
+Current runner: **Vitest**, because it fits Vite and ES modules with low setup cost.
 
 ### Build Checks
 
@@ -134,13 +134,12 @@ Expected checks:
 
 ## Recommended Test Tooling Roadmap
 
-Add tooling only when the first implementation slice needs it.
+Add more tooling only when an implementation slice needs it.
 
-1. Add Vitest and `npm run test` before implementing `src/domain/` behavior.
-2. Add a focused `tests/domain/` folder for rule, allowance, proposal, and receipt tests.
-3. Keep `npm run build` as the required integration check.
-4. Add Playwright later when Phaser scene behavior needs repeatable browser verification.
-5. Add CI only after local tests and build are stable.
+1. Add a focused `tests/domain/` folder for rule, allowance, proposal, and receipt tests.
+2. Keep `npm run build` as the required integration check.
+3. Add Playwright later when Phaser scene behavior needs repeatable browser verification.
+4. Add CI only after local tests and build are stable.
 
 Suggested future structure:
 

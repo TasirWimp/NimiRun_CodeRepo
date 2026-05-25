@@ -68,7 +68,7 @@ tests/
     app-loads.spec.js
 ```
 
-The first test tooling step should add Vitest and `npm run test` before implementing `src/domain/` behavior.
+Vitest and `npm run test` are the baseline unit-test tooling for `src/domain/` behavior.
 
 ## Feature Slices
 
@@ -286,14 +286,13 @@ Acceptance:
 
 Implement in this order:
 
-1. Add Vitest and `npm run test`.
-2. PB-001 Domain Rule Decision.
-3. PB-002 Receipt Creation.
-4. PB-003 Allowance Spend Execution.
-5. PB-004 Pocket Bot Workshop Scene Shell.
-6. PB-005 Proposal And Approval Flow.
-7. PB-006 Simulated Spend And Receipt Archive.
-8. PB-007 Receipt Inspection And Classification.
+1. PB-001 Domain Rule Decision.
+2. PB-002 Receipt Creation.
+3. PB-003 Allowance Spend Execution.
+4. PB-004 Pocket Bot Workshop Scene Shell.
+5. PB-005 Proposal And Approval Flow.
+6. PB-006 Simulated Spend And Receipt Archive.
+7. PB-007 Receipt Inspection And Classification.
 
 This order keeps the spending-control behavior testable before scene rendering.
 
@@ -302,10 +301,10 @@ This order keeps the spending-control behavior testable before scene rendering.
 The next implementation commit should be:
 
 ```text
-test: add domain test setup
+test: add PB-001 domain rule tests
 ```
 
-It should add Vitest, `npm run test`, and the first failing tests for PB-001 before implementing rule logic.
+It should add the first failing tests for PB-001 before implementing rule logic.
 
 ## Risks And Controls
 
