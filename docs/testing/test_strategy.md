@@ -23,6 +23,40 @@ Implementation plans must describe the intended tests for each feature slice bef
 - Every feature slice must list the tests or checks that prove it works.
 - If a feature changes product behavior, the tests should describe the user-visible rule being protected.
 - If a test cannot be automated yet, document the manual check and the missing automation.
+- Distinguish logic tests that require no user interaction from interaction checks that prove the user can understand and control the bot.
+- Treat interaction checks as first-class for scene, UI, control, approval, and receipt-inspection changes.
+
+## Two Test Tracks
+
+### Logic Tests, No User Interaction
+
+Use these tests for behavior that can run without a browser, Phaser scene, pointer input, keyboard input, or visual inspection.
+
+Primary targets:
+
+- allowance math,
+- rule decisions,
+- proposal validation,
+- receipt creation,
+- receipt classification state changes,
+- simulated spend execution.
+
+Current runner: **Vitest**.
+
+### Interaction Tests And Checks
+
+Use these checks for behavior where the product only works if the user can understand or control what is happening in the interface.
+
+Primary targets:
+
+- user can trigger the Pocket Bot proposal,
+- approval gate visibly communicates auto-approved, needs-approval, or blocked,
+- UI makes the allowance limit visible before spending,
+- simulated spend cannot be mistaken for real wallet spending,
+- receipt appears where the user expects it,
+- user can inspect and classify the latest receipt.
+
+Until browser automation exists, interaction checks may be manual or browser-smoke checks. Each check must include a concrete user action and an observable result.
 
 ## Test Layers
 
@@ -159,7 +193,8 @@ tests/
 Every implementation summary must include:
 
 - tests planned,
-- tests run,
+- logic tests run,
+- interaction checks run,
 - pass/fail result,
 - skipped tests and reason,
 - manual checks performed,

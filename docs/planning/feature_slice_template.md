@@ -16,11 +16,17 @@ Non-goals:
 
 ## Test Plan
 
-Unit tests:
+Logic tests, no user interaction:
 
 Build check:
 
-Browser/manual tests:
+Interaction tests/checks:
+
+Manual acceptance checks:
+
+Missing automation:
+
+Commands to run:
 
 Acceptance criteria:
 
@@ -38,7 +44,11 @@ Follow-ups:
 
 Files changed:
 
-Tests run:
+Logic tests run:
+
+Interaction checks run:
+
+Commands run:
 
 Skipped tests or checks:
 

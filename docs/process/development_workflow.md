@@ -20,7 +20,7 @@ Every feature should follow this loop:
 1. **Feature planning**
    Define the small user-visible behavior, source requirement, non-goals, expected files, and risks.
 2. **Test planning**
-   Decide which behavior can be covered by unit tests, which needs a build check, and which needs browser/manual verification.
+   Separate logic tests that need no user interaction from interaction checks for the user/bot interface. Decide what needs a build check, what can be automated now, what must be manual for now, and what tooling is missing.
 3. **Code implementation**
    Implement the smallest useful slice. Keep domain logic outside Phaser scenes when possible.
 4. **Test run**
@@ -37,6 +37,7 @@ Do not start feature implementation before the feature and test plan are clear.
 - Keep Phaser scenes focused on rendering, input, movement, and orchestration.
 - Avoid testing Phaser rendering through unit tests unless a behavior can be isolated cleanly.
 - Use build checks and browser/manual checks for scene visibility and interaction.
+- Treat interaction checks as first-class for scene, UI, control, approval, and receipt-inspection changes. These checks should describe a concrete user action and an observable result.
 - If a behavior cannot be tested yet because the test stack is missing, document the intended test and implement only the smallest low-risk slice.
 
 ## Feature Slice Template
@@ -54,9 +55,18 @@ Non-goals:
 
 ## Test Plan
 
-Unit tests:
+Logic tests, no user interaction:
+
 Build check:
-Browser/manual check:
+
+Interaction tests/checks:
+
+Manual acceptance checks:
+
+Missing automation:
+
+Commands to run:
+
 Acceptance criteria:
 
 ## Implementation Notes
