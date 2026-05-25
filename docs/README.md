@@ -5,6 +5,7 @@ This folder keeps project documentation grouped by purpose. Avoid placing new Ma
 ## Current Structure
 
 - `product/` - product requirements, product scope, user-facing behavior, MVP acceptance criteria.
+- `process/` - development workflow, agent workflow, coding conventions.
 
 ## Planned Structure
 
