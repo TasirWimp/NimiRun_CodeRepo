@@ -112,7 +112,7 @@ The MVP should be understandable to a non-enterprise user. It should not require
 
 The initial use case is a single robot helper operating with a small prepaid allowance for paid helper-tool calls.
 
-The example paid tool may be called **Cart Scout**, **Tool Scout**, or **Resource Scout** during prototyping. Its role is to stand in for a paid helper route, not to lock the product into grocery shopping.
+The example paid tool is provisionally called **Tool Scout**. Its role is to stand in for a paid helper route, not to lock the product into grocery shopping.
 
 ### Source-Backed Motivation
 
@@ -137,29 +137,29 @@ Reference sources:
 
 ### First-Class MVP Scenario
 
-Pocket Bot helps the user explore whether a paid helper route is worth trying. In the first scripted scenario, this may appear as a reviewable cart-prep task, but `Cart Scout` should be understood as a placeholder for a broader paid helper resource.
+Pocket Bot helps the user explore whether a paid helper route is worth trying. In the first scripted scenario, this appears as a reviewable result draft created through a paid helper route.
 
-The helper does **not** complete checkout, submit an order, enter payment information, or move money from the user's wallet. The only simulated spend in the MVP is the helper-tool cost paid from the prepaid allowance.
+The helper does **not** complete checkout, submit an order, enter payment information, or move money from the user's wallet. Checkout and payment-info blocking remain safety-boundary examples. The only simulated spend in the MVP is the helper-tool cost paid from the prepaid allowance.
 
 User rule:
 
-> Pocket Bot may spend from the AI Tools allowance, max 1 NIM per action, only on approved cart-prep helper tools. Pocket Bot may prepare a cart draft, but may not complete checkout.
+> Pocket Bot may spend from the AI Tools allowance, max 1 NIM per action, only on approved helper tools. Pocket Bot may prepare a reviewable result draft, but may not complete checkout or enter payment information.
 
 Robot proposal:
 
-> I want to use Cart Scout. Cost: 0.4 NIM. Allowance: AI Tools. Reason: find matching grocery items and prepare a reviewable cart draft. Outcome: cart draft only, no checkout.
+> I want to use Tool Scout. Cost: 0.4 NIM. Allowance: AI Tools. Reason: use a paid helper route to prepare a reviewable result draft. Outcome: result draft only, no checkout or payment info.
 
 System checks:
 
-- Is Cart Scout an approved cart-prep helper tool?
+- Is Tool Scout an approved helper tool?
 - Is 0.4 NIM at or below the 1 NIM max-per-action limit?
 - Does the AI Tools allowance have enough remaining balance?
-- Is the requested action limited to cart preparation rather than checkout or payment?
+- Is the requested action limited to preparing a reviewable result rather than checkout, payment, or irreversible action?
 - Does the rule allow auto-approval, or does this require user approval?
 
 Possible outcomes:
 
-- **Auto-approved:** the paid helper-tool call is approved, below the per-action limit, and limited to cart preparation.
+- **Auto-approved:** the paid helper-tool call is approved, below the per-action limit, and limited to preparing a reviewable result.
 - **Needs approval:** the action is allowed but sensitive enough to require explicit user confirmation, such as a higher cost, unfamiliar tool, or ambiguous shopping request.
 - **Rejected/blocked:** the action violates rule or allowance constraints, tries to complete checkout, uses an unapproved tool, or exceeds the allowance.
 
@@ -167,7 +167,7 @@ After execution, a receipt card records the action, decision, rule result, and o
 
 Important MVP note:
 
-The paid helper tool is simulated. The purpose of the first milestone is to demonstrate the allowance and control interface, not to integrate a real AI API, real shopping service, real checkout flow, or real Nimiq payment.
+The paid helper tool is simulated. The purpose of the first milestone is to demonstrate the allowance and control interface, not to integrate a real AI API, real external service, real checkout flow, or real Nimiq payment.
 
 ## 8. MVP Scope
 
@@ -206,7 +206,7 @@ The MVP should not include:
 - real LLM route proposals,
 - real learning or autonomous model improvement,
 - real or simulated training rewards,
-- real grocery ordering or checkout,
+- real ordering, checkout, or external-service execution,
 - multiple robots,
 - multiple budget envelopes,
 - persistent backend storage,
@@ -276,7 +276,7 @@ These may be considered future features after the first milestone demonstrates t
 ### Paid Helper Tool Stall
 
 - The scene must include one paid helper tool stall.
-- The initial stall should represent **Cart Scout** or a similar approved cart-prep helper tool.
+- The initial stall should represent **Tool Scout** or a similar approved paid helper tool.
 - The stall must have a visible cost in simulated NIM.
 - The stall must be treated as a paid service, not as a generic collectible.
 
@@ -284,7 +284,7 @@ These may be considered future features after the first milestone demonstrates t
 
 - The gate must check the proposal against the active rules and allowance.
 - The gate must provide one of three decisions: auto-approved, needs approval, or rejected/blocked.
-- For the initial happy path, Cart Scout at 0.4 NIM should pass the max-per-action and approved-tool checks.
+- For the initial happy path, Tool Scout at 0.4 NIM should pass the max-per-action and approved-tool checks.
 - A request to complete checkout or enter payment information must be blocked in the MVP.
 - If user approval is required in a scenario, the UI must provide approve and reject choices.
 
@@ -475,9 +475,9 @@ Required scene areas:
 
 Minimum first loop:
 
-1. Scene loads with Pocket Bot, AI Tools allowance, Cart Scout stall, approval gate, and receipt archive.
+1. Scene loads with Pocket Bot, AI Tools allowance, Tool Scout stall, approval gate, and receipt archive.
 2. UI shows the user rule and AI Tools allowance balance.
-3. Pocket Bot proposes using Cart Scout for 0.4 NIM to prepare a reviewable cart draft.
+3. Pocket Bot proposes using Tool Scout for 0.4 NIM to prepare a reviewable result draft.
 4. Gate checks approved tool, cost threshold, allowance balance, and no-checkout boundary.
 5. Action is auto-approved or presented for approval depending on the selected first milestone behavior.
 6. On execution, balance decreases by 0.4 NIM.
@@ -493,7 +493,7 @@ The first milestone is complete when:
 - The scene includes the robot, allowance pocket, paid helper tool stall, approval gate, receipt archive, and UI overlay.
 - The user rule is visible in the UI.
 - The UI clearly communicates that the helper has a limited allowance, not full wallet access.
-- The user can trigger or observe a proposal for Cart Scout costing 0.4 NIM.
+- The user can trigger or observe a proposal for Tool Scout costing 0.4 NIM.
 - The rule check evaluates tool approval, max cost per action, allowance balance, and the no-checkout boundary.
 - The action produces a clear decision: auto-approved, needs approval, or blocked.
 - Approved execution reduces the AI Tools allowance balance.

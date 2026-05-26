@@ -14,18 +14,18 @@ function evaluateScenario(overrides = {}) {
     },
   };
   const allowance = { ...scenario.allowance, ...overrides.allowance };
-  const tool = { ...scenario.tools.cartScout, ...overrides.tool };
-  const proposal = { ...scenario.proposals.cartScout, ...overrides.proposal };
+  const tool = { ...scenario.tools.toolScout, ...overrides.tool };
+  const proposal = { ...scenario.proposals.toolScout, ...overrides.proposal };
 
   return evaluateRuleDecision({ rule, allowance, tool, proposal });
 }
 
 describe('rule decisions', () => {
-  it('auto-approves the happy path Cart Scout proposal', () => {
+  it('auto-approves the happy path Tool Scout proposal', () => {
     const decision = evaluateScenario();
 
     expect(decision).toMatchObject({
-      proposalId: 'proposal-cart-scout',
+      proposalId: 'proposal-tool-scout',
       decision: DECISIONS.AUTO_APPROVED,
       requiresUserApproval: false,
     });

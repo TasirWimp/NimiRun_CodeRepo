@@ -126,7 +126,7 @@ Avoid vague manual checks such as "looks good."
 
 Expected automated tests:
 
-- approved cart-prep tool under 1 NIM is allowed,
+- approved helper tool under 1 NIM is allowed,
 - unapproved tool is blocked,
 - cost above 1 NIM is blocked or requires approval according to the rule,
 - insufficient allowance is blocked,
@@ -162,7 +162,7 @@ Expected checks:
 
 Expected checks:
 
-- user can trigger or observe the Cart Scout proposal,
+- user can trigger or observe the Tool Scout proposal,
 - gate evaluates approved tool, max cost, allowance balance, and no-checkout boundary,
 - allowed proposal can execute,
 - blocked proposal does not spend allowance.

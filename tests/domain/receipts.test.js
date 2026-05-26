@@ -11,8 +11,8 @@ import { createMvpScenario } from '../../src/game/mvpScenario.js';
 
 function createApprovedReceipt() {
   const scenario = createMvpScenario();
-  const proposal = scenario.proposals.cartScout;
-  const tool = scenario.tools.cartScout;
+  const proposal = scenario.proposals.toolScout;
+  const tool = scenario.tools.toolScout;
   const decision = evaluateRuleDecision({
     rule: scenario.rule,
     allowance: scenario.allowance,
@@ -34,8 +34,8 @@ describe('receipts', () => {
     const receipt = createApprovedReceipt();
 
     expect(receipt).toMatchObject({
-      id: 'receipt-proposal-cart-scout',
-      proposalId: 'proposal-cart-scout',
+      id: 'receipt-proposal-tool-scout',
+      proposalId: 'proposal-tool-scout',
       createdAt: '2026-05-25T12:00:00.000Z',
       userClassification: null,
     });
@@ -45,15 +45,15 @@ describe('receipts', () => {
     const receipt = createApprovedReceipt();
 
     expect(receipt).toMatchObject({
-      toolId: 'tool-cart-scout',
-      toolName: 'Cart Scout',
+      toolId: 'tool-scout',
+      toolName: 'Tool Scout',
       cost: 0.4,
       currency: 'NIM',
       allowanceId: 'allowance-ai-tools',
       allowanceName: 'AI Tools',
-      reason: 'Find matching grocery items and prepare a reviewable cart draft.',
+      reason: 'Use a paid helper route to prepare a reviewable result draft.',
       decision: DECISIONS.AUTO_APPROVED,
-      outcome: 'Cart draft only, no checkout.',
+      outcome: 'Result draft only, no checkout or payment info.',
     });
     expect(receipt.ruleResult).toMatchObject({
       decision: DECISIONS.AUTO_APPROVED,

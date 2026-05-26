@@ -7,12 +7,12 @@ This is the **Phase 1** implementation plan from `docs/product/roadmap.md`. Late
 The milestone goal is a playable **Pocket Bot Workshop** scene that demonstrates:
 
 1. limited AI Tools allowance,
-2. Cart Scout paid helper-tool proposal,
+2. Tool Scout paid helper-tool proposal,
 3. approval gate checks,
 4. simulated spend,
 5. receipt creation and inspection.
 
-No real wallet, real Nimiq payment, real checkout, real grocery service, real AI API execution, real LLM route proposal, real learning, real reward, x402 integration, or backend should be implemented in this milestone.
+No real wallet, real Nimiq payment, real checkout, real external service, real AI API execution, real LLM route proposal, real learning, real reward, x402 integration, or backend should be implemented in this milestone.
 
 ## Source Documents
 
@@ -89,7 +89,7 @@ Vitest and `npm run test` are the baseline unit-test tooling for `src/domain/` b
 
 Goal:
 
-Implement the rule-decision logic for the Cart Scout proposal.
+Implement the rule-decision logic for the Tool Scout proposal.
 
 User-visible behavior:
 
@@ -106,7 +106,7 @@ Expected files:
 
 Test plan:
 
-- approved Cart Scout proposal at 0.4 NIM is allowed,
+- approved Tool Scout proposal at 0.4 NIM is allowed,
 - unapproved tool is blocked,
 - cost above 1 NIM is blocked or marked approval-required according to the rule,
 - insufficient allowance is blocked,
@@ -182,7 +182,7 @@ Add the first Pocket Bot Workshop scene and wire it as the active scene.
 
 User-visible behavior:
 
-The app opens to a compact workshop containing Pocket Bot, AI Tools allowance, Cart Scout stall, approval gate, receipt archive, and a simple overlay.
+The app opens to a compact workshop containing Pocket Bot, AI Tools allowance, Tool Scout stall, approval gate, receipt archive, and a simple overlay.
 
 Expected files:
 
@@ -208,11 +208,11 @@ Acceptance:
 
 Goal:
 
-Connect the scene to domain logic so the user can trigger the Cart Scout proposal and see the approval decision.
+Connect the scene to domain logic so the user can trigger the Tool Scout proposal and see the approval decision.
 
 User-visible behavior:
 
-The user presses a clear UI control to let Pocket Bot propose Cart Scout. The approval gate shows the rule result.
+The user presses a clear UI control to let Pocket Bot propose Tool Scout. The approval gate shows the rule result.
 
 Expected files:
 
@@ -239,7 +239,7 @@ Acceptance:
 
 Goal:
 
-Execute the approved Cart Scout helper-tool call in simulation and create a visible receipt.
+Execute the approved Tool Scout helper-tool call in simulation and create a visible receipt.
 
 User-visible behavior:
 
@@ -340,7 +340,7 @@ It should add the first visible Phase 1 scene shell while preserving `Street.js`
 - Mini App SDK integration,
 - testnet or mainnet payments,
 - real AI API execution,
-- real grocery/cart provider integration,
+- real external tool/provider integration,
 - backend services,
 - persistence beyond in-memory state,
 - multiple helpers or allowances.

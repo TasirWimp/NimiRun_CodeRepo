@@ -76,7 +76,7 @@ The user sees a small robot helper with a limited simulated NIM allowance. The r
 - One scene: `PocketBotWorkshop` or equivalent.
 - One bot: `Pocket Bot`.
 - One allowance: `AI Tools`.
-- One paid helper tool: `Cart Scout` or equivalent.
+- One paid helper tool: `Tool Scout` or equivalent.
 - One approval gate.
 - One receipt archive.
 - One scripted paid-action proposal.
@@ -457,7 +457,7 @@ Validate whether Pocket Bot is a useful Nimiq mini app, not only an interesting 
 - Does the training loop feel valuable or like extra work?
 - Which use case is most compelling:
   - AI API/tool usage,
-  - shopping/cart preparation,
+  - paid resource navigation,
   - paid web tools,
   - Nimiq-native mini app services,
   - sponsored training quests?

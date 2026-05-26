@@ -9,11 +9,11 @@ import {
 import { DECISIONS, evaluateRuleDecision } from '../../src/domain/rules.js';
 import { createMvpScenario } from '../../src/game/mvpScenario.js';
 
-function createCartScoutDecision(overrides = {}) {
+function createToolScoutDecision(overrides = {}) {
   const scenario = createMvpScenario();
   const allowance = { ...scenario.allowance, ...overrides.allowance };
-  const proposal = { ...scenario.proposals.cartScout, ...overrides.proposal };
-  const tool = { ...scenario.tools.cartScout, ...overrides.tool };
+  const proposal = { ...scenario.proposals.toolScout, ...overrides.proposal };
+  const tool = { ...scenario.tools.toolScout, ...overrides.tool };
   const rule = { ...scenario.rule, ...overrides.rule };
 
   return {
@@ -37,7 +37,7 @@ describe('allowance checks', () => {
   it('passes when the allowance can cover the proposal cost', () => {
     const { allowance, proposals } = createMvpScenario();
 
-    expect(hasSufficientBalance(allowance, proposals.cartScout.cost)).toBe(true);
+    expect(hasSufficientBalance(allowance, proposals.toolScout.cost)).toBe(true);
   });
 
   it('fails when reserved funds leave too little available balance', () => {
@@ -49,7 +49,7 @@ describe('allowance checks', () => {
   it('returns a readable allowance check result', () => {
     const { allowance, proposals } = createMvpScenario();
 
-    expect(createAllowanceCheck(allowance, proposals.cartScout.cost)).toMatchObject({
+    expect(createAllowanceCheck(allowance, proposals.toolScout.cost)).toMatchObject({
       passed: true,
       availableBalance: 5,
       requiredAmount: 0.4,
@@ -60,7 +60,7 @@ describe('allowance checks', () => {
 
 describe('allowance spend execution', () => {
   it('reduces the allowance balance for an approved 0.4 NIM spend', () => {
-    const { allowance, proposal, decision } = createCartScoutDecision();
+    const { allowance, proposal, decision } = createToolScoutDecision();
 
     const result = executeAllowanceSpend({ allowance, proposal, decision });
 
@@ -78,7 +78,7 @@ describe('allowance spend execution', () => {
   });
 
   it('does not change the balance for a blocked proposal', () => {
-    const { allowance, proposal, decision } = createCartScoutDecision({
+    const { allowance, proposal, decision } = createToolScoutDecision({
       proposal: { checkoutRequested: true },
     });
 
@@ -95,7 +95,7 @@ describe('allowance spend execution', () => {
   });
 
   it('does not let an approved spend make the allowance negative', () => {
-    const { proposal } = createCartScoutDecision();
+    const { proposal } = createToolScoutDecision();
     const allowance = {
       id: 'allowance-ai-tools',
       name: 'AI Tools',
@@ -117,7 +117,7 @@ describe('allowance spend execution', () => {
   });
 
   it('applies repeated approved spends with stable money math', () => {
-    const { allowance, proposal, decision } = createCartScoutDecision();
+    const { allowance, proposal, decision } = createToolScoutDecision();
 
     const firstSpend = executeAllowanceSpend({ allowance, proposal, decision });
     const secondSpend = executeAllowanceSpend({
