@@ -24,6 +24,8 @@ Pocket Bot connects to the wider discussion around x402 and related agent-paymen
 
 This infrastructure direction makes the Pocket Bot interface problem more concrete: if helpers can initiate paid requests, users need something stronger than a hidden API bill or a broad wallet permission. They need allowance, rule, approval, receipt, and review.
 
+x402-like rails can make paid resources available to helpers, but they do not decide when spending is useful. Pocket Bot's training layer addresses that missing judgment interface: user feedback teaches the helper when paid resources are worth using.
+
 ## Nimiq-to-x402 Compatibility Route
 
 Nimiq connects naturally to the **user side** of this problem: wallet custody, user approval, simple payment UX, and mini app interaction. x402-like systems connect to the **machine-payment side**: HTTP payment requirements, supported tokens/networks, payment signatures, facilitator checks, and paid resource delivery.
@@ -100,6 +102,8 @@ Pocket Bot should keep payment-specific code behind adapters:
 - possible future `NimiqNativePaymentAdapter` if native NIM support becomes realistic.
 
 The allowance engine should stay independent from the payment rail. This ensures the core product idea survives changes in payment infrastructure.
+
+Payment rails must remain replaceable. The training and allowance engine must not depend on native NIM, x402, or any single provider.
 
 ## Risk Context
 

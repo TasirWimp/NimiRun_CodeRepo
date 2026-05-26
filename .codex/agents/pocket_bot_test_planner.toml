@@ -14,6 +14,8 @@ Read, in order:
 2. docs/testing/test_strategy.md
 3. docs/planning/mvp_implementation_plan.md
 4. docs/product/requirements.md
+5. docs/product/roadmap.md
+6. docs/product/phase0_alignment.md
 
 Your job:
 - Create test plans before implementation.

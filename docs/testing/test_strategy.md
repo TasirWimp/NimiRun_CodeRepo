@@ -54,7 +54,8 @@ Primary targets:
 - UI makes the allowance limit visible before spending,
 - simulated spend cannot be mistaken for real wallet spending,
 - receipt appears where the user expects it,
-- user can inspect and classify the latest receipt.
+- user can inspect the latest receipt,
+- optional stretch: user can classify the latest receipt.
 
 Until browser automation exists, interaction checks may be manual or browser-smoke checks. Each check must include a concrete user action and an observable result.
 
@@ -137,7 +138,7 @@ Expected automated tests:
 
 - executed proposal creates a receipt,
 - receipt records tool, cost, allowance, reason, decision, and outcome,
-- receipt classification can be set to one of the four MVP options.
+- receipt classification can be set to the future-facing classification values.
 
 ### PB-003 Allowance Spend Execution
 
@@ -174,14 +175,15 @@ Expected checks:
 - receipt appears after simulated spend,
 - receipt records tool, cost, allowance, rule result, reason, decision, and outcome.
 
-### PB-007 Receipt Inspection And Classification
+### PB-007 Receipt Inspection
 
 Expected checks:
 
 - receipt appears after execution,
 - latest receipt can be inspected,
-- user can select each classification option,
-- classification does not change the historical spend amount.
+- receipt amount, decision, reason, and outcome are readable,
+- optional stretch: user can select each classification option,
+- optional stretch: classification does not change the historical spend amount.
 
 ## Recommended Test Tooling Roadmap
 

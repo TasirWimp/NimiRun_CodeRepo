@@ -11,11 +11,13 @@ Current MVP goal: build the Pocket Bot Workshop scene through small, test-driven
 Before feature work, read the relevant docs in this order:
 
 1. `docs/product/requirements.md` - product scope, MVP behavior, acceptance criteria.
-2. `docs/product/pitch.md` - concise product framing and wording.
-3. `docs/product/infrastructure_context.md` - Nimiq and payment-rail context.
-4. `docs/process/development_workflow.md` - required development loop.
-5. `docs/testing/test_strategy.md` - testing approach.
-6. `docs/planning/mvp_implementation_plan.md` - PB feature slices and implementation order.
+2. `docs/product/roadmap.md` - phased product boundary; only Phase 1 is current implementation scope.
+3. `docs/product/phase0_alignment.md` - current Phase 0 handoff and code containment strategy.
+4. `docs/product/pitch.md` - concise product framing and wording.
+5. `docs/product/infrastructure_context.md` - Nimiq and payment-rail context.
+6. `docs/process/development_workflow.md` - required development loop.
+7. `docs/testing/test_strategy.md` - testing approach.
+8. `docs/planning/mvp_implementation_plan.md` - PB feature slices and implementation order.
 
 Use `README.md` for project setup and commands.
 
@@ -27,7 +29,8 @@ Follow this loop for implementation tasks:
 2. Test planning.
 3. Code implementation.
 4. Test run.
-5. Summary.
+5. Post-implementation documentation update.
+6. Summary.
 
 Do not start feature implementation before the feature and test plan are clear. If the user asks only for planning, review, or brainstorming, do not edit code.
 
@@ -71,7 +74,7 @@ Default order:
 5. PB-004 Pocket Bot Workshop Scene Shell.
 6. PB-005 Proposal And Approval Flow.
 7. PB-006 Simulated Spend And Receipt Archive.
-8. PB-007 Receipt Inspection And Classification.
+8. PB-007 Receipt Inspection.
 
 ## Test Expectations
 
@@ -93,6 +96,7 @@ Default order:
 ## Documentation Rules
 
 - Keep docs grouped by purpose under `docs/`.
+- After a feature slice is implemented and verified, update planning/status docs before treating the slice as complete.
 - Product decisions belong in `docs/product/`.
 - How-we-work instructions belong in `docs/process/`.
 - Build sequencing belongs in `docs/planning/`.

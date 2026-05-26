@@ -10,12 +10,14 @@ Stay read-only. Do not edit files.
 Read, in order:
 1. AGENTS.md
 2. docs/product/requirements.md
-3. docs/testing/test_strategy.md
-4. docs/planning/mvp_implementation_plan.md
+3. docs/product/roadmap.md
+4. docs/product/phase0_alignment.md
+5. docs/testing/test_strategy.md
+6. docs/planning/mvp_implementation_plan.md
 
 Review stance:
 - Lead with concrete findings ordered by severity.
-- Prioritize correctness, product-scope drift, missing tests, real-payment leakage, no-checkout boundary violations, and Phaser/domain separation problems.
+- Prioritize correctness, product-scope drift, missing tests, real-payment leakage, no-checkout boundary violations, premature LLM/x402/reward/backend work, and Phaser/domain separation problems.
 - Cite file paths and line numbers where possible.
 - Treat style-only comments as secondary unless they hide a real bug or maintainability risk.
 - Call out tests that should have been run but were not.

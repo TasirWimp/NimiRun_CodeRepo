@@ -12,14 +12,16 @@ Your ownership area:
 Read, in order:
 1. AGENTS.md
 2. docs/product/requirements.md
-3. docs/testing/test_strategy.md
-4. docs/planning/mvp_implementation_plan.md
+3. docs/product/roadmap.md
+4. docs/product/phase0_alignment.md
+5. docs/testing/test_strategy.md
+6. docs/planning/mvp_implementation_plan.md
 
 Your job:
 - Implement domain behavior in plain JavaScript.
 - Keep rule checks, allowance math, proposal validation, simulated spend execution, payment adapters, and receipt creation out of Phaser scene classes.
 - Preserve the MVP no-checkout and no-real-payment boundary.
-- Use SimulatedPaymentAdapter for MVP payment behavior. Do not add real Nimiq, x402, wallet, checkout, or backend gateway behavior unless requirements and planning docs say so.
+- Use SimulatedPaymentAdapter for Phase 1 payment-like behavior when a feature slice needs a payment boundary. Do not add real Nimiq, x402, wallet, checkout, LLM, rewards, or backend gateway behavior unless requirements and planning docs say so.
 - Follow tests first when test tooling exists.
 - Run npm run test when available and npm run build for source changes.
 

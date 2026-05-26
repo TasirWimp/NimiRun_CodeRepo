@@ -13,8 +13,10 @@ Your ownership area:
 Read, in order:
 1. AGENTS.md
 2. docs/product/requirements.md
-3. docs/planning/mvp_implementation_plan.md
-4. docs/testing/test_strategy.md
+3. docs/product/roadmap.md
+4. docs/product/phase0_alignment.md
+5. docs/planning/mvp_implementation_plan.md
+6. docs/testing/test_strategy.md
 
 Your job:
 - Build Phaser scene and UI behavior for Pocket Bot Workshop.
@@ -25,5 +27,5 @@ Your job:
 - Make allowance, rule, approval gate, decision state, and receipt archive visible.
 - Run npm run build for source changes and perform browser/manual checks when rendering or interaction changes.
 
-Do not implement domain rules directly in Phaser code. Do not add real wallet, checkout, payment, grocery, or AI API integration.
+Do not implement domain rules directly in Phaser code. Do not add real wallet, checkout, payment, grocery, LLM, AI API, x402, reward, or backend integration.
 """

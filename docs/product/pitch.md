@@ -8,11 +8,15 @@ Independent individuals should be able to tell their bot how much it may spend, 
 
 Pocket Bot is a playful Nimiq mini app exploring self-custodied prepaid allowances for software helpers. Instead of giving a bot broad wallet access, the user gives it a small allowance, sets simple rules, and reviews every paid action through clear receipts.
 
+Pocket Bot is a playful Nimiq mini app where users train a software helper to navigate paid resources. The helper starts with a small allowance, proposes when spending might help, and every paid action must explain why it is worth trying, when it will stop, and what receipt it leaves behind.
+
 ## Competition Framing
 
 Nimiq stands for universal money for independent individuals. Pocket Bot extends that idea into a future where software helpers may request paid tools, APIs, content, compute, or services.
 
 The project asks what a safe user interface should look like before that kind of spending becomes common.
+
+Pocket Bot explores how Nimiq can carry value through the training loop: allowance becomes interaction, interaction becomes experience, experience becomes better paid-resource judgment.
 
 ## Nimiq + x402 Framing
 
@@ -57,4 +61,4 @@ Pocket Bot turns that future infrastructure question into a small playable proto
 
 ## Boundary
 
-Pocket Bot is not claiming that the full payment infrastructure is mature today. The MVP is an interaction prototype. Real Nimiq wallet funding, live helper-tool payments, x402-style service calls, and backend gateway integration belong to later milestones.
+Pocket Bot is not claiming that the full payment infrastructure is mature today. The MVP is an interaction prototype. Real NIM rewards, real wallet-funded allowances, live helper-tool payments, real LLM route proposals, x402-style service calls, and backend gateway integration belong to later milestones.

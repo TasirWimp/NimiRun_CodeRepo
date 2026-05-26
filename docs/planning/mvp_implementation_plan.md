@@ -2,23 +2,36 @@
 
 This plan translates `docs/product/requirements.md` into small, test-driven implementation slices for the first Pocket Bot milestone.
 
+This is the **Phase 1** implementation plan from `docs/product/roadmap.md`. Later roadmap phases should guide containment decisions, but they are not implementation scope until Phase 1 is playable.
+
 The milestone goal is a playable **Pocket Bot Workshop** scene that demonstrates:
 
 1. limited AI Tools allowance,
 2. Cart Scout paid helper-tool proposal,
 3. approval gate checks,
 4. simulated spend,
-5. receipt creation and classification.
+5. receipt creation and inspection.
 
-No real wallet, real Nimiq payment, real checkout, real grocery service, or real AI API execution should be implemented in this milestone.
+No real wallet, real Nimiq payment, real checkout, real grocery service, real AI API execution, real LLM route proposal, real learning, real reward, x402 integration, or backend should be implemented in this milestone.
 
 ## Source Documents
 
 - Product requirements: `docs/product/requirements.md`
+- Product roadmap: `docs/product/roadmap.md`
+- Phase 0 alignment: `docs/product/phase0_alignment.md`
 - Product pitch: `docs/product/pitch.md`
 - Infrastructure context: `docs/product/infrastructure_context.md`
 - Development workflow: `docs/process/development_workflow.md`
 - Test strategy: `docs/testing/test_strategy.md`
+
+## Current Phase 1 Status
+
+- PB-001 Domain Rule Decision is implemented.
+- PB-002 Receipt Creation is implemented, including future-facing receipt classification data.
+- PB-003 Allowance Spend Execution is implemented.
+- PB-004 Pocket Bot Workshop Scene Shell is the next implementation slice.
+
+Receipt classification UI and training feedback are not Phase 1 baseline requirements. They may remain as small future-facing domain data, but full user feedback and training behavior belong to Phase 2A unless explicitly pulled forward.
 
 ## Implementation Assumptions
 
@@ -124,7 +137,7 @@ Test plan:
 
 - executed proposal creates one receipt,
 - receipt records tool, cost, allowance, reason, decision, and outcome,
-- receipt classification accepts the four MVP options,
+- receipt classification accepts the future-facing classification values,
 - invalid classification is rejected.
 
 Acceptance:
@@ -253,15 +266,15 @@ Acceptance:
 - balance changes only after approved execution,
 - receipt archive is visible in the scene.
 
-### PB-007 Receipt Inspection And Classification
+### PB-007 Receipt Inspection
 
 Goal:
 
-Allow the user to inspect and classify the latest receipt.
+Allow the user to inspect the latest receipt.
 
 User-visible behavior:
 
-The user can mark the receipt as `looks right`, `wrong category`, `should have asked`, or `block this tool next time`.
+The user can open or focus the latest receipt and understand what was spent, why, which rule decision applied, and what outcome was recorded.
 
 Expected files:
 
@@ -273,14 +286,18 @@ Test plan:
 
 - receipt classification unit tests pass,
 - `npm run build` passes,
-- manual/browser check confirms every classification option can be selected,
-- manual/browser check confirms classification does not alter spend history.
+- manual/browser check confirms the latest receipt can be inspected,
+- manual/browser check confirms receipt amount, decision, reason, and outcome remain readable.
 
 Acceptance:
 
-- classification is visible,
 - latest receipt remains inspectable,
-- receipt amount and decision history remain unchanged after classification.
+- receipt amount and decision history are visible and unchanged.
+
+Optional Phase 1 stretch:
+
+- user can classify the receipt using the future-facing classification values.
+- classification does not alter spend history.
 
 ## Milestone Sequence
 
@@ -292,19 +309,19 @@ Implement in this order:
 4. PB-004 Pocket Bot Workshop Scene Shell.
 5. PB-005 Proposal And Approval Flow.
 6. PB-006 Simulated Spend And Receipt Archive.
-7. PB-007 Receipt Inspection And Classification.
+7. PB-007 Receipt Inspection.
 
 This order keeps the spending-control behavior testable before scene rendering.
 
-## First Commit Recommendation
+## Next Commit Recommendation
 
 The next implementation commit should be:
 
 ```text
-test: add PB-001 domain rule tests
+feat: add PB-004 Pocket Bot Workshop scene shell
 ```
 
-It should add the first failing tests for PB-001 before implementing rule logic.
+It should add the first visible Phase 1 scene shell while preserving `Street.js` as a reference prototype.
 
 ## Risks And Controls
 
@@ -336,4 +353,5 @@ The MVP implementation plan is complete when:
 - planned tests/checks for each slice have been run,
 - `npm run build` passes,
 - the Pocket Bot Workshop scene demonstrates the full allowance -> proposal -> gate -> simulated spend -> receipt loop,
-- the MVP still cannot complete checkout, enter payment information, or spend from a real wallet.
+- the latest receipt can be inspected,
+- the MVP still cannot complete checkout, enter payment information, spend from a real wallet, call a real LLM, call a real paid API, distribute rewards, or use x402 infrastructure.

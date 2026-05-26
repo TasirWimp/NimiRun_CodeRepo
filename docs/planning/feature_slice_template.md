@@ -50,6 +50,8 @@ Interaction checks run:
 
 Commands run:
 
+Documentation updates:
+
 Skipped tests or checks:
 
 Residual risk:

@@ -64,9 +64,11 @@ The interface problem is to make these checks visible without forcing the user t
 
 Pocket Bot explores how Nimiq could provide a **self-custodied prepaid allowance for software helpers**.
 
+Pocket Bot treats spending decisions as trainable behavior: the helper must learn when a paid resource is worth trying, but the MVP only shows this through a scripted allowance-and-receipt loop.
+
 This mini app is motivated by a practical control problem already visible in agent products and developer reports: software helpers can prepare purchase-adjacent actions, call paid APIs, and spend metered compute. Users need a clear way to decide what the helper may spend before the action happens, not only a dashboard after money has already been used.
 
-Detailed infrastructure context for x402-like payment rails, Nimiq-to-x402 compatibility levels, and product boundaries lives in `docs/product/infrastructure_context.md`. Pitch wording lives in `docs/product/pitch.md`.
+Detailed infrastructure context for x402-like payment rails, Nimiq-to-x402 compatibility levels, and product boundaries lives in `docs/product/infrastructure_context.md`. Pitch wording lives in `docs/product/pitch.md`. Phased delivery boundaries live in `docs/product/roadmap.md`.
 
 The system should not claim to validate a robot's or AI agent's inner intention. Instead, it should validate whether a proposed action is an allowed continuation of a user-declared rule set and a bounded prepaid allowance.
 
@@ -80,7 +82,7 @@ The core product loop is:
 6. action is auto-approved, sent for approval, or blocked,
 7. approved action executes in simulation,
 8. receipt is created,
-9. user can inspect and classify the receipt,
+9. user can inspect the receipt,
 10. trace can be replayed or reviewed.
 
 Product principles:
@@ -185,6 +187,8 @@ The MVP must include:
 
 The MVP should keep the existing Phaser 3 + Vite foundation. The current implementation uses `src/main.js` as the entry point and `src/scenes/Street.js` as the active scene. Future implementation should adapt or extend the existing foundation instead of replacing the project structure.
 
+The MVP does not implement real learning. It only prepares the UI and data structure so later phases can add scripted training and LLM-powered route proposals.
+
 ## 9. Non-Goals For MVP
 
 The MVP should not include:
@@ -194,6 +198,9 @@ The MVP should not include:
 - Nimiq Mini App SDK integration,
 - real wallet-funded allowances,
 - real AI API execution,
+- real LLM route proposals,
+- real learning or autonomous model improvement,
+- real or simulated training rewards,
 - real grocery ordering or checkout,
 - multiple robots,
 - multiple budget envelopes,
@@ -262,7 +269,8 @@ These may be considered future features after the first milestone demonstrates t
 - Each receipt must include tool, cost, allowance/envelope, rule result, reason, decision, and outcome.
 - Receipts must appear in or near the receipt archive.
 - The user must be able to inspect the latest receipt.
-- The MVP should allow the user to classify a receipt as one of:
+- The MVP baseline does not require training feedback or receipt classification UI.
+- A Phase 1 stretch or later Phase 2A training layer may allow the user to classify a receipt as one of:
   - looks right,
   - wrong category,
   - should have asked,
@@ -391,6 +399,23 @@ The first implementation should be able to represent these objects, even if they
 - `userClassification`
 - `createdAt`
 
+### SpendingRationale
+
+Future-facing placeholder for Phase 2A/2B. Phase 1 may store simple rationale text, but does not need full route judgment.
+
+- `freeAlternativeConsidered`
+- `expectedBenefit`
+- `uncertainty`
+- `stopCondition`
+
+### TrainingFeedback
+
+Future-facing placeholder for Phase 2A. Phase 1 does not implement real learning, rewards, or preference updates.
+
+- `userJudgment`
+- `correction`
+- `learnedHint`
+
 ## 15. First Scene Requirements
 
 Scene name: **Pocket Bot Workshop**
@@ -413,7 +438,7 @@ Minimum first loop:
 5. Action is auto-approved or presented for approval depending on the selected first milestone behavior.
 6. On execution, balance decreases by 0.4 NIM.
 7. A receipt card appears in the receipt archive.
-8. User can inspect and classify the receipt.
+8. User can inspect the receipt.
 
 ## 16. Acceptance Criteria For The First Milestone
 
@@ -430,8 +455,8 @@ The first milestone is complete when:
 - Approved execution reduces the AI Tools allowance balance.
 - Execution creates a receipt card with the required receipt fields.
 - The latest receipt can be inspected.
-- The user can classify the receipt using the four MVP classification options.
 - No real wallet or payment action occurs.
+- No real learning, real LLM route proposal, backend, x402 flow, or training reward occurs.
 - Existing Phaser/Vite foundation remains intact.
 - The wording and UI framing emphasize user control, prepaid allowances, and independent individuals.
 
@@ -452,19 +477,19 @@ The first milestone is complete when:
 
 Recommended next task:
 
-1. Review and approve this revised Pocket Bot requirements document.
-2. Decide the first interaction model: automatic loop, keyboard-triggered loop, or UI-button-triggered loop.
-3. Decide whether the first milestone starts by adapting `src/scenes/Street.js` or by adding a new `PocketBotWorkshop` scene.
-4. Define the initial in-memory data objects for rule, allowance, tool, proposal, decision, and receipt.
-5. Implement the Pocket Bot Workshop scene using existing Phaser/Vite structure.
-6. Add the UI overlay for rule, allowance, proposal, decision, and receipt state.
-7. Add a minimal receipt archive interaction.
-8. Test locally through Vite and document any follow-up requirements.
+1. Continue with PB-004: add the Pocket Bot Workshop scene shell.
+2. Preserve `src/scenes/Street.js` as a reference prototype.
+3. Wire `PocketBotWorkshop` as the active scene only when it can show the Phase 1 entities.
+4. Add a simple overlay for allowance, rule, proposal, and decision state.
+5. Use the existing domain modules for rule, allowance, proposal, spend execution, and receipt data.
+6. Run `npm run test`, `npm run build`, and a browser/manual scene check.
 
 Future ideas after MVP:
 
 - multiple robot helpers,
 - multiple allowances,
+- scripted training route choices,
+- receipt/user feedback training loop,
 - trust levels,
 - simulated spending mode,
 - Nimiq testnet integration,
