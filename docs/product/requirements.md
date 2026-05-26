@@ -64,7 +64,7 @@ The interface problem is to make these checks visible without forcing the user t
 
 Pocket Bot explores how Nimiq could provide a **self-custodied prepaid allowance for software helpers**.
 
-Pocket Bot treats spending decisions as trainable behavior: the helper must learn when a paid resource is worth trying, but the MVP only shows this through a scripted allowance-and-receipt loop.
+Pocket Bot treats spending decisions as trainable behavior: the helper must eventually learn when a paid resource is worth trying, but the MVP only shows this through a scripted allowance-and-receipt loop. Spending must not be treated as useful merely because it is allowed.
 
 This mini app is motivated by a practical control problem already visible in agent products and developer reports: software helpers can prepare purchase-adjacent actions, call paid APIs, and spend metered compute. Users need a clear way to decide what the helper may spend before the action happens, not only a dashboard after money has already been used.
 
@@ -112,6 +112,8 @@ The MVP should be understandable to a non-enterprise user. It should not require
 
 The initial use case is a single robot helper operating with a small prepaid allowance for paid helper-tool calls.
 
+The example paid tool may be called **Cart Scout**, **Tool Scout**, or **Resource Scout** during prototyping. Its role is to stand in for a paid helper route, not to lock the product into grocery shopping.
+
 ### Source-Backed Motivation
 
 Public examples show that this is a real product problem, not only a speculative crypto scenario:
@@ -135,7 +137,7 @@ Reference sources:
 
 ### First-Class MVP Scenario
 
-Pocket Bot helps the user prepare a reviewable grocery cart from a short shopping request. It may spend a small simulated NIM amount to use an approved paid helper tool that searches products and drafts the cart.
+Pocket Bot helps the user explore whether a paid helper route is worth trying. In the first scripted scenario, this may appear as a reviewable cart-prep task, but `Cart Scout` should be understood as a placeholder for a broader paid helper resource.
 
 The helper does **not** complete checkout, submit an order, enter payment information, or move money from the user's wallet. The only simulated spend in the MVP is the helper-tool cost paid from the prepaid allowance.
 
@@ -185,6 +187,8 @@ The MVP must include:
 - simulated NIM amounts,
 - simulated approval and receipt behavior.
 
+The Phase 1 MVP remains simulated and small: one bot, one simulated allowance, one paid-tool proposal, one approval/rule gate, and one receipt. It must not include a real wallet, real LLM, real API call, real reward, x402 integration, or backend.
+
 The MVP should keep the existing Phaser 3 + Vite foundation. The current implementation uses `src/main.js` as the entry point and `src/scenes/Street.js` as the active scene. Future implementation should adapt or extend the existing foundation instead of replacing the project structure.
 
 The MVP does not implement real learning. It only prepares the UI and data structure so later phases can add scripted training and LLM-powered route proposals.
@@ -198,6 +202,7 @@ The MVP should not include:
 - Nimiq Mini App SDK integration,
 - real wallet-funded allowances,
 - real AI API execution,
+- real paid API/tool execution,
 - real LLM route proposals,
 - real learning or autonomous model improvement,
 - real or simulated training rewards,
@@ -234,6 +239,32 @@ These may be considered future features after the first milestone demonstrates t
 - The balance must decrease only after an approved action executes.
 - The UI must show remaining allowance after each executed action.
 - The allowance should be visually represented as a pouch, pocket, backpack, or small fund controlled by the user.
+
+### Need Navigation / Spending Strategy
+
+- A helper's paid-resource decision is not trivial.
+- Later phases must capture why the helper thinks a paid route is useful.
+- A future proposal should explain:
+  - why this route,
+  - why this tool,
+  - why this cost,
+  - what free or basic alternative was considered,
+  - what uncertainty remains,
+  - when the helper will stop,
+  - what result or receipt will remain.
+- Phase 1 may keep this as simple static rationale text.
+- Spending must remain bounded even when the helper's rationale sounds plausible.
+
+### On-Chain Traffic / Pocket Funding
+
+- Pocket Bot should not create meaningless transactions only for traffic.
+- The natural future Nimiq on-chain action is funding the bot's pocket allowance.
+- In later phases, this means:
+  - a Nimiq wallet action funds the pocket,
+  - the pocket allowance increases,
+  - the bot can act only inside that allowance,
+  - receipts distinguish top-up events from helper spend events.
+- For Phase 1, pocket funding is simulated only.
 
 ### Robot Helper
 
@@ -415,6 +446,19 @@ Future-facing placeholder for Phase 2A. Phase 1 does not implement real learning
 - `userJudgment`
 - `correction`
 - `learnedHint`
+
+### AllowanceFundingEvent
+
+Future-facing placeholder for wallet-funded pocket top-ups. Phase 1 simulates the initial allowance and does not create real on-chain traffic.
+
+- `id`
+- `allowanceId`
+- `amount`
+- `currency`
+- `fundingSource`
+- `transactionId`
+- `receiptId`
+- `createdAt`
 
 ## 15. First Scene Requirements
 

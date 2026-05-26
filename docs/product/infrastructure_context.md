@@ -34,10 +34,10 @@ Pocket Bot should therefore be framed as a control adapter between the two:
 
 ```text
 Nimiq Pay / Nimiq wallet
-  = user custody, approval, and independent-individual trust surface
+  = user custody, approval, value carrier, and independent-individual trust surface
 
 Pocket Bot
-  = allowance, rule gate, approval logic, receipt, and review
+  = allowance, route strategy, feedback, rule gate, receipt, and review
 
 x402-like paid services
   = APIs, tools, content, compute, or helper services that request payment per use
@@ -56,9 +56,30 @@ Nimiq Pay user
 
 This keeps Nimiq central where it is strongest: the user-facing wallet and approval experience. It also avoids pretending that native NIM already plugs into every x402 service.
 
+## Need Navigation Is Not Solved By Payment Rails
+
+x402-like rails can expose paid resources to helpers, but they do not decide when spending is useful. A payment requirement can say what a resource costs; it cannot tell the user whether that resource is the right next step.
+
+Pocket Bot addresses that missing judgment interface. The helper must propose why a paid route is useful, what uncertainty remains, when it will stop, and what receipt or result will remain. Later training layers can use user feedback to improve that paid-resource judgment.
+
+## Meaningful Nimiq On-Chain Activity
+
+Pocket Bot should not create on-chain traffic for its own sake. The natural future Nimiq transaction is funding the bot's pocket allowance.
+
+That transaction turns NIM into bounded helper agency:
+
+```text
+Nimiq wallet action
+-> pocket allowance increases
+-> helper can act only inside that allowance
+-> receipt distinguishes top-up from helper spend
+```
+
+Later sponsored campaigns could fund bot allowances or training rewards, but this must not be claimed as guaranteed Nimiq Foundation funding. For Phase 1, all pocket funding is simulated.
+
 ## Compatibility Levels
 
-### Level 1 — Simulated x402-like Flow
+### Level 1 - Simulated Paid-Resource Flow
 
 The MVP simulates the shape of a paid resource request:
 
@@ -71,7 +92,13 @@ The MVP simulates the shape of a paid resource request:
 
 This is enough for the competition prototype because the product question is the user-facing control layer.
 
-### Level 2 — EVM Token x402 Adapter
+### Level 2 - Wallet-Funded Pocket Top-Up
+
+A later milestone can make Nimiq meaningful as the value carrier by letting the user fund Pocket Bot's allowance through a wallet-mediated top-up. The helper still acts only inside the pocket allowance, and receipts distinguish top-up events from helper spend events.
+
+This level is about meaningful wallet use and on-chain activity, not direct x402 compatibility.
+
+### Level 3 - x402-Like Adapter
 
 A later milestone can explore real x402 compatibility by using an EVM-compatible wallet surface exposed through Nimiq Pay where available. The app would need to:
 
@@ -83,7 +110,7 @@ A later milestone can explore real x402 compatibility by using an EVM-compatible
 
 This level should start with a widely supported x402 token/network combination rather than native NIM.
 
-### Level 3 — Native Nimiq Rail Or Bridge
+### Level 4 - Native Nimiq Rail Or Bridge
 
 A deeper future milestone could explore native NIM support for x402-like flows. That would likely require one of:
 
@@ -136,4 +163,4 @@ The MVP is therefore not a payment product. It is a product-interaction explorat
 
 The clearest current stance is:
 
-> Nimiq is the user-trust surface. x402-like services are the machine-payment rail. Pocket Bot is the allowance and receipt layer between them.
+> Nimiq is the user-trust and value-carrier surface. x402-like services are the machine-payment rail. Pocket Bot is the allowance, route-strategy, feedback, and receipt layer between them.

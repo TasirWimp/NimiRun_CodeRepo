@@ -6,6 +6,8 @@ Independent individuals should be able to tell their bot how much it may spend, 
 
 ## Short Pitch
 
+Pocket Bot is a playful Nimiq mini app where independent individuals train a software helper to navigate paid resources under a bounded allowance.
+
 Pocket Bot is a playful Nimiq mini app exploring self-custodied prepaid allowances for software helpers. Instead of giving a bot broad wallet access, the user gives it a small allowance, sets simple rules, and reviews every paid action through clear receipts.
 
 Pocket Bot is a playful Nimiq mini app where users train a software helper to navigate paid resources. The helper starts with a small allowance, proposes when spending might help, and every paid action must explain why it is worth trying, when it will stop, and what receipt it leaves behind.
@@ -17,6 +19,8 @@ Nimiq stands for universal money for independent individuals. Pocket Bot extends
 The project asks what a safe user interface should look like before that kind of spending becomes common.
 
 Pocket Bot explores how Nimiq can carry value through the training loop: allowance becomes interaction, interaction becomes experience, experience becomes better paid-resource judgment.
+
+Users do not merely want a bot that follows literal instructions. They want a helper that learns what they need, and what they need often emerges during exploration. Pocket Bot turns that exploration into a visible training loop.
 
 ## Nimiq + x402 Framing
 
@@ -58,6 +62,18 @@ If bots can pay for APIs and tools, the missing user experience is not simply a 
 - and what proof remains afterward?
 
 Pocket Bot turns that future infrastructure question into a small playable prototype.
+
+The long-term value path is:
+
+```text
+NIM allowance / sponsor value
+-> user training interaction
+-> bot experience traces
+-> better paid-resource judgment
+-> future user benefit
+```
+
+A strong Nimiq path should eventually create meaningful wallet use and on-chain activity. Pocket Bot's natural on-chain action is funding the bot's pocket allowance, not random transaction spam. The MVP simulates this.
 
 ## Boundary
 
