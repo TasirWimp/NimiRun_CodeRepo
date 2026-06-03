@@ -12,7 +12,7 @@ The milestone goal is a playable **Pocket Bot Workshop** scene inside a Nimiq Mi
 4. simulated spend,
 5. receipt creation and inspection.
 
-No real wallet operation, real Nimiq payment, real checkout, real external service, real AI API execution, real LLM route proposal, real learning, real reward, x402 integration, or backend should be implemented in this milestone. Mini App framework compatibility is required; sensitive Nimiq provider calls are not.
+No real Nimiq payment, signing flow, checkout, real external service, real AI API execution, real LLM route proposal, real learning, real reward, x402 integration, or backend should be implemented in this milestone. Mini App framework compatibility is required. A narrow user-triggered testnet wallet connection/status shell is allowed in PB-004A so the app can prove it runs inside Nimiq Pay early.
 
 ## Source Documents
 
@@ -29,7 +29,9 @@ No real wallet operation, real Nimiq payment, real checkout, real external servi
 - PB-001 Domain Rule Decision is implemented.
 - PB-002 Receipt Creation is implemented, including future-facing receipt classification data.
 - PB-003 Allowance Spend Execution is implemented.
-- PB-004 Pocket Bot Workshop Scene Shell is the next implementation slice and must account for Mini App framework compatibility.
+- PB-004 Pocket Bot Workshop Scene Shell is implemented with Mini App framework compatibility, local fallback status, and a Tool Scout hover witness interaction.
+- PB-004A Testnet Wallet Connection Shell is the next implementation slice.
+- PB-005 Proposal And Approval Flow follows PB-004A.
 
 Receipt classification UI and training feedback are not Phase 1 baseline requirements. They may remain as small future-facing domain data, but full user feedback and training behavior belong to Phase 2A unless explicitly pulled forward.
 
@@ -42,6 +44,7 @@ These assumptions are binding for the first implementation pass unless the produ
 - Keep `Street.js` temporarily as a reference prototype until the new scene replaces it cleanly.
 - Keep the app compatible with the Nimiq Mini App framework while preserving local browser development.
 - Put Mini App SDK/provider access behind a small adapter or platform module when introduced.
+- Any wallet connection in Phase 1 must be explicit, user-triggered, and limited to testnet/status display. It must not fund allowances, sign messages, send NIM, or execute helper spend.
 - Domain behavior belongs in plain JavaScript modules under `src/domain/`.
 - MVP scenario constants belong under `src/game/`.
 - Phaser scenes should orchestrate and display state, not own the rule logic.
@@ -212,6 +215,47 @@ Acceptance:
 - existing Phaser/Vite foundation remains intact,
 - no real wallet operation, checkout, payment, or AI API behavior exists.
 
+### PB-004A Testnet Wallet Connection Shell
+
+Goal:
+
+Add a narrow, explicit Nimiq Pay testnet wallet connection/status panel before the proposal flow.
+
+User-visible behavior:
+
+When the app is opened inside Nimiq Pay, the user can press a clear connect button to prove the Mini App can access the injected Nimiq provider on testnet. The app shows wallet connection status, account address, consensus status, and current block number when available. Outside Nimiq Pay, the same panel clearly shows local simulated mode.
+
+Expected files:
+
+- `src/platform/nimiqMiniApp.js`
+- `src/scenes/PocketBotWorkshop.js`
+- optional `src/ui/walletStatusPanel.js`
+- `tests/platform/nimiqMiniApp.test.js`
+
+Test plan:
+
+- platform tests cover local fallback when `window.nimiq` is unavailable,
+- platform tests cover provider-ready status without performing signing or payments,
+- `npm run test` passes,
+- `npm run build` passes,
+- browser/manual check confirms local mode cannot connect to a wallet,
+- Nimiq Pay testnet manual check confirms:
+  - app opens through the custom Mini App URL,
+  - hidden dev menu is set to Testnet,
+  - connect action calls `init()` and `listAccounts()` only after user action,
+  - account, consensus, and block number display when approved,
+  - no sign, send, top-up, or allowance funding action is reachable.
+
+Acceptance:
+
+- wallet connection is optional and user-triggered,
+- local browser fallback remains safe and readable,
+- Nimiq Pay testnet status can be displayed when the Mini App host is available,
+- no NIM is sent,
+- no message is signed,
+- no wallet-funded allowance is created,
+- Tool Scout spend remains simulated.
+
 ### PB-005 Proposal And Approval Flow
 
 Goal:
@@ -315,9 +359,10 @@ Implement in this order:
 2. PB-002 Receipt Creation.
 3. PB-003 Allowance Spend Execution.
 4. PB-004 Pocket Bot Workshop Scene Shell.
-5. PB-005 Proposal And Approval Flow.
-6. PB-006 Simulated Spend And Receipt Archive.
-7. PB-007 Receipt Inspection.
+5. PB-004A Testnet Wallet Connection Shell.
+6. PB-005 Proposal And Approval Flow.
+7. PB-006 Simulated Spend And Receipt Archive.
+8. PB-007 Receipt Inspection.
 
 This order keeps the spending-control behavior testable before scene rendering.
 
@@ -326,10 +371,10 @@ This order keeps the spending-control behavior testable before scene rendering.
 The next implementation commit should be:
 
 ```text
-feat: add PB-004 mini app workshop shell
+feat: add PB-004A testnet wallet connection shell
 ```
 
-It should add the first visible Phase 1 scene shell, preserve `Street.js` as a reference prototype, and keep Mini App framework access behind a safe local fallback boundary.
+It should add explicit, user-triggered Nimiq Pay testnet wallet status without enabling signing, sending, top-up, helper spend, or wallet-funded allowance behavior.
 
 ## Risks And Controls
 
@@ -341,13 +386,16 @@ It should add the first visible Phase 1 scene shell, preserve `Street.js` as a r
   **Control:** Block checkout/payment attempts and label all NIM movement as simulated.
 - **Risk:** The scene is built as a browser-only demo and fails Mini App expectations later.
   **Control:** Introduce a small Mini App environment adapter/fallback boundary with PB-004.
+- **Risk:** Wallet connection is confused with spend permission.
+  **Control:** PB-004A may show account/status only; it must not sign, send, fund allowances, or give the helper wallet access.
 - **Risk:** UI grows faster than tests.
   **Control:** Implement the simplest scene shell after domain behavior is covered.
 
 ## Out Of Scope For This Plan
 
-- real Nimiq wallet/provider operations,
-- testnet or mainnet payments,
+- real Nimiq signing, sending, staking, top-up, or payment operations,
+- wallet-funded helper allowances,
+- mainnet payments,
 - real AI API execution,
 - real external tool/provider integration,
 - backend services,
@@ -364,4 +412,5 @@ The MVP implementation plan is complete when:
 - the Pocket Bot Workshop scene demonstrates the full allowance -> proposal -> gate -> simulated spend -> receipt loop,
 - the latest receipt can be inspected,
 - the app is compatible with the Nimiq Mini App framework while still supporting local browser development,
+- optional testnet wallet connection is limited to account/status display and does not fund helper spend,
 - the MVP still cannot complete checkout, enter payment information, spend from a real wallet, call a real LLM, call a real paid API, distribute rewards, or use x402 infrastructure.

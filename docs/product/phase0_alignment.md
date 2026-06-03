@@ -88,12 +88,14 @@ Implemented Phase 1 groundwork:
 - PB-001 Domain Rule Decision.
 - PB-002 Receipt Creation.
 - PB-003 Allowance Spend Execution.
+- PB-004 Pocket Bot Workshop Scene Shell with Mini App framework-compatible app wiring.
 
 Still needed for Phase 1:
 
-- PB-004 Pocket Bot Workshop Scene Shell with Mini App framework-compatible app wiring.
 - PB-005 Proposal And Approval Flow.
 - PB-006 Simulated Spend And Receipt Archive.
 - PB-007 Receipt Inspection.
+
+PB-004 added the first visible workshop scene, a safe Mini App/local fallback environment boundary, and a Tool Scout hover witness interaction. Dedicated Agent Desktop Automation MCP verification was skipped because that MCP server was not active yet.
 
 Receipt classification data exists as future-facing domain groundwork. Full user feedback, route correction, training rewards, and learned behavior belong to later roadmap phases unless explicitly pulled into Phase 1 as a small stretch.

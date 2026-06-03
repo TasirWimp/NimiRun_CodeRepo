@@ -1,4 +1,7 @@
 
+import Phaser from 'phaser';
+
+import PocketBotWorkshop from './scenes/PocketBotWorkshop.js';
 import SideScrollerScene from './scenes/Street.js';
 
 const config = {
@@ -11,7 +14,7 @@ const config = {
         mode: Phaser.Scale.FIT,
         autoCenter: Phaser.Scale.CENTER_BOTH,
     },
-    scene: [SideScrollerScene],
+    scene: [PocketBotWorkshop, SideScrollerScene],
     physics: {
         default: 'arcade',
         arcade: {
