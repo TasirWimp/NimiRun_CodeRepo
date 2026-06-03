@@ -4,7 +4,7 @@ This plan translates `docs/product/requirements.md` into small, test-driven impl
 
 This is the **Phase 1** implementation plan from `docs/product/roadmap.md`. Later roadmap phases should guide containment decisions, but they are not implementation scope until Phase 1 is playable.
 
-The milestone goal is a playable **Pocket Bot Workshop** scene that demonstrates:
+The milestone goal is a playable **Pocket Bot Workshop** scene inside a Nimiq Mini App-compatible Phaser/Vite shell that demonstrates:
 
 1. limited AI Tools allowance,
 2. Tool Scout paid helper-tool proposal,
@@ -12,7 +12,7 @@ The milestone goal is a playable **Pocket Bot Workshop** scene that demonstrates
 4. simulated spend,
 5. receipt creation and inspection.
 
-No real wallet, real Nimiq payment, real checkout, real external service, real AI API execution, real LLM route proposal, real learning, real reward, x402 integration, or backend should be implemented in this milestone.
+No real wallet operation, real Nimiq payment, real checkout, real external service, real AI API execution, real LLM route proposal, real learning, real reward, x402 integration, or backend should be implemented in this milestone. Mini App framework compatibility is required; sensitive Nimiq provider calls are not.
 
 ## Source Documents
 
@@ -29,7 +29,7 @@ No real wallet, real Nimiq payment, real checkout, real external service, real A
 - PB-001 Domain Rule Decision is implemented.
 - PB-002 Receipt Creation is implemented, including future-facing receipt classification data.
 - PB-003 Allowance Spend Execution is implemented.
-- PB-004 Pocket Bot Workshop Scene Shell is the next implementation slice.
+- PB-004 Pocket Bot Workshop Scene Shell is the next implementation slice and must account for Mini App framework compatibility.
 
 Receipt classification UI and training feedback are not Phase 1 baseline requirements. They may remain as small future-facing domain data, but full user feedback and training behavior belong to Phase 2A unless explicitly pulled forward.
 
@@ -40,6 +40,8 @@ These assumptions are binding for the first implementation pass unless the produ
 - The first interaction model is **UI-button-triggered**. Spending and approval controls should feel deliberate.
 - Add a new `PocketBotWorkshop` scene instead of renaming `Street.js` immediately.
 - Keep `Street.js` temporarily as a reference prototype until the new scene replaces it cleanly.
+- Keep the app compatible with the Nimiq Mini App framework while preserving local browser development.
+- Put Mini App SDK/provider access behind a small adapter or platform module when introduced.
 - Domain behavior belongs in plain JavaScript modules under `src/domain/`.
 - MVP scenario constants belong under `src/game/`.
 - Phaser scenes should orchestrate and display state, not own the rule logic.
@@ -58,6 +60,8 @@ src/
   game/
     mvpScenario.js
     pocketBotState.js
+  platform/
+    nimiqMiniApp.js
   scenes/
     PocketBotWorkshop.js
     Street.js
@@ -178,7 +182,7 @@ Acceptance:
 
 Goal:
 
-Add the first Pocket Bot Workshop scene and wire it as the active scene.
+Add the first Pocket Bot Workshop scene and wire it as the active scene inside a Nimiq Mini App-compatible shell.
 
 User-visible behavior:
 
@@ -189,20 +193,24 @@ Expected files:
 - `src/scenes/PocketBotWorkshop.js`
 - `src/main.js`
 - `src/game/mvpScenario.js`
+- optional `src/platform/nimiqMiniApp.js`
 - optional `src/ui/hud.js`
 
 Test plan:
 
 - `npm run build` passes,
 - browser smoke check confirms the scene loads,
+- local browser fallback works when Nimiq Pay providers are unavailable,
 - scene displays required MVP entities,
-- overlay displays allowance, rule, proposal, and decision state.
+- overlay displays allowance, rule, proposal, and decision state,
+- Nimiq Pay Mini App manual check is planned or performed when a device/emulator test path is available.
 
 Acceptance:
 
 - app starts with Pocket Bot Workshop,
+- app remains compatible with Nimiq Mini App framework expectations,
 - existing Phaser/Vite foundation remains intact,
-- no real wallet, checkout, payment, or AI API behavior exists.
+- no real wallet operation, checkout, payment, or AI API behavior exists.
 
 ### PB-005 Proposal And Approval Flow
 
@@ -318,10 +326,10 @@ This order keeps the spending-control behavior testable before scene rendering.
 The next implementation commit should be:
 
 ```text
-feat: add PB-004 Pocket Bot Workshop scene shell
+feat: add PB-004 mini app workshop shell
 ```
 
-It should add the first visible Phase 1 scene shell while preserving `Street.js` as a reference prototype.
+It should add the first visible Phase 1 scene shell, preserve `Street.js` as a reference prototype, and keep Mini App framework access behind a safe local fallback boundary.
 
 ## Risks And Controls
 
@@ -331,13 +339,14 @@ It should add the first visible Phase 1 scene shell while preserving `Street.js`
   **Control:** Keep allowance, rule, approval, and receipt visible in the first scene.
 - **Risk:** Real payment or checkout assumptions leak into the MVP.
   **Control:** Block checkout/payment attempts and label all NIM movement as simulated.
+- **Risk:** The scene is built as a browser-only demo and fails Mini App expectations later.
+  **Control:** Introduce a small Mini App environment adapter/fallback boundary with PB-004.
 - **Risk:** UI grows faster than tests.
   **Control:** Implement the simplest scene shell after domain behavior is covered.
 
 ## Out Of Scope For This Plan
 
-- real Nimiq wallet integration,
-- Mini App SDK integration,
+- real Nimiq wallet/provider operations,
 - testnet or mainnet payments,
 - real AI API execution,
 - real external tool/provider integration,
@@ -354,4 +363,5 @@ The MVP implementation plan is complete when:
 - `npm run build` passes,
 - the Pocket Bot Workshop scene demonstrates the full allowance -> proposal -> gate -> simulated spend -> receipt loop,
 - the latest receipt can be inspected,
+- the app is compatible with the Nimiq Mini App framework while still supporting local browser development,
 - the MVP still cannot complete checkout, enter payment information, spend from a real wallet, call a real LLM, call a real paid API, distribute rewards, or use x402 infrastructure.

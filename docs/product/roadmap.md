@@ -65,7 +65,7 @@ Mostly complete.
 
 ### Goal
 
-Build a local Phaser/Vite demo that shows the allowance-control loop without real wallet, real API, real LLM, or real payment infrastructure.
+Build a Nimiq Mini App-compatible Phaser/Vite demo that shows the allowance-control loop without real wallet operations, real API, real LLM, or real payment infrastructure.
 
 ### User-Facing Story
 
@@ -82,10 +82,11 @@ The user sees a small robot helper with a limited simulated NIM allowance. The r
 - One scripted paid-action proposal.
 - One simulated NIM balance.
 - One receipt with decision and outcome.
+- Nimiq Mini App framework-compatible app shell with local browser fallback.
 
 ### Explicit Non-Scope
 
-- No real Nimiq wallet connection.
+- No real Nimiq provider wallet operations.
 - No real testnet or mainnet transaction.
 - No real x402 payment.
 - No real AI API call.
@@ -96,6 +97,7 @@ The user sees a small robot helper with a limited simulated NIM allowance. The r
 ### Acceptance Criteria
 
 - App runs through the Vite workflow.
+- App is structured so it can be opened as a Nimiq Mini App while still working in local browser development.
 - Scene shows bot, allowance, tool stall, gate, receipt archive, and UI overlay.
 - User can trigger or observe a paid-action proposal.
 - Gate evaluates simple rule checks:
@@ -232,15 +234,15 @@ A route proposal should include:
 - User can approve, reject, or correct.
 - Receipt records interpretation, route, rationale, rule decision, and feedback.
 
-## Phase 3 — Nimiq Mini App Readiness
+## Phase 3 — Nimiq Pay Provider Readiness
 
 ### Goal
 
-Prepare Pocket Bot to run as a Nimiq mini app and align UX with Nimiq Pay constraints.
+Extend Pocket Bot from Phase 1 Mini App compatibility toward real Nimiq Pay provider capability and wallet-boundary readiness.
 
 ### Scope
 
-- Review Nimiq Mini App SDK constraints.
+- Review deeper Nimiq Mini App SDK constraints after the Phase 1 shell is playable.
 - Identify available wallet/provider APIs.
 - Define wallet action boundaries.
 - Keep all sensitive actions user-confirmed.
@@ -475,6 +477,6 @@ Validate whether Pocket Bot is a useful Nimiq mini app, not only an interesting 
 
 The immediate next step is **Phase 1**:
 
-> Implement a local Phaser/Vite Pocket Bot Workshop demo with one bot, one simulated allowance, one paid-tool proposal, one approval gate, and one receipt.
+> Implement a Nimiq Mini App-compatible Phaser/Vite Pocket Bot Workshop demo with one bot, one simulated allowance, one paid-tool proposal, one approval gate, and one receipt.
 
 No real wallet, LLM, x402, reward, or backend work should be implemented before Phase 1 is playable.

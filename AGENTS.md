@@ -4,7 +4,7 @@
 
 Pocket Bot is a Phaser 3 + Vite prototype for a Nimiq mini app concept. It explores how independent individuals can give software helpers a small, self-custodied prepaid allowance instead of broad wallet access.
 
-Current MVP goal: build the Pocket Bot Workshop scene through small, test-driven slices. Do not implement real wallet, real payment, real checkout, real grocery service, or real AI API behavior during the MVP unless the product requirements are updated first.
+Current MVP goal: build the Pocket Bot Workshop scene through small, test-driven slices inside a Nimiq Mini App-compatible app shell. Do not implement real wallet operations, real payment, real checkout, real grocery service, or real AI API behavior during the MVP unless the product requirements are updated first.
 
 ## Source Documents
 
@@ -87,11 +87,13 @@ Default order:
 ## Scope Boundaries
 
 - Preserve the existing Phaser 3 + Vite foundation.
+- Keep Phase 1 compatible with the Nimiq Mini App framework while preserving local browser development.
 - Add a new `PocketBotWorkshop` scene rather than renaming `Street.js` immediately.
 - Keep `Street.js` as a reference prototype until replacement is complete.
+- Keep Mini App SDK/provider access behind a small adapter or platform module when introduced.
 - Payment-specific behavior must stay behind adapters. MVP uses `SimulatedPaymentAdapter`.
 - Checkout/payment attempts must be blocked in the MVP, even in simulation.
-- Real Nimiq, x402, wallet, or backend gateway work is future scope unless requirements and planning docs are updated first.
+- Real Nimiq wallet/provider operations, x402, or backend gateway work is future scope unless requirements and planning docs are updated first.
 
 ## Documentation Rules
 

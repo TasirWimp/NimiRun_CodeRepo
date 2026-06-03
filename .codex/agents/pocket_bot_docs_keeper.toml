@@ -14,6 +14,7 @@ Read docs/README.md first to choose the right documentation location.
 Your job:
 - Keep documentation accurate, discoverable, and non-duplicative.
 - Keep roadmap, Phase 0 alignment, requirements, planning, and testing docs consistent when phase boundaries change.
+- Keep Nimiq Mini App framework compatibility aligned across requirements, roadmap, planning, testing, and agent instructions.
 - After a feature slice is implemented and verified, record what is now true in the relevant docs.
 - Mark implemented PB slices and next slices in docs/planning/mvp_implementation_plan.md.
 - Update docs/product/phase0_alignment.md current implementation status after successful Phase 1 slice delivery.

@@ -18,6 +18,12 @@ Agent products and developer workflows already show the underlying control probl
 
 The practical question is not simply whether a helper can spend. The practical question is whether the user can define a bounded allowance before the helper acts, see why a paid action is proposed, and review a receipt afterward.
 
+## Nimiq Mini App Framework Boundary
+
+Nimiq Mini Apps are web applications that run inside Nimiq Pay's Mini App WebView. The public docs describe injected providers for wallet access, with Nimiq-specific access handled through the `@nimiq/mini-app-sdk` `init()` helper and EVM-compatible access exposed through `window.ethereum`.
+
+For Pocket Bot, this changes Phase 1 from a generic browser-only prototype to a Nimiq Mini App-compatible prototype. It does not change the payment boundary: Phase 1 must not request accounts, sign messages, send NIM, or trigger any real wallet operation. Mini App/provider access should live behind an adapter with a local browser fallback.
+
 ## x402 And Related Payment Infrastructure
 
 Pocket Bot connects to the wider discussion around x402 and related agent-payment designs. x402 revives the HTTP `402 Payment Required` pattern for web-native micropayments and pay-per-use access to APIs, tools, content, and services. Related documentation and ecosystem discussion increasingly describe software agents paying for resources directly.
@@ -81,7 +87,7 @@ Later sponsored campaigns could fund bot allowances or training rewards, but thi
 
 ### Level 1 - Simulated Paid-Resource Flow
 
-The MVP simulates the shape of a paid resource request:
+The MVP uses a Nimiq Mini App-compatible shell and simulates the shape of a paid resource request:
 
 1. helper requests a paid tool,
 2. tool returns a payment requirement,
@@ -90,7 +96,7 @@ The MVP simulates the shape of a paid resource request:
 5. a simulated payment executes,
 6. a receipt is created.
 
-This is enough for the competition prototype because the product question is the user-facing control layer.
+This is enough for the first competition prototype because the product question is the user-facing control layer, not live payment execution.
 
 ### Level 2 - Wallet-Funded Pocket Top-Up
 
@@ -157,7 +163,7 @@ Pocket Bot does not solve these protocol-level risks. Its contribution is an int
 
 ## Product Boundary
 
-For the MVP, all payments, helper tools, and allowances are simulated. Real Nimiq wallet connection, real x402-style payment flows, real AI APIs, and real backend gateway behavior belong to later milestones.
+For the MVP, all payments, helper tools, and allowances are simulated. Real Nimiq wallet operations, real x402-style payment flows, real AI APIs, and real backend gateway behavior belong to later milestones.
 
 The MVP is therefore not a payment product. It is a product-interaction exploration for future wallet-funded helper allowances.
 

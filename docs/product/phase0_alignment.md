@@ -30,17 +30,18 @@ Phase 1 does not need to prove this full loop. It only needs to make the first a
 
 Only Phase 1 is current implementation scope.
 
-Phase 1 is a local Phaser/Vite demo with:
+Phase 1 is a Nimiq Mini App-compatible Phaser/Vite demo with:
 
 - one bot,
 - one simulated allowance,
 - one paid-tool proposal,
 - one approval gate,
-- one receipt.
+- one receipt,
+- a local browser fallback for development.
 
 Phase 1 must not implement:
 
-- real wallet connection,
+- real wallet/provider connection,
 - real Nimiq transaction,
 - real x402 payment,
 - real paid API call,
@@ -51,6 +52,8 @@ Phase 1 must not implement:
 - persistent user profiling.
 
 The MVP may prepare data shapes that support later training and route-choice phases, but the Phase 1 user experience remains scripted and simulated.
+
+Nimiq Mini App framework compatibility is now part of Phase 1 because the competition guidelines are public. That does not mean Phase 1 may perform real wallet operations. Provider or SDK access must be isolated behind a small adapter and must fail safely or fall back when the app is opened outside Nimiq Pay.
 
 ## Documentation Ownership
 
@@ -72,9 +75,10 @@ Preserve the existing Phaser/Vite foundation.
 - Add `src/scenes/PocketBotWorkshop.js` for Phase 1 instead of mutating `Street.js` directly.
 - Keep rule checks, allowance math, proposals, spend execution, and receipts in `src/domain/`.
 - Keep MVP scenario constants and scene-independent setup in `src/game/`.
+- Add a small Mini App environment adapter when PB-004 needs Nimiq Pay framework access.
 - Keep Phaser scene code focused on rendering, input, movement, and orchestration.
 - Use `SimulatedPaymentAdapter` for Phase 1 payment-like orchestration once scene execution needs a payment boundary.
-- Do not let wallet, provider, or x402 assumptions leak into scene logic.
+- Do not let wallet, provider, SDK, or x402 assumptions leak into scene logic.
 - Do not add real wallet, real API, real LLM, x402, backend, or rewards before Phase 1 is playable.
 
 ## Current Implementation Status
@@ -87,7 +91,7 @@ Implemented Phase 1 groundwork:
 
 Still needed for Phase 1:
 
-- PB-004 Pocket Bot Workshop Scene Shell.
+- PB-004 Pocket Bot Workshop Scene Shell with Mini App framework-compatible app wiring.
 - PB-005 Proposal And Approval Flow.
 - PB-006 Simulated Spend And Receipt Archive.
 - PB-007 Receipt Inspection.

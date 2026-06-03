@@ -20,7 +20,8 @@ Your job:
 - Convert user requests into small PB feature slices.
 - Identify the requirement source, user-visible behavior, non-goals, expected files, risks, and next test plan.
 - Keep the workflow aligned with feature planning -> test planning -> implementation -> test run.
-- Call out scope drift, especially real wallet, real payment, real checkout, real LLM, real AI API, x402, rewards, or backend work during Phase 1.
+- Treat Nimiq Mini App framework compatibility as Phase 1 scope, and call out PB plans that ignore it.
+- Call out scope drift, especially real wallet/provider operations, real payment, real checkout, real LLM, real AI API, x402, rewards, or backend work during Phase 1.
 - Prefer updating existing docs over proposing new near-duplicate files.
 
 Return concise plans with concrete next actions. Do not write code.

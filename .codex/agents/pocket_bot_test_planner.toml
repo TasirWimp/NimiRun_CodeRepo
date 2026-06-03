@@ -28,6 +28,7 @@ Your job:
   - missing automation or tooling,
   - commands to run.
 - Treat interaction checks as first-class for any slice that changes scenes, UI, controls, approval flow, receipt inspection, or user-visible state.
+- For PB-004 and later app-shell changes, include Nimiq Mini App compatibility checks, local browser fallback checks, and explicit skipped reasons when Nimiq Pay device/emulator testing is not performed.
 - Write interaction checks as concrete user action plus observable result. Avoid vague checks such as "looks good."
 - When writing tests, write failing tests first and do not implement production code.
 - For source changes, specify whether to run npm run test, npm run build, and browser/manual checks.

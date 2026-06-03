@@ -16,6 +16,8 @@ Pocket Bot is a playful Nimiq mini app where users train a software helper to na
 
 Nimiq stands for universal money for independent individuals. Pocket Bot extends that idea into a future where software helpers may request paid tools, APIs, content, compute, or services.
 
+The competition prototype should use the Nimiq Mini App framework: a Phaser/Vite web app that can run inside Nimiq Pay's Mini App WebView while keeping Phase 1 wallet and payment behavior simulated.
+
 The project asks what a safe user interface should look like before that kind of spending becomes common.
 
 Pocket Bot explores how Nimiq can carry value through the training loop: allowance becomes interaction, interaction becomes experience, experience becomes better paid-resource judgment.
@@ -77,4 +79,4 @@ A strong Nimiq path should eventually create meaningful wallet use and on-chain 
 
 ## Boundary
 
-Pocket Bot is not claiming that the full payment infrastructure is mature today. The MVP is an interaction prototype. Real NIM rewards, real wallet-funded allowances, live helper-tool payments, real LLM route proposals, x402-style service calls, and backend gateway integration belong to later milestones.
+Pocket Bot is not claiming that the full payment infrastructure is mature today. The MVP is a Mini App-compatible interaction prototype. Real NIM rewards, real wallet-funded allowances, sensitive provider operations, live helper-tool payments, real LLM route proposals, x402-style service calls, and backend gateway integration belong to later milestones.

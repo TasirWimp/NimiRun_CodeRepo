@@ -11,6 +11,7 @@ The repository currently has:
 - Phaser 3 + Vite app structure,
 - Vitest configured through `npm run test`,
 - `npm run build` for production build verification,
+- Nimiq Mini App framework compatibility required for Phase 1,
 - no configured browser or end-to-end test runner.
 
 Implementation plans must describe the intended tests for each feature slice before implementation starts.
@@ -101,9 +102,23 @@ Minimum smoke checks:
 - first scene appears,
 - expected core visual objects are present,
 - UI overlay text is readable,
-- basic interaction can trigger the current feature slice.
+- basic interaction can trigger the current feature slice,
+- local browser fallback works when Nimiq Pay providers are unavailable.
 
 Recommended future tool: **Playwright**. It can verify local Vite builds and capture screenshots for visual sanity checks.
+
+### Nimiq Mini App Checks
+
+Use Mini App checks when app-shell behavior, provider detection, localization, or wallet-boundary messaging changes.
+
+Minimum checks:
+
+- app can still run through `npm run dev -- --host` or an equivalent Vite network host command,
+- opening outside Nimiq Pay shows a safe local/simulated mode,
+- no Phase 1 UI control requests accounts, signs messages, sends NIM, or triggers a payment,
+- when a Nimiq Pay device/emulator path is available, the app can be opened as a Mini App and still reaches the scripted Pocket Bot Workshop scene.
+
+If a Nimiq Pay device/emulator check is not performed, report it as skipped with the reason.
 
 ### Manual Acceptance Checks
 
@@ -156,7 +171,9 @@ Expected checks:
 - `npm run build` passes,
 - browser opens the app,
 - Pocket Bot Workshop scene loads,
-- allowance, tool stall, approval gate, receipt archive, and overlay are visible.
+- allowance, tool stall, approval gate, receipt archive, and overlay are visible,
+- local browser fallback works outside Nimiq Pay,
+- Nimiq Pay Mini App check is performed or explicitly skipped with reason.
 
 ### PB-005 Proposal And Approval Flow
 
@@ -229,5 +246,6 @@ The MVP should be considered tested enough for the first milestone when:
 - receipt creation has unit coverage,
 - `npm run build` passes,
 - the first scene has at least one browser smoke check,
+- Mini App framework compatibility has at least one documented check or skipped check with reason,
 - manual acceptance checks cover the full allowance -> proposal -> gate -> simulated spend -> receipt loop,
 - no real wallet, real checkout, real payment, or real AI API execution is reachable in the MVP.

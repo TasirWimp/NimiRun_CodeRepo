@@ -22,7 +22,7 @@ Nimiq publicly frames itself as **"Universal Money for Independent Individuals"*
 
 The goal is not to build a full autonomous agent economy. The goal is to create a small, playful, competition-ready prototype that demonstrates:
 
-- a user-funded helper allowance,
+- a simulated helper allowance for the MVP, later user- or sponsor-funded,
 - simple spending rules,
 - visible spending boundaries,
 - human approval before sensitive actions,
@@ -37,7 +37,9 @@ Pocket Bot should be suitable as a Nimiq mini app competition entry.
 
 The competition-relevant idea is that Nimiq can provide the wallet and payment layer, while the game world provides the human interface layer. The prototype should demonstrate how a wallet-funded allowance can become an understandable, guided interaction in a mini app.
 
-For the MVP, Nimiq integration can be simulated. Real testnet, mainnet, Mini App SDK, wallet, or payment request integration belongs to a later milestone.
+As of the public competition guidance on June 3, 2026, Pocket Bot must use the Nimiq Mini App framework. The Phaser/Vite app should be built as a web app that can run inside Nimiq Pay's Mini App WebView, with Nimiq provider access isolated behind a small adapter when it is introduced.
+
+For the MVP, wallet and payment behavior remain simulated. Mini App framework compatibility belongs in Phase 1; real Nimiq account access, signing, testnet/mainnet transactions, wallet-funded allowances, or payment request execution belong to later milestones.
 
 The project should avoid heavy enterprise language. It should feel closer to:
 
@@ -104,7 +106,7 @@ Secondary target users:
 
 - Builders exploring human-in-the-loop controls for wallets and AI helpers.
 - Product designers exploring wallet UX for delegated payments.
-- Developers who need a simple prototype to extend toward Nimiq Mini App SDK integration.
+- Developers who need a simple prototype to extend toward later Nimiq wallet/provider capabilities.
 
 The MVP should be understandable to a non-enterprise user. It should not require knowledge of AI governance, enterprise procurement, or agent-economy theory.
 
@@ -187,9 +189,11 @@ The MVP must include:
 - simulated NIM amounts,
 - simulated approval and receipt behavior.
 
-The Phase 1 MVP remains simulated and small: one bot, one simulated allowance, one paid-tool proposal, one approval/rule gate, and one receipt. It must not include a real wallet, real LLM, real API call, real reward, x402 integration, or backend.
+The Phase 1 MVP remains simulated and small: one bot, one simulated allowance, one paid-tool proposal, one approval/rule gate, and one receipt. It must use a Nimiq Mini App-compatible app shell, but it must not include real wallet operations, real payment execution, real LLM, real API call, real reward, x402 integration, or backend.
 
 The MVP should keep the existing Phaser 3 + Vite foundation. The current implementation uses `src/main.js` as the entry point and `src/scenes/Street.js` as the active scene. Future implementation should adapt or extend the existing foundation instead of replacing the project structure.
+
+The MVP should remain usable in a normal local browser for development and test runs, while being structured so it can also be opened and tested inside Nimiq Pay as a Mini App.
 
 The MVP does not implement real learning. It only prepares the UI and data structure so later phases can add scripted training and LLM-powered route proposals.
 
@@ -199,7 +203,7 @@ The MVP should not include:
 
 - real Nimiq wallet connection,
 - real Nimiq testnet or mainnet payments,
-- Nimiq Mini App SDK integration,
+- real Nimiq provider wallet operations through the Mini App SDK,
 - real wallet-funded allowances,
 - real AI API execution,
 - real paid API/tool execution,
@@ -222,6 +226,14 @@ The MVP should not include:
 These may be considered future features after the first milestone demonstrates the core allowance loop.
 
 ## 10. Functional Requirements
+
+### Nimiq Mini App Framework Compatibility
+
+- The app must be structured as a Nimiq Mini App-compatible Phaser/Vite web app.
+- Mini App environment access must be isolated behind a small adapter or platform module, not scattered through Phaser scene code.
+- Local development must keep a browser fallback when the app is not opened inside Nimiq Pay.
+- Phase 1 must not request accounts, sign messages, send NIM, or trigger any sensitive wallet operation.
+- UI wording must clearly distinguish simulated allowance movement from real Nimiq wallet activity.
 
 ### Rule / Allowance
 
@@ -315,8 +327,9 @@ These may be considered future features after the first milestone demonstrates t
 
 ## 11. Non-Functional Requirements
 
-- The MVP must run as a local Phaser 3 + Vite application.
+- The MVP must run as a local Phaser 3 + Vite application and be compatible with the Nimiq Mini App framework.
 - The implementation should preserve the existing project foundation.
+- Mini App SDK or provider access must be introduced behind an adapter with a safe local fallback.
 - The game loop should remain simple and understandable.
 - The UI should be readable on a typical desktop browser viewport.
 - Controls should be obvious without requiring a long tutorial.
@@ -489,6 +502,7 @@ Minimum first loop:
 The first milestone is complete when:
 
 - The app runs locally through the existing Vite workflow.
+- The app is structured for Nimiq Mini App framework compatibility while preserving local browser development.
 - The first visible scene is Pocket Bot Workshop or an intentionally renamed equivalent.
 - The scene includes the robot, allowance pocket, paid helper tool stall, approval gate, receipt archive, and UI overlay.
 - The user rule is visible in the UI.
@@ -499,7 +513,7 @@ The first milestone is complete when:
 - Approved execution reduces the AI Tools allowance balance.
 - Execution creates a receipt card with the required receipt fields.
 - The latest receipt can be inspected.
-- No real wallet or payment action occurs.
+- No real Nimiq provider wallet operation, wallet payment, or payment action occurs.
 - No real learning, real LLM route proposal, backend, x402 flow, or training reward occurs.
 - Existing Phaser/Vite foundation remains intact.
 - The wording and UI framing emphasize user control, prepaid allowances, and independent individuals.
@@ -513,7 +527,8 @@ The first milestone is complete when:
 - Should `src/scenes/Street.js` be renamed later, or should a new Pocket Bot Workshop scene be added and wired as the active scene?
 - What visual style should be used for the robot, allowance pocket, tool stall, gate, and receipt archive before final art exists?
 - How explicit should the simulated nature of NIM payments be in the first UI?
-- Which Nimiq Mini App SDK or wallet APIs should be targeted in a later milestone?
+- What exact Mini App SDK setup and Nimiq Pay local test flow should PB-004 include?
+- Which Nimiq Mini App SDK wallet APIs should be targeted in a later wallet milestone?
 - Should the later real-product path target AI API usage, paid web tools, Nimiq-native mini app services, or another type of helper action first?
 - Which later compatibility route should be explored first: EVM-token x402 adapter via Nimiq Pay where available, native Nimiq bridge/facilitator, or backend gateway for paid API/tool calls?
 
@@ -522,11 +537,12 @@ The first milestone is complete when:
 Recommended next task:
 
 1. Continue with PB-004: add the Pocket Bot Workshop scene shell.
-2. Preserve `src/scenes/Street.js` as a reference prototype.
-3. Wire `PocketBotWorkshop` as the active scene only when it can show the Phase 1 entities.
-4. Add a simple overlay for allowance, rule, proposal, and decision state.
-5. Use the existing domain modules for rule, allowance, proposal, spend execution, and receipt data.
-6. Run `npm run test`, `npm run build`, and a browser/manual scene check.
+2. Add a small Mini App environment adapter or equivalent local fallback boundary if PB-004 needs framework access.
+3. Preserve `src/scenes/Street.js` as a reference prototype.
+4. Wire `PocketBotWorkshop` as the active scene only when it can show the Phase 1 entities.
+5. Add a simple overlay for allowance, rule, proposal, and decision state.
+6. Use the existing domain modules for rule, allowance, proposal, spend execution, and receipt data.
+7. Run `npm run test`, `npm run build`, and browser/manual scene checks, including a Mini App compatibility check when available.
 
 Future ideas after MVP:
 
@@ -539,7 +555,7 @@ Future ideas after MVP:
 - Nimiq testnet integration,
 - real payment request flow,
 - wallet-funded prepaid allowance,
-- Nimiq Mini App SDK integration,
+- real Nimiq provider wallet operations,
 - helper action replay,
 - receipt sorting mini-game,
 - simple rule editor,

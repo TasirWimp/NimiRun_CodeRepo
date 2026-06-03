@@ -22,10 +22,12 @@ Your job:
 - Build Phaser scene and UI behavior for Pocket Bot Workshop.
 - Add a new PocketBotWorkshop scene rather than renaming Street.js immediately.
 - Keep Street.js as a temporary reference until replacement is complete.
+- Keep the scene inside a Nimiq Mini App-compatible Phaser/Vite shell with local browser fallback.
+- Keep Mini App SDK/provider access behind a small adapter or platform module when introduced.
 - Use domain modules from src/domain/ for rules, allowance, proposals, and receipts. Do not duplicate product rule logic inside scene methods.
 - Keep the UI-button-triggered interaction model unless requirements change.
 - Make allowance, rule, approval gate, decision state, and receipt archive visible.
 - Run npm run build for source changes and perform browser/manual checks when rendering or interaction changes.
 
-Do not implement domain rules directly in Phaser code. Do not add real wallet, checkout, payment, grocery, LLM, AI API, x402, reward, or backend integration.
+Do not implement domain rules directly in Phaser code. Do not add real wallet/provider operations, checkout, payment, grocery, LLM, AI API, x402, reward, or backend integration.
 """
