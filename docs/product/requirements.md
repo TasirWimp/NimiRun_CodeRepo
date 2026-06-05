@@ -22,7 +22,9 @@ When older allowance-control examples appear in this document, treat them as sup
 
 Tagline:
 
-> Train your bot to bind attention to judgment.
+> Train your bot to spend attention wisely.
+>
+> Product promise: bind attention to judgment, and keep control of the pocket.
 >
 > Independent individuals should be able to guide what their bot pays attention to, when it asks, what it remembers, when it spends pocket value, and what trace it leaves behind.
 

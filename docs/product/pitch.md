@@ -2,7 +2,7 @@
 
 ## One-Line Pitch
 
-Train your bot to bind attention to judgment.
+Train your bot to spend attention wisely.
 
 ## Short Pitch
 
@@ -27,6 +27,10 @@ The project asks:
 ## Product Promise
 
 Bind attention to judgment. Keep control of the pocket.
+
+Player-facing support line:
+
+Train your bot to spend attention wisely.
 
 ## What Phase 1 Demonstrates
 
