@@ -1,18 +1,34 @@
-# MVP Implementation Plan
+# Phase 1 Implementation Plan
 
-This plan translates `docs/product/requirements.md` into small, test-driven implementation slices for the first Pocket Bot milestone.
+This plan translates the refined Pocket Bot thesis into small implementation slices for the first competition-ready milestone.
 
-This is the **Phase 1** implementation plan from `docs/product/roadmap.md`. Later roadmap phases should guide containment decisions, but they are not implementation scope until Phase 1 is playable.
+Phase 1 is no longer centered on a single paid-tool approval loop. The current thesis is:
 
-The milestone goal is a playable **Pocket Bot Workshop** scene inside a Nimiq Mini App-compatible Phaser/Vite shell that demonstrates:
+```text
+Pocket Bot is a gamified Nimiq Mini App where the user teaches a bot how to spend limited attention in messy, lossy environments.
+```
 
-1. limited AI Tools allowance,
-2. Tool Scout paid helper-tool proposal,
-3. approval gate checks,
-4. simulated spend,
-5. receipt creation and inspection.
+The bot has limited resources:
 
-No real Nimiq payment, signing flow, checkout, real external service, real AI API execution, real LLM route proposal, real learning, real reward, x402 integration, or backend should be implemented in this milestone. Mini App framework compatibility is required. A narrow user-triggered testnet wallet connection/status shell is allowed in PB-004A so the app can prove it runs inside Nimiq Pay early.
+- **Bot Attention**: the bot's thinking/action energy. It maps later to LLM tokens, API calls, tool calls, and reasoning time.
+- **Nimiq Pocket Money**: a value resource collected, shown, or topped up on testnet. It can later recharge or unlock Bot Attention.
+- **User Attention**: the player's investment through guidance, correction, approval, and preference feedback.
+- **Context Capacity**: limited short-term memory slots for the current run.
+- **Skills / Persistent Memory**: durable upgrades for Phase 2, not Phase 1.
+
+The milestone goal is a playable **Pocket Bot Workshop** or equivalent RPG-style map scene inside a Nimiq Mini App-compatible Phaser/Vite shell. The scene should demonstrate:
+
+1. a small lossy environment with fog, ambiguous paths, and hidden assumptions,
+2. a bot that proposes moves using an LLM route-proposal call,
+3. Bot Attention spent on inspect, ask, remember, skip, or act choices,
+4. user guidance that changes the bot's next move within the same session,
+5. Nimiq testnet pocket money shown as low-stakes value or recharge potential,
+6. context-window memory only, with no persistent memory until Phase 2,
+7. trace cards that record what was spent, what was revealed, and what lesson was applied.
+
+Phase 1 may use real LLM API calls through a small server-side relay. API keys must never live in the browser client. The first model should be a low-cost GPT model selected from current official OpenAI model/pricing guidance during implementation; the model id must be configurable and not hard-coded into gameplay logic.
+
+Phase 1 may use Nimiq testnet for wallet/status/top-up experiments because testnet avoids real high-stake value exposure. Phase 1 must not use mainnet value, uncontrolled payments, checkout, real paid external services, x402, rewards, persistent user profiling, or autonomous spending.
 
 ## Source Documents
 
@@ -24,56 +40,87 @@ No real Nimiq payment, signing flow, checkout, real external service, real AI AP
 - Development workflow: `docs/process/development_workflow.md`
 - Test strategy: `docs/testing/test_strategy.md`
 
+When older docs still describe the allowance-only MVP, use this plan and `docs/product/roadmap.md` as the current Phase 1 scope until those docs are fully harmonized.
+
 ## Current Phase 1 Status
+
+Implemented groundwork from the earlier allowance-control cut:
 
 - PB-001 Domain Rule Decision is implemented.
 - PB-002 Receipt Creation is implemented, including future-facing receipt classification data.
 - PB-003 Allowance Spend Execution is implemented.
 - PB-004 Pocket Bot Workshop Scene Shell is implemented with Mini App framework compatibility, local fallback status, and a Tool Scout hover witness interaction.
-- PB-004A Testnet Wallet Connection Shell is the next implementation slice.
-- PB-005 Proposal And Approval Flow follows PB-004A.
 
-Receipt classification UI and training feedback are not Phase 1 baseline requirements. They may remain as small future-facing domain data, but full user feedback and training behavior belong to Phase 2A unless explicitly pulled forward.
+This work should be retained as supporting infrastructure. It becomes one possible resource-governance mechanic inside the broader resource-judgment game, not the active center of Phase 1.
+
+Next work should pivot to the playable user-bot interaction loop:
+
+- RPG-style map/tooling decision,
+- resource model,
+- LLM route-proposal bridge,
+- lossy map scenario,
+- user guidance controls,
+- session-only lesson application,
+- trace cards,
+- Nimiq testnet pocket integration.
 
 ## Implementation Assumptions
 
-These assumptions are binding for the first implementation pass unless the product requirements are updated:
+These assumptions are binding for the revised Phase 1 unless the product requirements are updated again:
 
-- The first interaction model is **UI-button-triggered**. Spending and approval controls should feel deliberate.
-- Add a new `PocketBotWorkshop` scene instead of renaming `Street.js` immediately.
-- Keep `Street.js` temporarily as a reference prototype until the new scene replaces it cleanly.
-- Keep the app compatible with the Nimiq Mini App framework while preserving local browser development.
-- Put Mini App SDK/provider access behind a small adapter or platform module when introduced.
-- Any wallet connection in Phase 1 must be explicit, user-triggered, and limited to testnet/status display. It must not fund allowances, sign messages, send NIM, or execute helper spend.
+- The first screen should be a playable mini game, not a landing page and not a policy dashboard.
+- The scene should feel like a compact 2D RPG map built in Phaser/Vite, using a Phaser-compatible RPG/tilemap workflow where practical.
+- Before rebuilding the scene, evaluate a Phaser-compatible map workflow such as Tiled, LDtk, or an equivalent Vite-friendly RPG/tilemap approach.
+- Keep the existing Phaser 3 + Vite foundation.
+- Keep `src/scenes/Street.js` as the old prototype/reference scene.
+- Keep `src/scenes/PocketBotWorkshop.js`, but allow it to evolve from payment workshop into a resource-navigation map.
+- Keep Mini App SDK/provider access behind `src/platform/` adapters.
+- Keep LLM API access behind a server-side relay or equivalent backend boundary; no OpenAI or provider API key may be exposed to browser code.
+- LLM calls in Phase 1 are stateless except for the current session trace supplied in the prompt/context.
+- The LLM may propose moves, but deterministic game/resource rules decide whether a move is legal and what it costs.
+- Phase 1 memory is context-window/session memory only. No database-backed user memory or durable preference store is allowed.
+- Nimiq testnet wallet/status/top-up experiments are allowed when explicit and user-triggered.
+- Mainnet NIM, real-value rewards, real checkout, real paid API/tool execution, x402, and autonomous spending remain out of scope.
 - Domain behavior belongs in plain JavaScript modules under `src/domain/`.
-- MVP scenario constants belong under `src/game/`.
-- Phaser scenes should orchestrate and display state, not own the rule logic.
-- The first happy path can be auto-approved if all rule checks pass.
-- A checkout/payment attempt must be blocked even in simulation.
+- Scenario constants and scene-independent setup belong under `src/game/`.
+- Phaser scenes should orchestrate and display state, not own resource rules, LLM schemas, or wallet logic.
 
 ## Proposed Runtime Structure
 
 ```text
 src/
   domain/
-    allowance.js
-    rules.js
-    proposals.js
-    receipts.js
+    allowance.js              # existing Nimiq pocket / money-resource groundwork
+    attention.js              # Bot Attention budget and spend rules
+    contextSlots.js           # short-term memory slot rules
+    lossyMap.js               # map node state and reveal rules
+    proposals.js              # broader action / route proposal shape
+    resourceRules.js          # deterministic resource/legal checks
+    traces.js                 # action trace and lesson cards
+    rules.js                  # existing allowance rule checks retained for money gates
+    receipts.js               # existing receipt groundwork retained for spend-like traces
   game/
-    mvpScenario.js
+    mvpScenario.js            # existing scenario, to be replaced or wrapped
+    resourceMapScenario.js
     pocketBotState.js
+  llm/
+    routeProposalSchema.js
+    routeProposalClient.js     # browser client for backend relay only
+    routeProposalPrompt.js
   platform/
     nimiqMiniApp.js
+    openaiRelay.js             # server-side boundary if hosted in-repo
   scenes/
     PocketBotWorkshop.js
     Street.js
   ui/
     hud.js
-    receiptPanel.js
+    resourceMeters.js
+    guidanceControls.js
+    tracePanel.js
 ```
 
-Add files only when their feature slice needs them. Avoid creating empty implementation files.
+Add files only when their feature slice needs them. Avoid empty placeholders.
 
 ## Proposed Test Structure
 
@@ -81,336 +128,413 @@ Add files only when their feature slice needs them. Avoid creating empty impleme
 tests/
   domain/
     allowance.test.js
+    attention.test.js
+    contextSlots.test.js
+    lossyMap.test.js
+    resourceRules.test.js
+    traces.test.js
     rules.test.js
-    proposals.test.js
     receipts.test.js
+  llm/
+    routeProposalSchema.test.js
+    routeProposalClient.test.js
+  platform/
+    nimiqMiniApp.test.js
+    openaiRelay.test.js
   smoke/
     app-loads.spec.js
 ```
 
-Vitest and `npm run test` are the baseline unit-test tooling for `src/domain/` behavior.
+Vitest remains the baseline unit-test tooling. Browser/manual checks are required for Phaser map rendering and user-bot interaction until browser automation is added.
 
-## Feature Slices
+## Revised Feature Slices
 
 ### PB-001 Domain Rule Decision
 
-Goal:
+Status: implemented from the earlier allowance-control cut.
 
-Implement the rule-decision logic for the Tool Scout proposal.
-
-User-visible behavior:
-
-Pocket Bot can only spend from the AI Tools allowance when the tool, cost, allowance balance, and no-checkout boundary all pass.
-
-Expected files:
-
-- `src/domain/rules.js`
-- `src/domain/allowance.js`
-- `src/domain/proposals.js`
-- `src/game/mvpScenario.js`
-- `tests/domain/rules.test.js`
-- `tests/domain/allowance.test.js`
-
-Test plan:
-
-- approved Tool Scout proposal at 0.4 NIM is allowed,
-- unapproved tool is blocked,
-- cost above 1 NIM is blocked or marked approval-required according to the rule,
-- insufficient allowance is blocked,
-- checkout/payment attempt is blocked.
-
-Acceptance:
-
-- rule decision returns a clear decision: `auto-approved`, `needs-approval`, or `blocked`,
-- decision includes check results and a readable explanation,
-- `npm run test` and `npm run build` pass.
+Keep as supporting groundwork for future money/resource gates.
 
 ### PB-002 Receipt Creation
 
-Goal:
+Status: implemented from the earlier allowance-control cut.
 
-Create receipt data for an executed approved proposal.
-
-User-visible behavior:
-
-After the simulated helper-tool spend, the user can see what happened and why.
-
-Expected files:
-
-- `src/domain/receipts.js`
-- `tests/domain/receipts.test.js`
-
-Test plan:
-
-- executed proposal creates one receipt,
-- receipt records tool, cost, allowance, reason, decision, and outcome,
-- receipt classification accepts the future-facing classification values,
-- invalid classification is rejected.
-
-Acceptance:
-
-- receipt creation is deterministic,
-- receipt data matches the product requirement fields,
-- `npm run test` and `npm run build` pass.
+Keep as supporting groundwork. Future trace cards may reuse receipt fields when an action spends Nimiq pocket money or a paid tool is involved.
 
 ### PB-003 Allowance Spend Execution
 
-Goal:
+Status: implemented from the earlier allowance-control cut.
 
-Apply an approved simulated spend to the AI Tools allowance.
-
-User-visible behavior:
-
-The allowance balance decreases only after an approved action executes.
-
-Expected files:
-
-- `src/domain/allowance.js`
-- `tests/domain/allowance.test.js`
-
-Test plan:
-
-- approved 0.4 NIM spend reduces balance by 0.4 NIM,
-- blocked proposal does not change balance,
-- insufficient balance cannot go negative,
-- repeated approved spends produce the expected remaining balance.
-
-Acceptance:
-
-- allowance math is test-covered,
-- spend execution returns updated allowance state without mutating unrelated objects unexpectedly,
-- `npm run test` and `npm run build` pass.
+Keep as supporting groundwork for the Nimiq Pocket resource.
 
 ### PB-004 Pocket Bot Workshop Scene Shell
 
+Status: implemented from the earlier allowance-control cut.
+
+Keep the scene but evolve it into the playable resource-navigation map.
+
+### PB-005 RPG Map Tooling And Scene Direction
+
 Goal:
 
-Add the first Pocket Bot Workshop scene and wire it as the active scene inside a Nimiq Mini App-compatible shell.
+Choose the Phaser/Vite 2D RPG-map workflow for Phase 1.
 
 User-visible behavior:
 
-The app opens to a compact workshop containing Pocket Bot, AI Tools allowance, Tool Scout stall, approval gate, receipt archive, and a simple overlay.
+No major player-facing feature yet. This slice establishes how the map will be authored and rendered so the next slices can build the game loop without fighting the scene foundation.
+
+Expected files:
+
+- `docs/planning/mvp_implementation_plan.md`
+- optional `docs/architecture/rpg_map_tooling.md`
+- `src/scenes/PocketBotWorkshop.js`
+- optional map asset/config files under the most specific existing asset directory, or a new focused map directory if needed.
+
+Test plan:
+
+- compare Phaser-native tilemap support, Tiled, LDtk, or equivalent Vite-friendly RPG/tilemap approach,
+- pick the smallest workflow that supports tiles, object layers/nodes, fog/revealed state, and click/keyboard interaction,
+- `npm run build` passes after any dependency/config change,
+- browser/manual check confirms the scene still renders.
+
+Acceptance:
+
+- selected workflow is documented,
+- the choice does not require replacing Phaser/Vite,
+- the scene can represent nodes, paths, obstacles/fog, and interaction zones,
+- implementation can proceed without committing to final art.
+
+### PB-006 Core Resource Model
+
+Goal:
+
+Add the revised Phase 1 resource model.
+
+User-visible behavior:
+
+The HUD shows Bot Attention, Nimiq Pocket, User Attention prompts, and Context Capacity.
+
+Expected files:
+
+- `src/domain/attention.js`
+- `src/domain/contextSlots.js`
+- `src/domain/resourceRules.js`
+- `src/game/resourceMapScenario.js`
+- `tests/domain/attention.test.js`
+- `tests/domain/contextSlots.test.js`
+- `tests/domain/resourceRules.test.js`
+
+Test plan:
+
+- Bot Attention starts at the scenario budget,
+- inspect/ask/remember/act choices spend the expected attention amount,
+- invalid spends cannot make attention negative,
+- context slots have a fixed capacity,
+- remembering a clue fails or requires replacement when slots are full,
+- Nimiq Pocket is represented separately from Bot Attention.
+
+Acceptance:
+
+- resource math is deterministic and test-covered,
+- Nimiq Pocket and Bot Attention are not conflated,
+- user-facing labels make clear that Bot Attention is the spendable thinking/action energy.
+
+### PB-007 LLM Route Proposal Bridge
+
+Goal:
+
+Add Phase 1 LLM support for route/move proposals.
+
+User-visible behavior:
+
+Pocket Bot can propose a next move in natural language based on the current goal, visible map state, resources, context slots, and current session trace.
+
+Expected files:
+
+- `src/llm/routeProposalSchema.js`
+- `src/llm/routeProposalPrompt.js`
+- `src/llm/routeProposalClient.js`
+- server-side relay file or function under the repo's chosen backend/platform location
+- `tests/llm/routeProposalSchema.test.js`
+- `tests/llm/routeProposalClient.test.js`
+- optional `tests/platform/openaiRelay.test.js`
+
+Test plan:
+
+- schema accepts a valid route proposal,
+- schema rejects unknown actions, missing costs, or unbounded tool/payment requests,
+- client calls only the backend relay, not OpenAI directly from browser code,
+- relay reads API key from environment,
+- relay model id is configurable,
+- relay has a safe offline/mock mode for local demo and tests,
+- `npm run test` and `npm run build` pass.
+
+Acceptance:
+
+- LLM proposals are structured, bounded, and validated before entering game state,
+- no provider API key is bundled into client code,
+- failure/offline states produce a readable fallback move,
+- the bot's proposal can reference only current session context and provided game state.
+
+### PB-008 Lossy Map Scenario
+
+Goal:
+
+Create the first abstract task landscape.
+
+User-visible behavior:
+
+The player sees a small RPG-like map with fog, ambiguous route nodes, clue nodes, a tempting shortcut, a context-memory station, a Nimiq pocket/recharge node, and a goal node.
+
+Expected files:
+
+- `src/domain/lossyMap.js`
+- `src/game/resourceMapScenario.js`
+- `src/scenes/PocketBotWorkshop.js`
+- map data/assets as selected in PB-005
+- `tests/domain/lossyMap.test.js`
+
+Test plan:
+
+- unrevealed nodes hide their assumptions,
+- inspect reveals a clue at attention cost,
+- skip preserves attention but keeps uncertainty,
+- act commits to a route state,
+- map state is serializable into the LLM prompt context,
+- `npm run test` and `npm run build` pass.
+
+Acceptance:
+
+- the map makes ambiguity visible,
+- each node asks "is this worth spending attention on?",
+- the first map is small enough to finish in a short competition demo.
+
+### PB-009 User-Bot Guidance Loop
+
+Goal:
+
+Connect LLM proposals, deterministic resource checks, and player guidance.
+
+User-visible behavior:
+
+The bot proposes a move. The player can approve, redirect, ask for a cheaper route, ask the bot to inspect first, or tell the bot to remember/forget a clue. The bot spends resources only after a legal move is accepted.
 
 Expected files:
 
 - `src/scenes/PocketBotWorkshop.js`
-- `src/main.js`
-- `src/game/mvpScenario.js`
-- optional `src/platform/nimiqMiniApp.js`
-- optional `src/ui/hud.js`
+- `src/ui/guidanceControls.js`
+- `src/ui/resourceMeters.js`
+- `src/game/pocketBotState.js`
+- `src/domain/resourceRules.js`
+- `src/domain/traces.js`
+- `tests/domain/resourceRules.test.js`
+- `tests/domain/traces.test.js`
 
 Test plan:
 
-- `npm run build` passes,
-- browser smoke check confirms the scene loads,
-- local browser fallback works when Nimiq Pay providers are unavailable,
-- scene displays required MVP entities,
-- overlay displays allowance, rule, proposal, and decision state,
-- Nimiq Pay Mini App manual check is planned or performed when a device/emulator test path is available.
+- approved inspect move spends Bot Attention and reveals state,
+- redirect updates the pending move without spending the original cost,
+- ask-user actions are represented as user attention prompts,
+- illegal moves are blocked before resource state changes,
+- trace is appended after each accepted action,
+- `npm run test` and `npm run build` pass,
+- browser/manual check confirms controls update map and HUD.
 
 Acceptance:
 
-- app starts with Pocket Bot Workshop,
-- app remains compatible with Nimiq Mini App framework expectations,
-- existing Phaser/Vite foundation remains intact,
-- no real wallet operation, checkout, payment, or AI API behavior exists.
+- the player can feel that guidance changes the bot's behavior,
+- resources are spent deliberately,
+- the LLM never directly mutates game state.
 
-### PB-004A Testnet Wallet Connection Shell
+### PB-010 Session Lesson Application
 
 Goal:
 
-Add a narrow, explicit Nimiq Pay testnet wallet connection/status panel before the proposal flow.
+Make the bot apply one player lesson later in the same run using context-window memory only.
 
 User-visible behavior:
 
-When the app is opened inside Nimiq Pay, the user can press a clear connect button to prove the Mini App can access the injected Nimiq provider on testnet. The app shows wallet connection status, account address, consensus status, and current block number when available. Outside Nimiq Pay, the same panel clearly shows local simulated mode.
+After the player corrects the bot, the next proposal reflects that correction in a simple visible way.
+
+Example:
+
+```text
+Player correction: Try cheap scouting before the expensive path.
+Later bot proposal: You corrected me toward cheap scouting first, so I will inspect the clue node before using pocket money.
+```
+
+Expected files:
+
+- `src/domain/traces.js`
+- `src/game/pocketBotState.js`
+- `src/llm/routeProposalPrompt.js`
+- `src/ui/tracePanel.js`
+- `tests/domain/traces.test.js`
+- `tests/llm/routeProposalSchema.test.js`
+
+Test plan:
+
+- user correction creates a session lesson trace,
+- session lesson is included in the next LLM prompt context,
+- session lesson can influence a validated proposal,
+- lesson is not persisted beyond reload/session reset,
+- `npm run test` and `npm run build` pass.
+
+Acceptance:
+
+- Phase 1 demonstrates "bot learns during this run" without persistent memory,
+- UI wording does not claim durable training,
+- resetting the run clears the lesson.
+
+### PB-011 Trace Cards
+
+Goal:
+
+Generalize receipts into trace cards for the broader resource-judgment loop.
+
+User-visible behavior:
+
+The player can inspect what happened: move proposed, user guidance, resource spent, information revealed, lesson applied, and outcome.
+
+Expected files:
+
+- `src/domain/traces.js`
+- `src/ui/tracePanel.js`
+- `src/scenes/PocketBotWorkshop.js`
+- `tests/domain/traces.test.js`
+
+Test plan:
+
+- trace card records proposal, accepted move, resource costs, map result, and lesson fields,
+- money-like actions can reference existing receipt data,
+- trace history order is stable,
+- latest trace can be inspected,
+- `npm run test` and `npm run build` pass,
+- browser/manual check confirms trace panel is readable.
+
+Acceptance:
+
+- receipts are no longer the only trace type,
+- trace cards support both attention spending and Nimiq pocket events,
+- the user can reconstruct why the bot acted.
+
+### PB-012 Nimiq Testnet Pocket
+
+Goal:
+
+Connect the Nimiq Mini App/testnet surface to the resource game without introducing real-value risk.
+
+User-visible behavior:
+
+When opened in Nimiq Pay testnet, the player can explicitly connect and see testnet pocket/status. In local mode, the player sees a clear fallback pocket. Nimiq pocket money is framed as collectible/recharge value for Bot Attention, not as broad wallet access.
 
 Expected files:
 
 - `src/platform/nimiqMiniApp.js`
-- `src/scenes/PocketBotWorkshop.js`
-- optional `src/ui/walletStatusPanel.js`
-- `tests/platform/nimiqMiniApp.test.js`
-
-Test plan:
-
-- platform tests cover local fallback when `window.nimiq` is unavailable,
-- platform tests cover provider-ready status without performing signing or payments,
-- `npm run test` passes,
-- `npm run build` passes,
-- browser/manual check confirms local mode cannot connect to a wallet,
-- Nimiq Pay testnet manual check confirms:
-  - app opens through the custom Mini App URL,
-  - hidden dev menu is set to Testnet,
-  - connect action calls `init()` and `listAccounts()` only after user action,
-  - account, consensus, and block number display when approved,
-  - no sign, send, top-up, or allowance funding action is reachable.
-
-Acceptance:
-
-- wallet connection is optional and user-triggered,
-- local browser fallback remains safe and readable,
-- Nimiq Pay testnet status can be displayed when the Mini App host is available,
-- no NIM is sent,
-- no message is signed,
-- no wallet-funded allowance is created,
-- Tool Scout spend remains simulated.
-
-### PB-005 Proposal And Approval Flow
-
-Goal:
-
-Connect the scene to domain logic so the user can trigger the Tool Scout proposal and see the approval decision.
-
-User-visible behavior:
-
-The user presses a clear UI control to let Pocket Bot propose Tool Scout. The approval gate shows the rule result.
-
-Expected files:
-
-- `src/scenes/PocketBotWorkshop.js`
-- `src/ui/hud.js`
-- `src/domain/rules.js`
-- `src/domain/proposals.js`
-- `src/game/pocketBotState.js`
-
-Test plan:
-
-- domain unit tests from PB-001 still pass,
-- `npm run build` passes,
-- manual/browser check confirms the proposal can be triggered,
-- manual/browser check confirms the gate decision appears.
-
-Acceptance:
-
-- proposal text includes tool, cost, allowance, reason, and no-checkout outcome,
-- gate decision is visible,
-- blocked states do not execute a spend.
-
-### PB-006 Simulated Spend And Receipt Archive
-
-Goal:
-
-Execute the approved Tool Scout helper-tool call in simulation and create a visible receipt.
-
-User-visible behavior:
-
-After approval, the allowance decreases by 0.4 NIM and a receipt appears in the archive.
-
-Expected files:
-
-- `src/scenes/PocketBotWorkshop.js`
-- `src/ui/receiptPanel.js`
 - `src/domain/allowance.js`
-- `src/domain/receipts.js`
-- `src/game/pocketBotState.js`
+- `src/domain/resourceRules.js`
+- `src/ui/resourceMeters.js`
+- `src/scenes/PocketBotWorkshop.js`
+- `tests/platform/nimiqMiniApp.test.js`
+- optional tests for any testnet top-up adapter if added
 
 Test plan:
 
-- domain tests for allowance and receipts pass,
-- `npm run build` passes,
-- manual/browser check confirms balance decreases after approved execution,
-- manual/browser check confirms receipt appears with required fields.
+- local fallback is safe and readable,
+- connect/status action is explicit and user-triggered,
+- testnet-only wording is visible when applicable,
+- no mainnet operation is reachable,
+- no uncontrolled send/sign/payment is reachable,
+- Nimiq Pocket display remains separate from Bot Attention,
+- `npm run test` and `npm run build` pass,
+- Nimiq Pay testnet manual check is planned or performed when device/emulator path is available.
 
 Acceptance:
 
-- receipt records tool, cost, allowance, rule result, reason, decision, and outcome,
-- balance changes only after approved execution,
-- receipt archive is visible in the scene.
-
-### PB-007 Receipt Inspection
-
-Goal:
-
-Allow the user to inspect the latest receipt.
-
-User-visible behavior:
-
-The user can open or focus the latest receipt and understand what was spent, why, which rule decision applied, and what outcome was recorded.
-
-Expected files:
-
-- `src/ui/receiptPanel.js`
-- `src/domain/receipts.js`
-- `tests/domain/receipts.test.js`
-
-Test plan:
-
-- receipt classification unit tests pass,
-- `npm run build` passes,
-- manual/browser check confirms the latest receipt can be inspected,
-- manual/browser check confirms receipt amount, decision, reason, and outcome remain readable.
-
-Acceptance:
-
-- latest receipt remains inspectable,
-- receipt amount and decision history are visible and unchanged.
-
-Optional Phase 1 stretch:
-
-- user can classify the receipt using the future-facing classification values.
-- classification does not alter spend history.
+- Nimiq testnet is integrated as low-stakes value surface,
+- pocket money can be shown as collectible or recharge potential,
+- the bot still spends Bot Attention on moves,
+- wallet access never grants broad bot authority.
 
 ## Milestone Sequence
 
-Implement in this order:
+Implemented groundwork:
 
 1. PB-001 Domain Rule Decision.
 2. PB-002 Receipt Creation.
 3. PB-003 Allowance Spend Execution.
 4. PB-004 Pocket Bot Workshop Scene Shell.
-5. PB-004A Testnet Wallet Connection Shell.
-6. PB-005 Proposal And Approval Flow.
-7. PB-006 Simulated Spend And Receipt Archive.
-8. PB-007 Receipt Inspection.
 
-This order keeps the spending-control behavior testable before scene rendering.
+Revised next sequence:
+
+5. PB-005 RPG Map Tooling And Scene Direction.
+6. PB-006 Core Resource Model.
+7. PB-007 LLM Route Proposal Bridge.
+8. PB-008 Lossy Map Scenario.
+9. PB-009 User-Bot Guidance Loop.
+10. PB-010 Session Lesson Application.
+11. PB-011 Trace Cards.
+12. PB-012 Nimiq Testnet Pocket.
+
+This order gets the game surface and resource rules clear before deeper Nimiq testnet behavior, while still adding LLM support early enough to shape the playable loop.
 
 ## Next Commit Recommendation
 
 The next implementation commit should be:
 
 ```text
-feat: add PB-004A testnet wallet connection shell
+docs: revise phase 1 resource-judgment plan
 ```
 
-It should add explicit, user-triggered Nimiq Pay testnet wallet status without enabling signing, sending, top-up, helper spend, or wallet-funded allowance behavior.
+The next code commit after the plan update should be:
+
+```text
+feat: choose rpg map workflow for pocket bot
+```
 
 ## Risks And Controls
 
-- **Risk:** Scene code absorbs rule logic.
-  **Control:** Keep PB-001 through PB-003 in `src/domain/` with tests before scene work.
-- **Risk:** The prototype feels like a generic game instead of a payment-control interface.
-  **Control:** Keep allowance, rule, approval, and receipt visible in the first scene.
-- **Risk:** Real payment or checkout assumptions leak into the MVP.
-  **Control:** Block checkout/payment attempts and label all NIM movement as simulated.
-- **Risk:** The scene is built as a browser-only demo and fails Mini App expectations later.
-  **Control:** Introduce a small Mini App environment adapter/fallback boundary with PB-004.
-- **Risk:** Wallet connection is confused with spend permission.
-  **Control:** PB-004A may show account/status only; it must not sign, send, fund allowances, or give the helper wallet access.
-- **Risk:** UI grows faster than tests.
-  **Control:** Implement the simplest scene shell after domain behavior is covered.
+- **Risk:** LLM behavior becomes the game authority.
+  **Control:** LLM proposes; deterministic resource rules decide legality and cost.
+- **Risk:** API keys leak into the browser bundle.
+  **Control:** all LLM API calls go through a server-side relay and tests guard against direct client provider calls.
+- **Risk:** Phase 1 grows into a full RPG.
+  **Control:** keep the first map small: one goal, a few nodes, one lesson, one pocket/recharge element.
+- **Risk:** Nimiq pocket money overshadows Bot Attention.
+  **Control:** treat Nimiq as value/recharge layer; Bot Attention is the resource spent on task navigation.
+- **Risk:** Testnet wallet connection is confused with spend permission.
+  **Control:** testnet interactions are explicit, user-triggered, and never grant broad bot authority.
+- **Risk:** Persistent-memory claims appear too early.
+  **Control:** Phase 1 only uses session/context-window memory; Phase 2 owns durable memory and skills.
+- **Risk:** The RPG-map framework choice locks the app into unnecessary complexity.
+  **Control:** pick the smallest Phaser/Vite-compatible workflow that supports map nodes, fog/reveal state, and interaction zones.
 
-## Out Of Scope For This Plan
+## Out Of Scope For Phase 1
 
-- real Nimiq signing, sending, staking, top-up, or payment operations,
-- wallet-funded helper allowances,
-- mainnet payments,
-- real AI API execution,
-- real external tool/provider integration,
-- backend services,
-- persistence beyond in-memory state,
-- multiple helpers or allowances.
+- Nimiq mainnet value,
+- uncontrolled wallet operations,
+- broad wallet permissions,
+- real checkout or payment-info entry,
+- x402 integration,
+- real paid external service execution,
+- persistent memory or durable user profiles,
+- autonomous model self-improvement claims,
+- real-value rewards,
+- combat, inventory bloat, or large RPG content,
+- multi-bot or multi-user systems.
 
 ## Completion Criteria
 
-The MVP implementation plan is complete when:
+The revised Phase 1 implementation plan is complete when:
 
-- PB-001 through PB-007 are implemented,
-- planned tests/checks for each slice have been run,
-- `npm run build` passes,
-- the Pocket Bot Workshop scene demonstrates the full allowance -> proposal -> gate -> simulated spend -> receipt loop,
-- the latest receipt can be inspected,
-- the app is compatible with the Nimiq Mini App framework while still supporting local browser development,
-- optional testnet wallet connection is limited to account/status display and does not fund helper spend,
-- the MVP still cannot complete checkout, enter payment information, spend from a real wallet, call a real LLM, call a real paid API, distribute rewards, or use x402 infrastructure.
+- the app runs through the Vite workflow,
+- `npm run test` and `npm run build` pass,
+- the first screen is a playable Phaser RPG-style resource-navigation scene,
+- the scene shows Bot Attention, Nimiq Pocket, User Attention prompts, and Context Capacity,
+- the bot can request an LLM-backed structured route proposal through a safe backend relay,
+- the player can guide or correct the bot,
+- accepted moves spend Bot Attention and update map state,
+- at least one session lesson changes a later proposal within the same run,
+- trace cards show resource spend, revealed information, user guidance, and lesson application,
+- Nimiq testnet/local fallback pocket status is visible without mainnet risk,
+- no persistent memory, mainnet spend, x402 flow, real paid external service, checkout, or autonomous spending exists.

@@ -1,18 +1,34 @@
 # Pocket Bot Project Requirements
 
+## Current Phase 1 Refinement
+
+As of the current Phase 1 plan, Pocket Bot is centered on **resource judgment in lossy environments**.
+
+The earlier allowance-control scenario is retained as useful groundwork and as a later application, but it is no longer the whole Phase 1 MVP. Current Phase 1 should build a playable Nimiq Mini App mini game where:
+
+- the bot spends **Bot Attention** to inspect, ask, remember, skip, or act,
+- Nimiq pocket money is shown as collectible/testnet/recharge value,
+- the user spends attention by guiding and correcting the bot,
+- a low-cost GPT model proposes structured moves through a server-side relay,
+- deterministic game/resource rules validate proposals before state changes,
+- memory is session/context-window only,
+- persistent memory and real-world task bridges start in later phases.
+
+When older allowance-control examples appear in this document, treat them as supporting groundwork or later paid-resource applications. Use `docs/product/roadmap.md` and `docs/planning/mvp_implementation_plan.md` as the current Phase 1 scope.
+
 ## 1. Project Title
 
-**Pocket Bot** is a playful Nimiq mini app prototype about giving software helpers a small, self-custodied prepaid allowance instead of broad access to a user's wallet.
+**Pocket Bot** is a playful Nimiq mini app prototype about teaching a software helper how to spend scarce resources well in messy, lossy environments.
 
 Tagline:
 
-> Give your helper pocket money, not your wallet.
+> Train your bot to spend attention wisely.
 >
-> Independent individuals should be able to tell their bot how much it may spend, what it may spend on, when it must ask first, and what receipt it must leave behind.
+> Independent individuals should be able to guide what their bot pays attention to, when it asks, what it remembers, when it spends pocket value, and what trace it leaves behind.
 
-The product should use a compact 2D game scene to make helper allowances visible, bounded, understandable, and reviewable.
+The product should use a compact 2D game scene to make hidden assumptions, limited attention, context capacity, pocket value, user guidance, and trace review visible.
 
-The project is intentionally framed around **personal control for independent individuals**, not enterprise automation. The robot is a personal helper with a small allowance, not a corporate autonomous agent with broad spending authority.
+The project is intentionally framed around **personal control for independent individuals**, not enterprise automation. The robot is a personal helper learning the user's judgment, not a corporate autonomous agent with broad spending authority.
 
 ## 2. Project Reason
 
@@ -64,34 +80,40 @@ The interface problem is to make these checks visible without forcing the user t
 
 ## 5. Product Thesis
 
-Pocket Bot explores how Nimiq could provide a **self-custodied prepaid allowance for software helpers**.
+Pocket Bot explores how Nimiq can be the value carrier for a gamified helper-training loop.
 
-Pocket Bot treats spending decisions as trainable behavior: the helper must eventually learn when a paid resource is worth trying, but the MVP only shows this through a scripted allowance-and-receipt loop. Spending must not be treated as useful merely because it is allowed.
+The core thesis is **resource judgment in lossy environments**. Real tasks contain incomplete information, hidden assumptions, ambiguous routes, and scarce resources. A useful helper must learn how this user wants those resources spent on the path to a goal.
 
-This mini app is motivated by a practical control problem already visible in agent products and developer reports: software helpers can prepare purchase-adjacent actions, call paid APIs, and spend metered compute. Users need a clear way to decide what the helper may spend before the action happens, not only a dashboard after money has already been used.
+Pocket Bot's core resources are:
+
+- **Bot Attention:** thinking/action energy. It maps later to LLM tokens, API calls, tool calls, and reasoning time.
+- **Nimiq Pocket Money:** collectible, testnet, or later fundable value that can recharge or unlock Bot Attention.
+- **User Attention:** the player's guidance, correction, approval, and preference signal.
+- **Context Capacity:** limited short-term working memory during a run.
+- **Skills / Persistent Memory:** durable upgrades introduced after Phase 1.
 
 Detailed infrastructure context for x402-like payment rails, Nimiq-to-x402 compatibility levels, and product boundaries lives in `docs/product/infrastructure_context.md`. Pitch wording lives in `docs/product/pitch.md`. Phased delivery boundaries live in `docs/product/roadmap.md`.
 
-The system should not claim to validate a robot's or AI agent's inner intention. Instead, it should validate whether a proposed action is an allowed continuation of a user-declared rule set and a bounded prepaid allowance.
+The system should not claim to validate a robot's or AI agent's inner intention. Instead, it should validate whether a proposed move is legal inside the current resource rules, whether the user has guided or corrected it, and what trace remains afterward.
 
-The core product loop is:
+The revised core product loop is:
 
-1. user gives the helper a small allowance,
-2. user sets a simple rule,
-3. user assigns a bounded budget envelope,
-4. robot helper proposes a small paid action,
-5. system checks the proposal against the rule and allowance,
-6. action is auto-approved, sent for approval, or blocked,
-7. approved action executes in simulation,
-8. receipt is created,
-9. user can inspect the receipt,
-10. trace can be replayed or reviewed.
+1. user gives or selects a goal,
+2. bot sees a messy, lossy map with hidden assumptions,
+3. LLM proposes a structured next move,
+4. deterministic resource rules validate the move,
+5. user approves, redirects, or corrects,
+6. approved move spends Bot Attention or another visible resource,
+7. map state changes and partial truth is revealed,
+8. trace card records what happened,
+9. user feedback creates a session lesson,
+10. later proposal reflects the session lesson within the same run.
 
 Product principles:
 
-> Delegation should never mean losing control.
+> Delegation should never mean losing control of attention, memory, or pocket value.
 >
-> A helper gets pocket money, not the user's wallet.
+> Train the bot's attention. Keep control of the pocket.
 
 ## 6. Target Users
 
@@ -112,9 +134,9 @@ The MVP should be understandable to a non-enterprise user. It should not require
 
 ## 7. Core Use Case
 
-The initial use case is a single robot helper operating with a small prepaid allowance for paid helper-tool calls.
+The initial use case is a single robot helper navigating a small, messy task landscape with limited Bot Attention and limited context.
 
-The example paid tool is provisionally called **Tool Scout**. Its role is to stand in for a paid helper route, not to lock the product into grocery shopping.
+The first playable task should make hidden assumptions and resource tradeoffs concrete. The bot may inspect a clue, ask the user, remember a limited fact, skip an uncertain node, or act toward the goal. Each move has a cost or tradeoff.
 
 ### Source-Backed Motivation
 
@@ -124,9 +146,9 @@ Public examples show that this is a real product problem, not only a speculative
 - Developers report agents getting stuck in loops and spending real API money. Public LangChain/agent posts describe incidents such as agents burning hundreds of dollars through repeated OpenAI or third-party API calls before a human noticed.
 - Recent research on agentic coding tasks reports that AI-agent token usage can be highly variable across runs, which makes spend hard to predict from the user's original task alone.
 
-These sources support the core question for Pocket Bot:
+These sources support one application of the broader Pocket Bot question:
 
-> Can a Nimiq mini app make a helper's prepaid allowance visible, require each paid action to pass a clear rule gate, and leave a receipt the user can understand later?
+> Can a Nimiq mini app make a helper's limited attention, pocket value, user guidance, and trace history visible before the helper spends scarce resources?
 
 Reference sources:
 
@@ -139,91 +161,96 @@ Reference sources:
 
 ### First-Class MVP Scenario
 
-Pocket Bot helps the user explore whether a paid helper route is worth trying. In the first scripted scenario, this appears as a reviewable result draft created through a paid helper route.
+Pocket Bot helps the user guide a bot through an abstract, lossy task map.
 
-The helper does **not** complete checkout, submit an order, enter payment information, or move money from the user's wallet. Checkout and payment-info blocking remain safety-boundary examples. The only simulated spend in the MVP is the helper-tool cost paid from the prepaid allowance.
+Example goal:
 
-User rule:
+> Find the safest useful path to the result before Bot Attention runs out.
 
-> Pocket Bot may spend from the AI Tools allowance, max 1 NIM per action, only on approved helper tools. Pocket Bot may prepare a reviewable result draft, but may not complete checkout or enter payment information.
+Example bot proposal:
 
-Robot proposal:
-
-> I want to use Tool Scout. Cost: 0.4 NIM. Allowance: AI Tools. Reason: use a paid helper route to prepare a reviewable result draft. Outcome: result draft only, no checkout or payment info.
+> I can inspect the fogged clue node first. Cost: 2 Bot Attention. Reason: you prefer cheap scouting before expensive action, and this node may reveal whether the shortcut hides a cost.
 
 System checks:
 
-- Is Tool Scout an approved helper tool?
-- Is 0.4 NIM at or below the 1 NIM max-per-action limit?
-- Does the AI Tools allowance have enough remaining balance?
-- Is the requested action limited to preparing a reviewable result rather than checkout, payment, or irreversible action?
-- Does the rule allow auto-approval, or does this require user approval?
+- Is the proposed move one of the allowed move types?
+- Does the bot have enough Bot Attention?
+- Does the move fit current Context Capacity?
+- Does the move require user guidance before spending more resources?
+- Does the move attempt any blocked action such as checkout, broad wallet access, or uncontrolled external service execution?
 
 Possible outcomes:
 
-- **Auto-approved:** the paid helper-tool call is approved, below the per-action limit, and limited to preparing a reviewable result.
-- **Needs approval:** the action is allowed but sensitive enough to require explicit user confirmation, such as a higher cost, unfamiliar tool, or ambiguous shopping request.
-- **Rejected/blocked:** the action violates rule or allowance constraints, tries to complete checkout, uses an unapproved tool, or exceeds the allowance.
+- **Approved move:** the user accepts the move, Bot Attention is spent, and the map changes.
+- **Redirected move:** the user points the bot to a cheaper, safer, or more relevant route before resources are spent.
+- **Blocked move:** deterministic rules reject an unsafe, unbounded, or impossible proposal.
 
-After execution, a receipt card records the action, decision, rule result, and outcome.
+After execution, a trace card records the proposal, user guidance, resource spend, revealed information, and outcome.
 
 Important MVP note:
 
-The paid helper tool is simulated. The purpose of the first milestone is to demonstrate the allowance and control interface, not to integrate a real AI API, real external service, real checkout flow, or real Nimiq payment.
+The bot may use a real LLM API through a backend relay to propose moves. The LLM must not directly mutate game state, spend resources, access wallet functions, or bypass deterministic resource rules. Persistent memory and real-world task execution remain later-phase work.
+
+### Later Paid-Resource Example
+
+The earlier **Tool Scout** example is retained as a later paid-resource application. Its role is to show how the same resource-judgment loop can govern paid helper tools once the core game loop is proven.
 
 ## 8. MVP Scope
 
-The MVP is a small Phaser scene, not a large RPG.
+The Phase 1 MVP is a small playable Phaser scene with RPG-style map mechanics, not a large RPG.
 
 The required first scene is **Pocket Bot Workshop**.
 
 The MVP must include:
 
 - one robot helper,
-- one prepaid allowance / budget envelope,
-- one paid helper tool stall,
-- one approval gate,
-- one receipt archive,
-- one simple task/action loop,
-- one visible UI overlay for allowance, rule, and current action state,
-- simulated NIM amounts,
-- simulated approval and receipt behavior.
+- one compact lossy map with fog, route nodes, hidden assumptions, and a goal,
+- one Bot Attention meter,
+- one Nimiq Pocket meter using local fallback and/or testnet status,
+- one User Attention / guidance surface,
+- one Context Capacity display,
+- one LLM-backed structured route proposal flow through a server-side relay,
+- deterministic resource checks outside the LLM,
+- one session-only lesson that changes a later proposal,
+- one trace archive,
+- one visible UI overlay for resources, current goal, proposal, guidance, and trace state.
 
-The Phase 1 MVP remains simulated and small: one bot, one simulated allowance, one paid-tool proposal, one approval/rule gate, and one receipt. It must use a Nimiq Mini App-compatible app shell, but it must not include real wallet operations, real payment execution, real LLM, real API call, real reward, x402 integration, or backend.
+The Phase 1 MVP remains small: one bot, one lossy map, one attention budget, one pocket-value surface, one route-proposal loop, one session lesson, and trace cards. It must use a Nimiq Mini App-compatible app shell. It may include a real LLM API call through a server-side relay, but it must not expose provider API keys in client code.
 
 The MVP should keep the existing Phaser 3 + Vite foundation. The current implementation uses `src/main.js` as the entry point and `src/scenes/Street.js` as the active scene. Future implementation should adapt or extend the existing foundation instead of replacing the project structure.
 
 The MVP should remain usable in a normal local browser for development and test runs, while being structured so it can also be opened and tested inside Nimiq Pay as a Mini App.
 
-The MVP does not implement real learning. It only prepares the UI and data structure so later phases can add scripted training and LLM-powered route proposals.
+The MVP does not implement persistent learning. It may demonstrate session/context-window learning by applying one player correction later in the same run. Durable memory, skills, and real-world task transfer belong to Phase 2 and later.
 
 ## 9. Non-Goals For MVP
 
 The MVP should not include:
 
-- real Nimiq wallet connection,
-- real Nimiq testnet or mainnet payments,
+- Nimiq mainnet value,
 - real Nimiq provider wallet operations through the Mini App SDK,
-- real wallet-funded allowances,
-- real AI API execution,
-- real paid API/tool execution,
-- real LLM route proposals,
-- real learning or autonomous model improvement,
-- real or simulated training rewards,
+- broad wallet permission,
+- uncontrolled signing, sending, payment, or checkout,
+- provider API keys in browser code,
+- real paid external-service execution,
+- x402 integration,
+- persistent memory or durable user profiles,
+- autonomous model self-improvement claims,
+- real-value rewards,
 - real ordering, checkout, or external-service execution,
 - multiple robots,
-- multiple budget envelopes,
-- persistent backend storage,
+- multiple large maps,
+- persistent backend storage beyond the minimum stateless LLM relay,
 - user authentication,
 - exportable audit logs,
 - complex policy editor,
 - trust levels,
 - large RPG maps,
-- inventory systems,
+- inventory bloat,
 - combat, quests, or unrelated game mechanics,
 - enterprise procurement or compliance workflows.
 
-These may be considered future features after the first milestone demonstrates the core allowance loop.
+These may be considered future features after the first milestone demonstrates the core resource-judgment loop.
 
 ## 10. Functional Requirements
 
@@ -232,98 +259,98 @@ These may be considered future features after the first milestone demonstrates t
 - The app must be structured as a Nimiq Mini App-compatible Phaser/Vite web app.
 - Mini App environment access must be isolated behind a small adapter or platform module, not scattered through Phaser scene code.
 - Local development must keep a browser fallback when the app is not opened inside Nimiq Pay.
-- Phase 1 must not request accounts, sign messages, send NIM, or trigger any sensitive wallet operation.
-- UI wording must clearly distinguish simulated allowance movement from real Nimiq wallet activity.
+- Phase 1 may include explicit, user-triggered Nimiq testnet status or pocket experiments.
+- Phase 1 must not trigger mainnet value movement, uncontrolled signing, uncontrolled sending, checkout, or broad wallet permission.
+- UI wording must clearly distinguish local fallback, testnet pocket value, Bot Attention, and any future real Nimiq wallet activity.
 
 ### Rule / Allowance
 
-- The app must display the active user rule in concise language.
-- The MVP rule must include a helper name, allowance/envelope name, max cost per action, and allowed tool category.
-- The app must represent the rule boundary visually as an approval gate.
-- The app must distinguish allowed, approval-required, and blocked actions.
-- The language should use simple terms such as **rule**, **allowance**, **helper**, **approval**, and **receipt** before introducing advanced terms like mandate or policy.
-- The UI must communicate that the helper has limited pocket money, not full wallet access.
+- The app must display the active goal and resource constraints in concise language.
+- The MVP rules must include allowed move types, Bot Attention costs, context-slot limits, and blocked actions.
+- The app must distinguish approved, redirected, and blocked moves.
+- The language should use simple terms such as **goal**, **attention**, **pocket**, **context**, **guidance**, and **trace** before introducing advanced terms like policy or mandate.
+- The UI must communicate that the helper has limited Bot Attention and no broad wallet access.
 
-### Prepaid Allowance / Budget Envelope
+### Bot Attention / Nimiq Pocket
 
-- The app must show one visible prepaid allowance named **AI Tools**.
-- The allowance must have a simulated NIM balance.
-- The balance must decrease only after an approved action executes.
-- The UI must show remaining allowance after each executed action.
-- The allowance should be visually represented as a pouch, pocket, backpack, or small fund controlled by the user.
+- The app must show one visible Bot Attention budget.
+- Bot Attention must decrease only after an approved move executes.
+- The UI must show remaining Bot Attention after each executed move.
+- The app must show one visible Nimiq Pocket meter using local fallback and/or testnet status.
+- Nimiq Pocket must be visually separate from Bot Attention.
+- Nimiq Pocket should be represented as a pouch, pocket, backpack, or small fund controlled by the user.
+- Phase 1 must frame Nimiq Pocket as collectible/testnet/recharge potential, not as broad wallet access.
 
-### Need Navigation / Spending Strategy
+### Need Navigation / Resource Strategy
 
-- A helper's paid-resource decision is not trivial.
-- Later phases must capture why the helper thinks a paid route is useful.
-- A future proposal should explain:
+- A helper's resource decision is not trivial.
+- Phase 1 must capture why the helper thinks a move is useful.
+- A proposal should explain:
   - why this route,
-  - why this tool,
-  - why this cost,
-  - what free or basic alternative was considered,
+  - why this move,
+  - what resource it spends,
+  - what cheaper or safer alternative was considered,
   - what uncertainty remains,
   - when the helper will stop,
-  - what result or receipt will remain.
-- Phase 1 may keep this as simple static rationale text.
+  - what trace will remain.
 - Spending must remain bounded even when the helper's rationale sounds plausible.
 
 ### On-Chain Traffic / Pocket Funding
 
 - Pocket Bot should not create meaningless transactions only for traffic.
-- The natural future Nimiq on-chain action is funding the bot's pocket allowance.
+- The natural future Nimiq on-chain action is funding or collecting pocket value that can recharge Bot Attention or unlock helper capacity.
 - In later phases, this means:
   - a Nimiq wallet action funds the pocket,
-  - the pocket allowance increases,
-  - the bot can act only inside that allowance,
-  - receipts distinguish top-up events from helper spend events.
-- For Phase 1, pocket funding is simulated only.
+  - the pocket value increases,
+  - the bot can convert value into attention or capacity only inside visible rules,
+  - traces distinguish top-up/recharge events from bot actions.
+- For Phase 1, Nimiq pocket activity may use local fallback or explicit testnet only.
 
 ### Robot Helper
 
 - The app must show one robot helper, provisionally named **Pocket Bot**.
-- The robot must be presented as a personal helper acting under user rules.
-- The robot must be able to enter or approach the action flow in the scene.
-- The robot must present a concrete action proposal to the user or system.
+- The robot must be presented as a personal helper learning the user's judgment.
+- The robot must be able to move through or select nodes in the lossy map.
+- The robot must present a concrete move proposal to the user or system.
 
-### Paid Helper Tool Stall
+### Lossy Map
 
-- The scene must include one paid helper tool stall.
-- The initial stall should represent **Tool Scout** or a similar approved paid helper tool.
-- The stall must have a visible cost in simulated NIM.
-- The stall must be treated as a paid service, not as a generic collectible.
+- The scene must include one small lossy map.
+- The map must include fog or hidden information.
+- The map must include at least one ambiguous route or tempting shortcut.
+- The map must include at least one clue/inspect node.
+- The map must include at least one goal node.
+- The map must include at least one pocket/recharge or Nimiq-value marker.
+- The map must be small enough for a short competition demo.
 
-### Approval Gate
+### LLM Proposal Gate
 
-- The gate must check the proposal against the active rules and allowance.
-- The gate must provide one of three decisions: auto-approved, needs approval, or rejected/blocked.
-- For the initial happy path, Tool Scout at 0.4 NIM should pass the max-per-action and approved-tool checks.
-- A request to complete checkout or enter payment information must be blocked in the MVP.
-- If user approval is required in a scenario, the UI must provide approve and reject choices.
+- The LLM must return a structured move proposal.
+- The proposal must be schema-validated before entering game state.
+- Deterministic resource rules must check the proposal against active resources and blocked actions.
+- The gate must provide one of three outcomes: approved/available, redirected by user, or rejected/blocked.
+- A request to complete checkout, enter payment information, access broad wallet authority, or call an unbounded external service must be blocked in the MVP.
+- If user approval or correction is required, the UI must provide clear guidance choices.
 
 ### Execution
 
-- An approved action must execute in a visible way.
-- Execution may be represented by the robot moving through the gate, visiting the stall, or triggering a small scene event.
-- Execution must create a receipt.
+- An approved move must execute in a visible way.
+- Execution may be represented by the robot moving to a node, revealing fog, filling a context slot, or updating the goal path.
+- Execution must create a trace card.
 
-### Receipts
+### Trace Cards
 
-- Every executed spend/action must create a receipt card.
-- Each receipt must include tool, cost, allowance/envelope, rule result, reason, decision, and outcome.
-- Receipts must appear in or near the receipt archive.
-- The user must be able to inspect the latest receipt.
-- The MVP baseline does not require training feedback or receipt classification UI.
-- A Phase 1 stretch or later Phase 2A training layer may allow the user to classify a receipt as one of:
-  - looks right,
-  - wrong category,
-  - should have asked,
-  - block this tool next time.
+- Every executed move must create a trace card.
+- Each trace card must include proposal, accepted move, resource spend, user guidance, revealed information, rule result, session lesson if any, and outcome.
+- Trace cards must appear in or near the trace archive.
+- The user must be able to inspect the latest trace.
+- Receipt cards remain useful for later money-like actions, but traces are the primary Phase 1 history surface.
 
 ### Trace
 
 - The app must preserve enough visible state for the user to understand what happened.
 - The MVP can keep trace data in memory.
-- The receipt archive is the primary trace surface for the first milestone.
+- The trace archive is the primary history surface for the first milestone.
 
 ## 11. Non-Functional Requirements
 
@@ -454,7 +481,7 @@ Future-facing placeholder for Phase 2A/2B. Phase 1 may store simple rationale te
 
 ### TrainingFeedback
 
-Future-facing placeholder for Phase 2A. Phase 1 does not implement real learning, rewards, or preference updates.
+Future-facing placeholder for persistent memory and skill training. Phase 1 may create session-only lessons from user correction, but it does not implement durable memory, rewards, or autonomous model improvement.
 
 - `userJudgment`
 - `correction`
@@ -462,7 +489,7 @@ Future-facing placeholder for Phase 2A. Phase 1 does not implement real learning
 
 ### AllowanceFundingEvent
 
-Future-facing placeholder for wallet-funded pocket top-ups. Phase 1 simulates the initial allowance and does not create real on-chain traffic.
+Future-facing placeholder for wallet-funded pocket top-ups. Phase 1 may show local fallback or explicit Nimiq testnet pocket value, but mainnet funding and real-value top-ups belong to later phases.
 
 - `id`
 - `allowanceId`
@@ -479,23 +506,27 @@ Scene name: **Pocket Bot Workshop**
 
 Required scene areas:
 
-- **Workshop start:** the robot begins here.
-- **Allowance pocket area:** shows the current allowance and remaining balance.
-- **Tool stall:** represents the paid helper service.
-- **Approval gate:** checks whether the proposed action can proceed.
-- **Receipt archive:** stores the generated receipt card.
-- **UI overlay:** displays allowance, user rule, proposal, and decision state.
+- **Start / goal area:** the robot begins with a selected goal.
+- **Lossy map area:** small RPG-style map with fog, ambiguous paths, hidden assumptions, and a goal node.
+- **Bot Attention meter:** shows thinking/action energy available for moves.
+- **Nimiq Pocket area:** shows local fallback or testnet pocket value as collectible/recharge potential.
+- **Context slot area:** shows what the bot can keep in short-term memory during the run.
+- **User guidance controls:** approve, redirect, ask for cheaper route, inspect first, remember, forget, or skip.
+- **Trace archive:** stores trace cards for proposals, user guidance, resource spend, reveals, and lessons.
+- **UI overlay:** displays current goal, resources, LLM proposal, deterministic rule result, session lesson, and trace state.
 
 Minimum first loop:
 
-1. Scene loads with Pocket Bot, AI Tools allowance, Tool Scout stall, approval gate, and receipt archive.
-2. UI shows the user rule and AI Tools allowance balance.
-3. Pocket Bot proposes using Tool Scout for 0.4 NIM to prepare a reviewable result draft.
-4. Gate checks approved tool, cost threshold, allowance balance, and no-checkout boundary.
-5. Action is auto-approved or presented for approval depending on the selected first milestone behavior.
-6. On execution, balance decreases by 0.4 NIM.
-7. A receipt card appears in the receipt archive.
-8. User can inspect the receipt.
+1. Scene loads with Pocket Bot, a small lossy map, Bot Attention, Nimiq Pocket, Context Capacity, and trace archive.
+2. User sees or selects a goal.
+3. Pocket Bot requests an LLM-backed structured move proposal through a server-side relay, or uses the offline/mock fallback.
+4. Deterministic resource rules validate the proposal and show the cost.
+5. User approves, redirects, or corrects the proposal.
+6. Accepted move spends Bot Attention or another visible resource.
+7. Map state changes by revealing information, preserving uncertainty, or advancing toward the goal.
+8. Trace card records the move, user guidance, resource spend, and outcome.
+9. User correction creates a session lesson.
+10. Later proposal reflects the session lesson within the same run.
 
 ## 16. Acceptance Criteria For The First Milestone
 
@@ -504,60 +535,66 @@ The first milestone is complete when:
 - The app runs locally through the existing Vite workflow.
 - The app is structured for Nimiq Mini App framework compatibility while preserving local browser development.
 - The first visible scene is Pocket Bot Workshop or an intentionally renamed equivalent.
-- The scene includes the robot, allowance pocket, paid helper tool stall, approval gate, receipt archive, and UI overlay.
-- The user rule is visible in the UI.
-- The UI clearly communicates that the helper has a limited allowance, not full wallet access.
-- The user can trigger or observe a proposal for Tool Scout costing 0.4 NIM.
-- The rule check evaluates tool approval, max cost per action, allowance balance, and the no-checkout boundary.
-- The action produces a clear decision: auto-approved, needs approval, or blocked.
-- Approved execution reduces the AI Tools allowance balance.
-- Execution creates a receipt card with the required receipt fields.
-- The latest receipt can be inspected.
-- No real Nimiq provider wallet operation, wallet payment, or payment action occurs.
-- No real learning, real LLM route proposal, backend, x402 flow, or training reward occurs.
+- The scene includes the robot, lossy map, Bot Attention meter, Nimiq Pocket area, Context Capacity, guidance controls, trace archive, and UI overlay.
+- The current goal and resource state are visible.
+- The UI clearly communicates that the helper spends limited Bot Attention and does not receive broad wallet access.
+- The bot can request or display a structured LLM route proposal through a backend relay or safe mock fallback.
+- Browser client code does not contain provider API keys.
+- Deterministic resource rules validate the proposal before game state changes.
+- The user can approve, redirect, or correct the bot's proposed move.
+- Accepted moves spend Bot Attention and update map state.
+- At least one hidden assumption or clue can be revealed.
+- A trace card records proposal, user guidance, resource spend, revealed information, and outcome.
+- A user correction creates a session lesson.
+- A later proposal reflects the session lesson without persistent storage.
+- Nimiq Pocket value is visible as local fallback and/or testnet pocket value.
+- No Nimiq mainnet value, uncontrolled wallet operation, checkout, x402 flow, persistent memory, real paid external service, or autonomous spending occurs.
 - Existing Phaser/Vite foundation remains intact.
-- The wording and UI framing emphasize user control, prepaid allowances, and independent individuals.
+- The wording and UI framing emphasize user control, Bot Attention, Nimiq pocket value, and independent individuals.
 
 ## 17. Open Questions
 
-- Should the first playable loop be user-triggered by keyboard/controller input, UI button input, or automatic scene progression?
-- Should the first milestone use auto-approval only, or include an explicit approval choice for the happy path?
-- What initial AI Tools allowance balance should be shown?
-- Should the robot movement remain side-scroller style, or shift toward a top-down workshop layout?
+- Which Phaser-compatible RPG/tilemap workflow should Phase 1 use: Phaser-native tilemaps, Tiled, LDtk, or another Vite-friendly option?
+- Should the first loop use keyboard/controller movement, node-click movement, UI button input, or a hybrid?
+- What exact low-cost GPT model should be selected at implementation time based on current official model and pricing docs?
+- Should the LLM relay live in this repo as a small server function, or in a separate deployment target?
+- What first task goal best communicates "messy, lossy environment" in a short competition demo?
+- How much Bot Attention should the first run provide?
+- What is the first Nimiq testnet pocket interaction: status only, collectible value, or explicit testnet top-up/recharge?
 - Should `src/scenes/Street.js` be renamed later, or should a new Pocket Bot Workshop scene be added and wired as the active scene?
-- What visual style should be used for the robot, allowance pocket, tool stall, gate, and receipt archive before final art exists?
-- How explicit should the simulated nature of NIM payments be in the first UI?
-- What exact Mini App SDK setup and Nimiq Pay local test flow should PB-004 include?
-- Which Nimiq Mini App SDK wallet APIs should be targeted in a later wallet milestone?
-- Should the later real-product path target AI API usage, paid web tools, Nimiq-native mini app services, or another type of helper action first?
-- Which later compatibility route should be explored first: EVM-token x402 adapter via Nimiq Pay where available, native Nimiq bridge/facilitator, or backend gateway for paid API/tool calls?
+- What visual style should be used for the robot, fog, map nodes, pocket, context slots, and trace archive before final art exists?
+- How explicit should local fallback vs Nimiq testnet pocket value be in the first UI?
 
 ## 18. Suggested Next Implementation Steps
 
 Recommended next task:
 
-1. Continue with PB-004: add the Pocket Bot Workshop scene shell.
-2. Add a small Mini App environment adapter or equivalent local fallback boundary if PB-004 needs framework access.
-3. Preserve `src/scenes/Street.js` as a reference prototype.
-4. Wire `PocketBotWorkshop` as the active scene only when it can show the Phase 1 entities.
-5. Add a simple overlay for allowance, rule, proposal, and decision state.
-6. Use the existing domain modules for rule, allowance, proposal, spend execution, and receipt data.
-7. Run `npm run test`, `npm run build`, and browser/manual scene checks, including a Mini App compatibility check when available.
+1. PB-005: choose and document the Phaser-compatible RPG/tilemap workflow.
+2. PB-006: implement the core resource model for Bot Attention, Nimiq Pocket, User Attention prompts, and Context Capacity.
+3. PB-007: add the LLM route-proposal bridge with schema validation, server-side API-key boundary, and offline/mock fallback.
+4. PB-008: create the first lossy map scenario.
+5. PB-009: connect user guidance controls to validated bot moves.
+6. PB-010: add one session lesson that affects a later proposal.
+7. PB-011: generalize receipts into trace cards.
+8. PB-012: integrate Nimiq testnet pocket/status without mainnet or broad wallet authority.
+9. Run `npm run test`, `npm run build`, and browser/manual scene checks, including a Mini App/testnet compatibility check when available.
 
-Future ideas after MVP:
+Future ideas after Phase 1:
 
 - multiple robot helpers,
-- multiple allowances,
-- scripted training route choices,
-- receipt/user feedback training loop,
+- multiple maps,
+- persistent memory,
+- skill unlocks,
+- trained real-world task bridges,
+- richer Nimiq pocket recharge loops,
+- paid-resource governance as one application,
 - trust levels,
-- simulated spending mode,
-- Nimiq testnet integration,
+- Nimiq mainnet readiness after risk review,
 - real payment request flow,
-- wallet-funded prepaid allowance,
-- real Nimiq provider wallet operations,
+- wallet-funded Bot Attention recharge,
 - helper action replay,
-- receipt sorting mini-game,
-- simple rule editor,
-- exportable personal receipt history,
-- backend gateway for real paid API/tool calls.
+- trace sorting/review mini-game,
+- simple preference editor,
+- exportable personal trace history,
+- backend gateway for real paid API/tool calls,
+- x402-like adapter experiments.

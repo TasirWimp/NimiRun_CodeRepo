@@ -2,81 +2,86 @@
 
 ## One-Line Pitch
 
-Independent individuals should be able to tell their bot how much it may spend, what it may spend on, when it must ask first, and what receipt it must leave behind.
+Train your bot to spend attention wisely.
 
 ## Short Pitch
 
-Pocket Bot is a playful Nimiq mini app where independent individuals train a software helper to navigate paid resources under a bounded allowance.
+Pocket Bot is a playful Nimiq mini app where users guide a software helper through messy, lossy task landscapes. The bot has limited attention, limited context, and a small Nimiq pocket. The player teaches it when to inspect, ask, remember, skip, or act.
 
-Pocket Bot is a playful Nimiq mini app exploring self-custodied prepaid allowances for software helpers. Instead of giving a bot broad wallet access, the user gives it a small allowance, sets simple rules, and reviews every paid action through clear receipts.
+Pocket Bot turns user-bot alignment into a small RPG-style game: the bot proposes a move, the player redirects or approves it, resources are spent, hidden assumptions are revealed, and trace cards show what the bot learned during the run.
 
-Pocket Bot is a playful Nimiq mini app where users train a software helper to navigate paid resources. The helper starts with a small allowance, proposes when spending might help, and every paid action must explain why it is worth trying, when it will stop, and what receipt it leaves behind.
+Nimiq is the value carrier. Pocket money can be collected, topped up on testnet, or later converted into Bot Attention. Bot Attention is the resource the helper spends while trying to reach a goal.
 
 ## Competition Framing
 
-Nimiq stands for universal money for independent individuals. Pocket Bot extends that idea into a future where software helpers may request paid tools, APIs, content, compute, or services.
+Nimiq stands for universal money for independent individuals. Pocket Bot extends that idea into a future where independent individuals train their own software helpers, instead of granting opaque systems broad authority.
 
-The competition prototype should use the Nimiq Mini App framework: a Phaser/Vite web app that can run inside Nimiq Pay's Mini App WebView while keeping Phase 1 wallet and payment behavior simulated.
+The competition prototype should use the Nimiq Mini App framework: a Phaser/Vite web app that can run inside Nimiq Pay's Mini App WebView while preserving local browser development.
 
-The project asks what a safe user interface should look like before that kind of spending becomes common.
+Phase 1 should be a playable mini game, not a policy dashboard. The user sees a compact 2D RPG-like map, a bot, attention/resource meters, ambiguous paths, and trace cards. A low-cost GPT model can propose the bot's next move through a safe backend relay, while deterministic game rules decide what is legal and what it costs.
 
-Pocket Bot explores how Nimiq can carry value through the training loop: allowance becomes interaction, interaction becomes experience, experience becomes better paid-resource judgment.
+The project asks:
 
-Users do not merely want a bot that follows literal instructions. They want a helper that learns what they need, and what they need often emerges during exploration. Pocket Bot turns that exploration into a visible training loop.
+> Can a Mini App make the process of training a helper's judgment playful, visible, and user-controlled?
 
-## Nimiq + x402 Framing
+## Product Promise
+
+Train your bot's attention. Keep control of the pocket.
+
+## What Phase 1 Demonstrates
+
+- a small lossy task map,
+- a bot with limited Bot Attention,
+- Nimiq Pocket value as collectible/testnet/recharge potential,
+- context slots as limited working memory,
+- an LLM-backed structured move proposal,
+- user guidance that corrects the bot,
+- one session-only lesson applied later in the same run,
+- trace cards that show resource spend, revealed information, guidance, and lesson application.
+
+## Why It Matters
+
+Real tasks are messy. Good helpers must navigate incomplete information, hidden assumptions, ambiguous routes, and limited resources. The hard product problem is not only whether a bot may spend money. The deeper problem is whether the bot can learn how this user wants scarce resources spent on the path to a goal.
+
+Pocket Bot makes that judgment problem playable:
+
+- spend Bot Attention to inspect,
+- ask the user when ambiguity matters,
+- remember only what fits,
+- conserve resources when a route looks wasteful,
+- use Nimiq pocket value as the visible value/recharge layer,
+- record what happened so the user can inspect and correct it.
+
+The long-term value path is:
+
+```text
+user plays and guides the bot
+-> bot spends attention on uncertain choices
+-> user feedback directs that attention toward useful judgment
+-> Nimiq pocket money powers or rewards attention
+-> traces become memory and skills
+-> trained bot applies user preferences to real-world tasks
+```
+
+## Nimiq Framing
 
 The clearest architecture is:
 
 ```text
 Nimiq Pay / Nimiq wallet
-  = user custody, approval, and independent-individual trust surface
+  = user custody, testnet pocket value, approval, and independent-individual trust surface
 
 Pocket Bot
-  = allowance, rule gate, approval logic, receipt, and review
+  = attention economy, map/game loop, user guidance, resource rules, trace cards, and later memory
 
-x402-like paid services
-  = APIs, tools, content, compute, or helper services that request payment per use
+LLM / tools / APIs
+  = attention-consuming resources the bot may use under user-controlled limits
 ```
 
-Pocket Bot does not claim that native NIM already works with every x402 service. Instead, it explores the user-facing layer that would be needed if Nimiq Pay, EVM-compatible wallet access, supported tokens, or future Nimiq-native bridges connect users to x402-like paid resources.
-
-## Product Promise
-
-Give your helper pocket money, not your wallet.
-
-## What The MVP Demonstrates
-
-- a small simulated NIM allowance,
-- a bot that proposes one paid helper-tool action,
-- a visible rule gate,
-- approval, auto-approval, or blocking,
-- and a receipt that explains what happened.
-
-## Why It Matters
-
-If bots can pay for APIs and tools, the missing user experience is not simply a payment button. The missing user experience is control:
-
-- how much may the helper spend,
-- on what kind of resource,
-- under which rule,
-- when must it ask,
-- and what proof remains afterward?
-
-Pocket Bot turns that future infrastructure question into a small playable prototype.
-
-The long-term value path is:
-
-```text
-NIM allowance / sponsor value
--> user training interaction
--> bot experience traces
--> better paid-resource judgment
--> future user benefit
-```
-
-A strong Nimiq path should eventually create meaningful wallet use and on-chain activity. Pocket Bot's natural on-chain action is funding the bot's pocket allowance, not random transaction spam. The MVP simulates this.
+Pocket Bot should not create meaningless transactions for its own sake. The natural Nimiq action is funding or collecting pocket value that can recharge Bot Attention or unlock later helper capacity. Phase 1 can use testnet or local fallback value to avoid real high-stake exposure.
 
 ## Boundary
 
-Pocket Bot is not claiming that the full payment infrastructure is mature today. The MVP is a Mini App-compatible interaction prototype. Real NIM rewards, real wallet-funded allowances, sensitive provider operations, live helper-tool payments, real LLM route proposals, x402-style service calls, and backend gateway integration belong to later milestones.
+Phase 1 may use a real LLM API through a backend relay because the bot's move proposals are part of the playable interaction. API keys must not live in the browser client, and LLM output must be validated before it affects game state.
+
+Phase 1 does not include persistent memory, mainnet value, real paid external-service execution, checkout, x402, broad wallet access, real-value rewards, or autonomous spending. Persistent memory and real-world task bridges belong to later phases.
