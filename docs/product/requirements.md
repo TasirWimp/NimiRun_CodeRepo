@@ -620,8 +620,9 @@ Recommended next task:
 10. PB-012: close the NIM/USDT support path inside the Nimiq pocket surface.
 11. PB-POLISH: finish the 60-second judge path.
 12. PB-MARKET: prepare submission materials and record external feedback.
-8. PB-012: integrate Nimiq testnet pocket/status without mainnet or broad wallet authority.
-9. Run `npm run test`, `npm run build`, and browser/manual scene checks, including a Mini App/testnet compatibility check when available.
+
+Run `npm run test`, `npm run build`, and browser/manual scene checks for source
+changes, including a Mini App/testnet compatibility check when available.
 
 Future ideas after Phase 1:
 
