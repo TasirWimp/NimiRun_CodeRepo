@@ -49,6 +49,33 @@ Phase 1 may use real LLM API calls through a small server-side relay. API keys m
 
 Phase 1 may use Nimiq testnet for wallet/status/top-up experiments because testnet avoids real high-stake value exposure. Phase 1 must not use mainnet value, uncontrolled payments, checkout, real paid external services, x402, rewards, persistent user profiling, or autonomous spending.
 
+## Competition Delivery Floor
+
+The competition should constrain delivery quality without becoming the product's
+north star. Pocket Bot should stay on the CRPM path: resource judgment in lossy
+environments, trace, residue, re-entry, and safe/partial/false finish
+discipline. The competition adds a floor for what must be shippable:
+
+```text
+Competition = working, polished, first-try Mini App surface.
+CRPM = product spine and originality.
+```
+
+Do not flatten the project into a generic wallet game to chase points. Do not
+ignore the competition basics either. Before submission, the app must have:
+
+- a working Nimiq Pay Mini Apps Framework path,
+- a documented NIM/USDT support decision and smallest meaningful integration,
+- no hardcoded private keys, API secrets, or sensitive credentials,
+- public, attributed, MIT-licensed code,
+- mobile-first first impression and under-60-second first-use path,
+- one polished vertical slice of the Pocket Bot loop,
+- a short submission story, screenshots, and optional demo walkthrough.
+
+Internal Phase 1 readiness and competition submission readiness are related but
+not identical. If NIM/USDT support or first-try usability is missing, the CRPM
+demo may still be useful, but the submission should be marked blocked.
+
 ## Source Documents
 
 - Product requirements: `docs/product/requirements.md`
@@ -75,6 +102,7 @@ This work should be retained as supporting infrastructure. It becomes one possib
 
 Next work should pivot to the playable user-bot interaction loop:
 
+- competition compliance floor,
 - RPG-style map/tooling decision,
 - resource model,
 - LLM route-proposal bridge,
@@ -400,6 +428,46 @@ Keep as supporting groundwork for the Nimiq Pocket resource.
 Status: implemented from the earlier allowance-control cut.
 
 Keep the scene but evolve it into the playable resource-navigation map.
+
+### PB-004A Competition Compliance Floor
+
+Goal:
+
+Add a small competition-readiness gate without letting the scoring rubric
+override the CRPM-centered product spine.
+
+User-visible behavior:
+
+No new game mechanic is required in this slice. It makes sure the app has a
+credible path to a working Mini App submission: first-try usability, Nimiq Pay
+integration, NIM/USDT support decision, source attribution, no secrets, and
+clear submission story.
+
+Expected files:
+
+- `docs/planning/mvp_implementation_plan.md`
+- `docs/product/requirements.md`
+- `docs/product/source_attribution.md`
+- `docs/testing/test_strategy.md`
+- optional `README.md` competition-readiness checklist if submission docs are being prepared
+
+Test plan:
+
+- confirm competition scoring, rules, FAQ, and Mini Apps docs are listed in source attribution,
+- decide whether the first submission targets NIM, USDT, or both,
+- document the smallest meaningful Nimiq Pay integration that preserves the resource-judgment game,
+- confirm no browser-visible API key, private key, seed, or sensitive credential exists,
+- confirm public repo and MIT license readiness,
+- define the under-60-second first-use path,
+- define the one polished vertical slice to demo,
+- list any competition blocker separately from internal Phase 1 blockers.
+
+Acceptance:
+
+- the plan distinguishes competition delivery floor from CRPM product spine,
+- Nimiq integration is not postponed into an undefined late risk,
+- competition readiness has explicit pass/block criteria,
+- the project does not pivot into a generic wallet/payment game.
 
 ### PB-005 RPG Map Tooling And Scene Direction
 
@@ -794,7 +862,10 @@ Acceptance:
 
 Goal:
 
-Connect the Nimiq Mini App/testnet surface to the resource game without introducing real-value risk.
+Connect the Nimiq Mini App/testnet surface to the resource game without turning
+the app into a payment dashboard. For competition submission, this slice must
+also close the earlier NIM/USDT support decision or explicitly mark submission
+readiness blocked.
 
 User-visible behavior:
 
@@ -834,10 +905,52 @@ Test plan:
 Acceptance:
 
 - Nimiq testnet is integrated as low-stakes value surface,
+- the chosen NIM/USDT support path is implemented or submission readiness is marked blocked,
 - pocket money can be shown as collectible or recharge potential,
 - pocket value never masks Bot Attention scarcity,
 - the bot still spends Bot Attention on moves,
 - wallet access never grants broad bot authority.
+
+### PB-POLISH Submission Vertical Slice
+
+Goal:
+
+Make one complete Pocket Bot loop feel polished, mobile-readable, and
+competition-testable without expanding into a full RPG.
+
+User-visible behavior:
+
+A new user can open the app and understand the loop in about 60 seconds:
+goal, map, bot proposal, approve/correct, attention spend, reveal, residue,
+trace card, and finish status. Nimiq pocket value is visibly connected to
+control and trace, not just branding.
+
+Expected files:
+
+- `src/scenes/PocketBotWorkshop.js`
+- `src/ui/`
+- `README.md`
+- `docs/product/pitch.md`
+- `docs/product/source_attribution.md`
+- optional screenshots or demo assets under an attributed asset location
+
+Test plan:
+
+- mobile viewport/browser check for first impression, layout, and readable text,
+- first-use path takes about 60 seconds without reading external instructions,
+- one complete loop can be demonstrated from reset,
+- trace card is readable on mobile,
+- Nimiq pocket is visible and meaningful without masking Bot Attention,
+- final status is safe/partial/false/open, not vague success,
+- README/submission description explains what the app does, who it is for, and how it uses Nimiq Pay,
+- screenshots/demo assets are attributed if used.
+
+Acceptance:
+
+- one vertical slice is polished enough for early access feedback,
+- the CRPM path remains visible through mechanics, not jargon,
+- submission story and demo materials explain the binding-layer idea in plain language,
+- marketing/distribution work supports the product rather than distorting it.
 
 ## Milestone Sequence
 
@@ -850,17 +963,21 @@ Implemented groundwork:
 
 Revised next sequence:
 
-5. PB-005 RPG Map Tooling And Scene Direction.
-6. PB-006 Core Resource Model.
-7. PB-006A Run Session And Transition Runtime.
-8. PB-007 LLM Route Proposal Bridge.
-9. PB-008 Lossy Map Scenario.
-10. PB-009 User-Bot Guidance Loop.
-11. PB-010 Session Lesson Application.
+5. PB-004A Competition Compliance Floor.
+6. PB-005 RPG Map Tooling And Scene Direction.
+7. PB-006 Core Resource Model.
+8. PB-006A Run Session And Transition Runtime.
+9. PB-007 LLM Route Proposal Bridge.
+10. PB-008 Lossy Map Scenario.
+11. PB-009 User-Bot Guidance Loop.
 12. PB-011 Trace Cards.
-13. PB-012 Nimiq Testnet Pocket.
+13. PB-010 Session Lesson Application.
+14. PB-012 Nimiq Testnet Pocket.
+15. PB-POLISH Submission Vertical Slice.
 
-This order gets the game surface and resource rules clear before deeper Nimiq testnet behavior, while still adding LLM support early enough to shape the playable loop.
+This order keeps CRPM/resource-judgment mechanics as the spine, pulls
+competition blockers forward, and leaves polish/submission work as a focused
+vertical-slice pass rather than a product pivot.
 
 ## Next Commit Recommendation
 
@@ -880,6 +997,10 @@ feat: choose rpg map workflow for pocket bot
   **Control:** keep the first map small: one goal, a few nodes, one lesson, one pocket/recharge element.
 - **Risk:** Nimiq pocket money overshadows Bot Attention.
   **Control:** treat Nimiq as value/recharge layer; Bot Attention is the resource spent on task navigation.
+- **Risk:** The competition rubric pushes the app into a generic wallet/payment game.
+  **Control:** treat competition requirements as a delivery floor; keep the playable loop centered on attention, residue, trace, and finish judgment.
+- **Risk:** The app is internally playable but not competition-ready.
+  **Control:** track submission blockers separately, especially NIM/USDT support, Mini App framework compliance, first-try usability, and source attribution.
 - **Risk:** Testnet wallet connection is confused with spend permission.
   **Control:** testnet interactions are explicit, user-triggered, and never grant broad bot authority.
 - **Risk:** Persistent-memory claims appear too early.
@@ -925,4 +1046,6 @@ The revised Phase 1 implementation plan is complete when:
 - trace cards show resource spend, revealed information, suppressed/not-checked information, residue carried forward, user guidance, and lesson application,
 - the final run state distinguishes safe finish, partial finish, false finish, and open run,
 - Nimiq testnet/local fallback pocket status is visible without mainnet risk,
+- competition submission readiness has no unresolved Mini App framework, NIM/USDT support, no-secrets, attribution, license, or first-try usability blocker,
+- one polished vertical slice can be explained in a short submission description and optional demo walkthrough,
 - no persistent memory, mainnet spend, x402 flow, real paid external service, checkout, or autonomous spending exists.

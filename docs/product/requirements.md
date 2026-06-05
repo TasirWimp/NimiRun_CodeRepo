@@ -57,7 +57,26 @@ The competition-relevant idea is that Nimiq can provide the wallet and value lay
 
 As of the public competition guidance on June 3, 2026, Pocket Bot must use the Nimiq Mini App framework. The Phaser/Vite app should be built as a web app that can run inside Nimiq Pay's Mini App WebView, with Nimiq provider access isolated behind a small adapter when it is introduced.
 
-For the MVP, wallet and payment behavior remain simulated. Mini App framework compatibility belongs in Phase 1; real Nimiq account access, signing, testnet/mainnet transactions, wallet-funded allowances, or payment request execution belong to later milestones.
+For the internal CRPM/resource-judgment MVP, wallet and payment behavior may
+remain simulated while Mini App framework compatibility is established. For
+competition submission readiness, the project must separately close the
+smallest safe Nimiq Pay integration path and NIM/USDT support decision without
+granting broad wallet authority or turning the app into a payment dashboard.
+
+Competition delivery should be treated as a floor, not the product's north
+star. Pocket Bot should remain a CRPM-shaped resource-judgment game, but it
+must not ignore competition basics:
+
+- usable on first try by a real person,
+- touch-friendly and understandable within about 60 seconds,
+- built on the Nimiq Pay Mini Apps Framework,
+- no hardcoded private keys, API secrets, or sensitive credentials,
+- public, attributed, MIT-licensed code,
+- a clear decision and implementation path for meaningful Nimiq Pay integration
+  with NIM or USDT support before submission.
+
+If NIM/USDT support is not implemented yet, the app may still be a useful
+internal Phase 1 demo, but it should not be treated as competition-ready.
 
 Because this is a competition prototype, non-standard resources and design
 sources must be explicitly attributed. The source register is
@@ -559,6 +578,7 @@ The first milestone is complete when:
 - A user correction creates a session lesson.
 - A later proposal reflects the session lesson without persistent storage.
 - Nimiq Pocket value is visible as local fallback and/or testnet pocket value.
+- Competition submission readiness includes a documented NIM/USDT support path and meaningful Nimiq Pay integration, or is explicitly marked blocked.
 - No Nimiq mainnet value, uncontrolled wallet operation, checkout, x402 flow, persistent memory, real paid external service, or autonomous spending occurs.
 - Existing Phaser/Vite foundation remains intact.
 - Non-standard implementation resources, design sources, local source repos, model/API sources, and generated assets used by the prototype are listed in `docs/product/source_attribution.md`.
@@ -581,13 +601,15 @@ The first milestone is complete when:
 
 Recommended next task:
 
-1. PB-005: choose and document the Phaser-compatible RPG/tilemap workflow.
-2. PB-006: implement the core resource model for Bot Attention, Nimiq Pocket, User Attention prompts, and Context Capacity.
-3. PB-007: add the LLM route-proposal bridge with schema validation, server-side API-key boundary, and offline/mock fallback.
-4. PB-008: create the first lossy map scenario.
-5. PB-009: connect user guidance controls to validated bot moves.
-6. PB-010: add one session lesson that affects a later proposal.
-7. PB-011: generalize receipts into trace cards.
+1. PB-004A: document the competition compliance floor and NIM/USDT support decision.
+2. PB-005: choose and document the Phaser-compatible RPG/tilemap workflow.
+3. PB-006: implement the core resource model for Bot Attention, Nimiq Pocket, User Attention prompts, and Context Capacity.
+4. PB-006A: implement the run-session / transition-gate / carrier / finish-judgment runtime.
+5. PB-007: add the LLM route-proposal bridge with schema validation, server-side API-key boundary, and offline/mock fallback.
+6. PB-008: create the first lossy map scenario.
+7. PB-009: connect user guidance controls to validated bot moves.
+8. PB-011: generalize receipts into trace cards.
+9. PB-010: add one session lesson that affects a later proposal.
 8. PB-012: integrate Nimiq testnet pocket/status without mainnet or broad wallet authority.
 9. Run `npm run test`, `npm run build`, and browser/manual scene checks, including a Mini App/testnet compatibility check when available.
 

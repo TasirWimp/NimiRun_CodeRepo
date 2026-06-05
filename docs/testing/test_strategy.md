@@ -173,10 +173,29 @@ Minimum checks:
 - testnet mode is visually distinct when available,
 - no Phase 1 UI control can trigger mainnet operations,
 - no broad wallet authority is granted to the bot,
+- NIM/USDT support path is implemented or competition submission readiness is explicitly marked blocked,
 - Nimiq Pocket remains visually separate from Bot Attention,
 - when a Nimiq Pay device/emulator path is available, the app can be opened as a Mini App and still reaches the Pocket Bot map scene.
 
 If a Nimiq Pay device/emulator check is not performed, report it as skipped with the reason.
+
+### Competition Delivery Checks
+
+Use these checks before treating the app as competition-ready. They are a
+delivery floor, not a replacement for the CRPM/resource-judgment behavior tests.
+
+Minimum checks:
+
+- app is usable by a new user on first try,
+- first-use path can reach the core loop in about 60 seconds,
+- mobile viewport is readable and touch-friendly,
+- public repo, MIT license, and source attribution are current,
+- no private keys, API secrets, seeds, or sensitive credentials are present,
+- Mini App Framework path is documented and tested or explicitly blocked,
+- NIM/USDT support path is documented and implemented or explicitly blocked,
+- README/submission description explains what the app does, who it is for, and how it uses Nimiq Pay,
+- screenshots, demo video, generated assets, fonts, icons, and copied examples are attributed when used,
+- early-access/community feedback tasks are tracked if entering a competition cycle.
 
 ### Manual Acceptance Checks
 
@@ -435,6 +454,7 @@ Phase 1 should be considered tested enough for the first milestone when:
 - `npm run build` passes,
 - the first scene has at least one browser smoke check,
 - Mini App/testnet compatibility has at least one documented check or skipped check with reason,
+- competition delivery checks have no unresolved blocker if the app is being submitted,
 - manual acceptance checks cover the goal -> lossy map -> LLM proposal -> user guidance -> attention spend -> reveal/outcome -> trace -> session lesson loop,
 - manual acceptance checks include at least one inspect-first correction and one visible remaining-unknown/residue case,
 - final status can distinguish safe finish, partial finish, false finish, and open run,
