@@ -1,8 +1,8 @@
 # Test Strategy
 
-Pocket Bot should use a practical test-driven approach: test resource rules, LLM proposal validation, map state, and trace behavior with fast unit tests, then use build and browser checks to verify Phaser integration.
+Pocket Bot should use a practical test-driven approach: test resource rules, LLM proposal validation, map state, trace behavior, residue carry-forward, and landfall status with fast unit tests, then use build and browser checks to verify Phaser integration.
 
-The first goal is not broad test coverage. The first goal is to keep the core resource-judgment behavior testable outside Phaser scenes.
+The first goal is not broad test coverage. The first goal is to keep the core resource-judgment and source-navigation teaching behavior testable outside Phaser scenes.
 
 ## Current Test State
 
@@ -26,9 +26,13 @@ Implementation plans must describe the intended tests for each feature slice bef
 - If a feature changes product behavior, the tests should describe the user-visible rule being protected.
 - If a test cannot be automated yet, document the manual check and the missing automation.
 - Distinguish logic tests that require no user interaction from interaction checks that prove the user can understand and guide the bot.
-- Treat interaction checks as first-class for scene, UI, control, map navigation, resource meters, and trace inspection.
+- Treat interaction checks as first-class for scene, UI, control, map navigation, resource meters, trace inspection, and final-run status.
 - LLM output must be schema-validated before it can affect game state.
 - The LLM may propose moves, but deterministic resource rules decide legality and cost.
+- Proposals should be tested as compressed path sets: they must name cost, considered alternatives, cut price, remaining residue, and stop condition.
+- Map-node tests should distinguish revealed information from residue that remains unresolved.
+- Trace tests should prove that residue carries into the next proposal context when relevant.
+- Goal arrival should not automatically count as success; tests must distinguish safe finish, partial finish, false finish, and open run.
 
 ## Two Test Tracks
 
@@ -44,8 +48,10 @@ Primary targets:
 - lossy map reveal state,
 - route/action proposal validation,
 - deterministic resource checks,
+- residue and cut-price handling,
 - session lesson creation,
 - trace card creation,
+- final landfall / partial / false-finish classification,
 - LLM route proposal schema validation,
 - relay/client behavior using mocks.
 
@@ -60,11 +66,15 @@ Primary targets:
 - user can see the lossy map and current goal,
 - user can see Bot Attention, Nimiq Pocket, User Attention prompts, and Context Capacity,
 - user can request or receive a bot route proposal,
-- user can approve, redirect, or correct the bot,
+- user can inspect why the bot chose a route,
+- user can see what remains unknown before approving,
+- user can approve, redirect, correct, inspect first, or mark partial finish,
 - accepted moves visibly spend Bot Attention,
-- inspect actions reveal hidden information,
+- inspect actions reveal hidden information while leaving some uncertainty when appropriate,
+- skipped nodes preserve uncertainty as residue,
 - session lessons are visible and applied later in the run,
 - trace cards appear where the user expects them,
+- trace cards make revealed information, remaining residue, and re-entry notes readable,
 - testnet/local Nimiq pocket mode is clear and low-stakes.
 
 Until browser automation exists, interaction checks may be manual or browser-smoke checks. Each check must include a concrete user action and an observable result.
@@ -80,6 +90,7 @@ Primary targets:
 - attention spend checks,
 - context slot capacity and replacement checks,
 - map node reveal and route-state checks,
+- false-landfall and partial-finish classification,
 - proposal schema validation,
 - resource decision generation,
 - trace and session lesson creation,
@@ -113,6 +124,7 @@ Minimum smoke checks:
 - first scene appears,
 - map or placeholder map is visible,
 - Bot Attention and Nimiq Pocket meters are readable,
+- Context Capacity / carrier slots are visible when implemented,
 - basic interaction can trigger the current feature slice,
 - local browser fallback works when Nimiq Pay providers are unavailable,
 - LLM offline/mock fallback state is readable if no relay/API key is configured.
@@ -129,7 +141,9 @@ Minimum checks:
 - malformed proposal is rejected,
 - proposal with unknown move type is rejected,
 - proposal with missing resource cost is rejected,
+- proposal with missing considered alternative, cut price, residue, or stop condition is rejected,
 - proposal cannot request unchecked payment, checkout, or wallet authority,
+- proposal cannot claim that its chosen route proves the whole terrain,
 - browser client calls only the backend relay,
 - relay reads model id and API key from environment,
 - offline/mock mode works without a provider key.
@@ -147,6 +161,7 @@ Minimum checks:
 - testnet mode is visually distinct when available,
 - no Phase 1 UI control can trigger mainnet operations,
 - no broad wallet authority is granted to the bot,
+- Nimiq Pocket remains visually separate from Bot Attention,
 - when a Nimiq Pay device/emulator path is available, the app can be opened as a Mini App and still reaches the Pocket Bot map scene.
 
 If a Nimiq Pay device/emulator check is not performed, report it as skipped with the reason.
@@ -160,12 +175,16 @@ Manual checks must be concrete, for example:
 - start dev server,
 - open the local app,
 - request a bot move proposal,
+- inspect why the bot proposes this route,
+- inspect what remains unknown,
 - approve an inspect move,
 - confirm Bot Attention decreases,
 - confirm a fogged node reveals information,
+- confirm skipped or unresolved information remains visible as residue,
 - correct the bot toward a cheaper/safer route,
 - confirm the later proposal references the session lesson,
-- confirm a trace card records the move and lesson.
+- confirm a trace card records the move, residue, and lesson,
+- confirm final run status distinguishes safe finish, partial finish, false finish, or open run.
 
 Avoid vague manual checks such as "looks good."
 
@@ -200,6 +219,8 @@ Keep build and browser checks as baseline scene smoke coverage.
 Expected checks:
 
 - selected map workflow is documented,
+- map workflow can represent fog/revealed state,
+- map workflow can attach hidden pressure / residue metadata to nodes without overcomplicating art production,
 - `npm run build` passes after dependency/config changes,
 - browser opens the app,
 - scene renders map or map placeholder,
@@ -213,6 +234,8 @@ Expected automated tests:
 - legal moves spend the expected attention,
 - invalid spends cannot make attention negative,
 - context slots enforce capacity,
+- remembering a clue or residue fails or requires replacement when slots are full,
+- replacement distinguishes safely trace-backed residue from dangerously lost context,
 - Nimiq Pocket and Bot Attention are represented separately.
 
 ### PB-007 LLM Route Proposal Bridge
@@ -221,6 +244,9 @@ Expected automated tests:
 
 - valid structured move proposal is accepted,
 - malformed/unsafe proposals are rejected,
+- missing cost, considered alternatives, cut price, residue, or stop condition is rejected,
+- unbounded payment/tool/wallet requests are rejected,
+- proposal cannot claim full terrain certainty from one route choice,
 - client calls backend relay only,
 - relay uses environment configuration,
 - mock/offline fallback works.
@@ -228,6 +254,7 @@ Expected automated tests:
 Expected manual or smoke checks:
 
 - user can request a bot proposal,
+- proposal displays reason, resource cost, considered alternative, and remaining unknown,
 - no API key appears in browser-visible configuration,
 - failure state is readable when no relay/API key is configured.
 
@@ -237,13 +264,17 @@ Expected automated tests:
 
 - unrevealed nodes hide assumptions,
 - inspect reveals a clue at attention cost,
-- skip preserves attention and uncertainty,
+- inspect records remaining unknowns when not everything is settled,
+- skip preserves attention and carries uncertainty as residue,
 - act commits to route state,
-- map state serializes into LLM prompt context.
+- acting through a false-landfall trap cannot mark the run as safe finish,
+- map state serializes into LLM prompt context with revealed information and residue.
 
 Expected checks:
 
-- map, fog/uncertainty, route nodes, and goal are visible.
+- map, fog/uncertainty, route nodes, clue nodes, and goal are visible,
+- at least one node makes a tempting shortcut legible,
+- at least one node can demonstrate partial finish or false finish.
 
 ### PB-009 User-Bot Guidance Loop
 
@@ -252,13 +283,18 @@ Expected automated tests:
 - approved inspect move spends Bot Attention and reveals state,
 - redirect updates pending move without spending original cost,
 - ask-user actions are represented as user attention prompts,
+- asking why-this-route exposes the proposal rationale and considered alternative,
+- asking what-remains-unknown exposes the proposal residue,
+- inspect-first redirection changes an action proposal into a probe proposal when allowed,
+- mark-partial records that a useful subgoal is not full success,
 - illegal moves are blocked before resource state changes,
 - trace is appended after each accepted action.
 
 Expected checks:
 
-- user can approve, redirect, or correct a proposal,
-- HUD and map update after accepted move.
+- user can approve, redirect, correct, ask why, inspect what remains unknown, inspect first, or mark partial,
+- HUD and map update after accepted move,
+- user can feel that guidance changes later bot behavior.
 
 ### PB-010 Session Lesson Application
 
@@ -266,24 +302,32 @@ Expected automated tests:
 
 - user correction creates a session lesson trace,
 - session lesson is included in next LLM prompt context,
+- cut-preference lesson can change inspect-before-act ordering,
+- residue-rule lesson can require the next proposal to preserve remaining unknowns,
+- stop-condition lesson can block premature full-success claims,
 - lesson is not persisted beyond reset/reload.
 
 Expected checks:
 
-- later bot proposal visibly reflects the session lesson.
+- later bot proposal visibly reflects the session lesson,
+- UI wording does not claim durable training.
 
 ### PB-011 Trace Cards
 
 Expected automated tests:
 
 - trace card records proposal, accepted move, resource costs, map result, and lesson fields,
+- trace card distinguishes revealed information from suppressed/not-checked information,
+- trace card records residue carried forward,
 - trace history order is stable,
-- money-like actions can reference existing receipt data.
+- money-like actions can reference existing receipt data,
+- final run trace can distinguish safe finish, partial finish, false finish, and open run.
 
 Expected checks:
 
 - latest trace can be inspected,
-- trace content is readable.
+- trace content is readable,
+- user can reconstruct why the bot acted and what remains unknown.
 
 ### PB-012 Nimiq Testnet Pocket
 
@@ -292,12 +336,14 @@ Expected automated tests:
 - local fallback is safe and readable,
 - testnet status is separate from mainnet behavior,
 - no uncontrolled sign/send/payment action is reachable through resource rules,
-- Nimiq Pocket display remains separate from Bot Attention.
+- Nimiq Pocket display remains separate from Bot Attention,
+- pocket/recharge trace cards distinguish value top-up from bot navigation moves.
 
 Expected checks:
 
 - Nimiq Pay testnet manual check is performed or explicitly skipped,
-- testnet/local mode wording is clear.
+- testnet/local mode wording is clear,
+- Nimiq Pocket never appears to grant broad bot authority.
 
 ## Recommended Test Tooling Roadmap
 
@@ -352,10 +398,12 @@ Phase 1 should be considered tested enough for the first milestone when:
 
 - resource rules have unit coverage,
 - LLM proposal schemas have unit coverage,
-- trace creation has unit coverage,
+- lossy-map reveal / residue behavior has unit coverage,
+- trace creation and residue carry-forward have unit coverage,
 - existing allowance/receipt tests still pass,
 - `npm run build` passes,
 - the first scene has at least one browser smoke check,
 - Mini App/testnet compatibility has at least one documented check or skipped check with reason,
 - manual acceptance checks cover the goal -> lossy map -> LLM proposal -> user guidance -> attention spend -> reveal/outcome -> trace -> session lesson loop,
-- no mainnet wallet spend, checkout, x402, persistent memory, real paid external service, or autonomous spending is reachable in Phase 1.
+- manual acceptance checks include at least one inspect-first correction and one visible remaining-unknown/residue case,
+- final status can distinguish safe finish, partial finish, false finish, and open run.
