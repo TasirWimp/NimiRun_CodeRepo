@@ -76,6 +76,50 @@ Internal Phase 1 readiness and competition submission readiness are related but
 not identical. If NIM/USDT support or first-try usability is missing, the CRPM
 demo may still be useful, but the submission should be marked blocked.
 
+Treat NIM/USDT support as the highest external competition uncertainty. Resolve
+it early enough to avoid discovering late that the app is internally playable
+but not submission-ready. The low-risk target is:
+
+```text
+NIM support path
+  -> explicit connect/status or low-stakes top-up/recharge
+  -> visible trace card
+  -> no broad wallet authority
+  -> no real checkout/payment flow
+```
+
+If testnet-only behavior is the intended path, ask in the official technical or
+support channel whether it satisfies the competition integration requirement.
+
+Track submission readiness in `docs/product/competition_scorecard.md`:
+
+```yaml
+competition_submission_status:
+  mini_app_framework_path: pass | blocked | unknown
+  nim_or_usdt_support: pass | blocked | unknown
+  no_secrets_scan: pass | blocked | unknown
+  mit_license_public_repo: pass | blocked | unknown
+  mobile_ux_60s_path: pass | blocked | unknown
+  vertical_slice: pass | blocked | unknown
+  submission_story: pass | blocked | unknown
+  community_feedback: pass | blocked | unknown
+  overall: ready | blocked
+```
+
+Keep the judge path brutally simple:
+
+```text
+Open app
+  -> see bot, goal, attention, pocket, trace
+    -> bot proposes inspect shortcut first
+      -> user approves
+        -> attention decreases
+          -> fog reveals clue plus remaining unknown
+            -> trace card binds action, cost, reveal, residue
+              -> bot applies lesson or reaches partial/safe finish
+                -> Nimiq pocket is visibly connected to controlled capacity
+```
+
 ## Source Documents
 
 - Product requirements: `docs/product/requirements.md`
@@ -84,6 +128,7 @@ demo may still be useful, but the submission should be marked blocked.
 - Product pitch: `docs/product/pitch.md`
 - Infrastructure context: `docs/product/infrastructure_context.md`
 - Source attribution: `docs/product/source_attribution.md`
+- Competition scorecard: `docs/product/competition_scorecard.md`
 - Development workflow: `docs/process/development_workflow.md`
 - Test strategy: `docs/testing/test_strategy.md`
 
@@ -448,6 +493,7 @@ Expected files:
 - `docs/planning/mvp_implementation_plan.md`
 - `docs/product/requirements.md`
 - `docs/product/source_attribution.md`
+- `docs/product/competition_scorecard.md`
 - `docs/testing/test_strategy.md`
 - optional `README.md` competition-readiness checklist if submission docs are being prepared
 
@@ -456,6 +502,8 @@ Test plan:
 - confirm competition scoring, rules, FAQ, and Mini Apps docs are listed in source attribution,
 - decide whether the first submission targets NIM, USDT, or both,
 - document the smallest meaningful Nimiq Pay integration that preserves the resource-judgment game,
+- if relying on testnet-only behavior, ask the official technical/support channel whether it satisfies the integration requirement,
+- initialize `docs/product/competition_scorecard.md` with blocked/unknown/pass status,
 - confirm no browser-visible API key, private key, seed, or sensitive credential exists,
 - confirm public repo and MIT license readiness,
 - define the under-60-second first-use path,
@@ -467,6 +515,7 @@ Acceptance:
 - the plan distinguishes competition delivery floor from CRPM product spine,
 - Nimiq integration is not postponed into an undefined late risk,
 - competition readiness has explicit pass/block criteria,
+- NIM/USDT support is treated as the earliest external uncertainty,
 - the project does not pivot into a generic wallet/payment game.
 
 ### PB-005 RPG Map Tooling And Scene Direction
@@ -932,6 +981,7 @@ Expected files:
 - `README.md`
 - `docs/product/pitch.md`
 - `docs/product/source_attribution.md`
+- `docs/product/competition_scorecard.md`
 - optional screenshots or demo assets under an attributed asset location
 
 Test plan:
@@ -944,6 +994,7 @@ Test plan:
 - final status is safe/partial/false/open, not vague success,
 - README/submission description explains what the app does, who it is for, and how it uses Nimiq Pay,
 - screenshots/demo assets are attributed if used.
+- competition scorecard reflects the current vertical-slice status.
 
 Acceptance:
 
@@ -951,6 +1002,44 @@ Acceptance:
 - the CRPM path remains visible through mechanics, not jargon,
 - submission story and demo materials explain the binding-layer idea in plain language,
 - marketing/distribution work supports the product rather than distorting it.
+
+### PB-MARKET Early Access And Community Feedback
+
+Goal:
+
+Turn the polished vertical slice into real feedback and visible competition
+engagement without distorting the product into a marketing-first build.
+
+User-visible behavior:
+
+No new mechanic is required. The project has clear submission materials, a demo
+path, public progress, and feedback from real users.
+
+Expected files:
+
+- `README.md`
+- `docs/product/pitch.md`
+- `docs/product/competition_scorecard.md`
+- optional screenshots, GIF, or demo video assets in an attributed location
+- GitHub issues or documented feedback notes
+
+Test plan:
+
+- draft a 250-word submission description,
+- prepare a 30-60 second demo video or GIF,
+- prepare 3-5 screenshots,
+- update README with "What it does / Who it is for / How it uses Nimiq Pay",
+- get at least 3 external testers through the judge path,
+- record feedback as GitHub issues, docs notes, or trace-style feedback cards,
+- make at least one improvement from feedback,
+- share progress in the competition community when entering a competition cycle.
+
+Acceptance:
+
+- submission materials explain the app in plain language,
+- external feedback has affected at least one change,
+- competition scorecard marketing/distribution fields are updated,
+- community engagement supports the CRPM/resource-judgment story rather than replacing it.
 
 ## Milestone Sequence
 
@@ -974,6 +1063,7 @@ Revised next sequence:
 13. PB-010 Session Lesson Application.
 14. PB-012 Nimiq Testnet Pocket.
 15. PB-POLISH Submission Vertical Slice.
+16. PB-MARKET Early Access And Community Feedback.
 
 This order keeps CRPM/resource-judgment mechanics as the spine, pulls
 competition blockers forward, and leaves polish/submission work as a focused
@@ -984,7 +1074,7 @@ vertical-slice pass rather than a product pivot.
 The next implementation commit should be:
 
 ```text
-feat: choose rpg map workflow for pocket bot
+docs: resolve competition compliance floor
 ```
 
 ## Risks And Controls
@@ -1001,6 +1091,8 @@ feat: choose rpg map workflow for pocket bot
   **Control:** treat competition requirements as a delivery floor; keep the playable loop centered on attention, residue, trace, and finish judgment.
 - **Risk:** The app is internally playable but not competition-ready.
   **Control:** track submission blockers separately, especially NIM/USDT support, Mini App framework compliance, first-try usability, and source attribution.
+- **Risk:** NIM/USDT uncertainty is resolved too late.
+  **Control:** treat it as the first external competition question; decide NIM, USDT, or both during PB-004A and ask official support if the intended testnet path is ambiguous.
 - **Risk:** Testnet wallet connection is confused with spend permission.
   **Control:** testnet interactions are explicit, user-triggered, and never grant broad bot authority.
 - **Risk:** Persistent-memory claims appear too early.
@@ -1048,4 +1140,6 @@ The revised Phase 1 implementation plan is complete when:
 - Nimiq testnet/local fallback pocket status is visible without mainnet risk,
 - competition submission readiness has no unresolved Mini App framework, NIM/USDT support, no-secrets, attribution, license, or first-try usability blocker,
 - one polished vertical slice can be explained in a short submission description and optional demo walkthrough,
+- competition scorecard is current and does not mark submission ready while required items are blocked or unknown,
+- at least 3 external testers have tried the judge path before final submission, unless the project owner explicitly skips competition submission,
 - no persistent memory, mainnet spend, x402 flow, real paid external service, checkout, or autonomous spending exists.

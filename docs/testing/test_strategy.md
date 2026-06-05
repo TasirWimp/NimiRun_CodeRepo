@@ -193,8 +193,11 @@ Minimum checks:
 - no private keys, API secrets, seeds, or sensitive credentials are present,
 - Mini App Framework path is documented and tested or explicitly blocked,
 - NIM/USDT support path is documented and implemented or explicitly blocked,
+- `docs/product/competition_scorecard.md` reflects pass/blocked/unknown status and does not mark overall ready while required items are blocked or unknown,
 - README/submission description explains what the app does, who it is for, and how it uses Nimiq Pay,
 - screenshots, demo video, generated assets, fonts, icons, and copied examples are attributed when used,
+- at least 3 external testers have tried the judge path before final submission, unless explicitly skipped,
+- at least one feedback-driven improvement is recorded when entering a competition cycle,
 - early-access/community feedback tasks are tracked if entering a competition cycle.
 
 ### Manual Acceptance Checks
@@ -455,6 +458,7 @@ Phase 1 should be considered tested enough for the first milestone when:
 - the first scene has at least one browser smoke check,
 - Mini App/testnet compatibility has at least one documented check or skipped check with reason,
 - competition delivery checks have no unresolved blocker if the app is being submitted,
+- competition scorecard is current if the app is being submitted,
 - manual acceptance checks cover the goal -> lossy map -> LLM proposal -> user guidance -> attention spend -> reveal/outcome -> trace -> session lesson loop,
 - manual acceptance checks include at least one inspect-first correction and one visible remaining-unknown/residue case,
 - final status can distinguish safe finish, partial finish, false finish, and open run,

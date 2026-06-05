@@ -86,6 +86,12 @@ documentation such as Nimiq Mini Apps docs, implementation dependencies, model
 or API sources, generated assets, and any other resource that is not plain
 standard implementation work.
 
+Competition readiness is tracked in `docs/product/competition_scorecard.md`.
+That scorecard must not mark the app ready while Mini App framework path,
+NIM/USDT support, no-secrets scan, public MIT repo, mobile 60-second path,
+vertical slice, submission story, or community feedback remain blocked or
+unknown.
+
 The project should avoid heavy enterprise language. It should feel closer to:
 
 > A playful Nimiq mini app where an independent individual teaches a small robot helper to bind limited attention, pocket value, guidance, and trace into better decisions.
@@ -579,6 +585,7 @@ The first milestone is complete when:
 - A later proposal reflects the session lesson without persistent storage.
 - Nimiq Pocket value is visible as local fallback and/or testnet pocket value.
 - Competition submission readiness includes a documented NIM/USDT support path and meaningful Nimiq Pay integration, or is explicitly marked blocked.
+- `docs/product/competition_scorecard.md` is current and does not overclaim submission readiness.
 - No Nimiq mainnet value, uncontrolled wallet operation, checkout, x402 flow, persistent memory, real paid external service, or autonomous spending occurs.
 - Existing Phaser/Vite foundation remains intact.
 - Non-standard implementation resources, design sources, local source repos, model/API sources, and generated assets used by the prototype are listed in `docs/product/source_attribution.md`.
@@ -610,6 +617,9 @@ Recommended next task:
 7. PB-009: connect user guidance controls to validated bot moves.
 8. PB-011: generalize receipts into trace cards.
 9. PB-010: add one session lesson that affects a later proposal.
+10. PB-012: close the NIM/USDT support path inside the Nimiq pocket surface.
+11. PB-POLISH: finish the 60-second judge path.
+12. PB-MARKET: prepare submission materials and record external feedback.
 8. PB-012: integrate Nimiq testnet pocket/status without mainnet or broad wallet authority.
 9. Run `npm run test`, `npm run build`, and browser/manual scene checks, including a Mini App/testnet compatibility check when available.
 
