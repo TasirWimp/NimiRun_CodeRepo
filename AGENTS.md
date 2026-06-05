@@ -2,9 +2,9 @@
 
 ## Repository Context
 
-Pocket Bot is a Phaser 3 + Vite prototype for a Nimiq mini app concept. It explores how independent individuals can give software helpers a small, self-custodied prepaid allowance instead of broad wallet access.
+Pocket Bot is a Phaser 3 + Vite prototype for a Nimiq mini app concept. It explores how independent individuals can guide a software helper that has limited attention, limited context, and a small Nimiq pocket.
 
-Current MVP goal: build the Pocket Bot Workshop scene through small, test-driven slices inside a Nimiq Mini App-compatible app shell. Do not implement real wallet operations, real payment, real checkout, real grocery service, or real AI API behavior during the MVP unless the product requirements are updated first.
+Current MVP goal: build a playable Pocket Bot Workshop resource-judgment mini game inside a Nimiq Mini App-compatible app shell. The player guides a bot through a messy, lossy RPG-like map; the bot spends Bot Attention, uses session-only context, can request a bounded LLM route proposal through a server-side relay, and records trace cards. Do not implement real wallet operations, real payment, real checkout, real grocery service, mainnet value, persistent memory, autonomous spending, or browser-exposed API keys during the MVP unless the product requirements are updated first.
 
 ## Source Documents
 
@@ -15,9 +15,10 @@ Before feature work, read the relevant docs in this order:
 3. `docs/product/phase0_alignment.md` - current Phase 0 handoff and code containment strategy.
 4. `docs/product/pitch.md` - concise product framing and wording.
 5. `docs/product/infrastructure_context.md` - Nimiq and payment-rail context.
-6. `docs/process/development_workflow.md` - required development loop.
-7. `docs/testing/test_strategy.md` - testing approach.
-8. `docs/planning/mvp_implementation_plan.md` - PB feature slices and implementation order.
+6. `docs/product/source_attribution.md` - competition-facing attribution register.
+7. `docs/process/development_workflow.md` - required development loop.
+8. `docs/testing/test_strategy.md` - testing approach.
+9. `docs/planning/mvp_implementation_plan.md` - PB feature slices, subagent roles, and implementation order.
 
 Use `README.md` for project setup and commands.
 
@@ -55,7 +56,7 @@ If implementation shows that the current plan is wrong, incomplete, or risky:
 ## TDD Rules
 
 - Prefer tests before implementation for domain behavior.
-- Keep rule checks, allowance math, proposal validation, spend execution, and receipt creation in `src/domain/`.
+- Keep rule checks, attention math, context-slot behavior, map reveal rules, runtime gates, finish judgment, allowance math, proposal validation, spend execution, and trace/receipt creation in `src/domain/`.
 - Keep MVP scenario constants and state setup in `src/game/`.
 - Keep Phaser scenes focused on rendering, input, movement, and orchestration.
 - Do not bury product rules inside Phaser scene methods when they can be plain JavaScript.
@@ -65,16 +66,23 @@ If implementation shows that the current plan is wrong, incomplete, or risky:
 
 Use the plan in `docs/planning/mvp_implementation_plan.md`.
 
-Default order:
+Current order:
 
-1. Add Vitest and `npm run test`.
-2. PB-001 Domain Rule Decision.
-3. PB-002 Receipt Creation.
-4. PB-003 Allowance Spend Execution.
-5. PB-004 Pocket Bot Workshop Scene Shell.
-6. PB-005 Proposal And Approval Flow.
-7. PB-006 Simulated Spend And Receipt Archive.
-8. PB-007 Receipt Inspection.
+1. PB-001 Domain Rule Decision - implemented groundwork.
+2. PB-002 Receipt Creation - implemented groundwork.
+3. PB-003 Allowance Spend Execution - implemented groundwork.
+4. PB-004 Pocket Bot Workshop Scene Shell - implemented groundwork.
+5. PB-005 RPG Map Tooling And Scene Direction.
+6. PB-006 Core Resource Model.
+7. PB-006A Run Session And Transition Runtime.
+8. PB-007 LLM Route Proposal Bridge.
+9. PB-008 Lossy Map Scenario.
+10. PB-009 User-Bot Guidance Loop.
+11. PB-010 Session Lesson Application.
+12. PB-011 Trace Cards.
+13. PB-012 Nimiq Testnet Pocket.
+
+Use the subagent role plan in `docs/planning/mvp_implementation_plan.md`. Add `pocket_bot_nimiq_platform_worker` only when PB-012 starts unless PB-012 is explicitly pulled forward.
 
 ## Test Expectations
 
@@ -92,8 +100,10 @@ Default order:
 - Keep `Street.js` as a reference prototype until replacement is complete.
 - Keep Mini App SDK/provider access behind a small adapter or platform module when introduced.
 - Payment-specific behavior must stay behind adapters. MVP uses `SimulatedPaymentAdapter`.
+- LLM access must stay behind a server-side relay or equivalent backend boundary. Browser code must never contain provider API keys.
+- LLM output may propose moves only; deterministic resource/runtime rules decide legality, cost, state mutation, and finish status.
 - Checkout/payment attempts must be blocked in the MVP, even in simulation.
-- Real Nimiq wallet/provider operations, x402, or backend gateway work is future scope unless requirements and planning docs are updated first.
+- Real Nimiq mainnet operations, uncontrolled wallet/provider operations, x402, persistent memory, rewards, real paid external-service execution, or backend gateway work beyond the planned stateless LLM relay are future scope unless requirements and planning docs are updated first.
 
 ## Documentation Rules
 
@@ -105,6 +115,7 @@ Default order:
 - Test approach and test cases belong in `docs/testing/`.
 - Technical design notes belong in `docs/architecture/`.
 - External research and source notes belong in `docs/research/`.
+- Competition-facing attribution belongs in `docs/product/source_attribution.md`.
 - Prefer updating an existing doc over creating a near-duplicate file.
 
 ## Git And Reporting

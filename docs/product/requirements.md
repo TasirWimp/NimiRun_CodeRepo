@@ -57,6 +57,14 @@ As of the public competition guidance on June 3, 2026, Pocket Bot must use the N
 
 For the MVP, wallet and payment behavior remain simulated. Mini App framework compatibility belongs in Phase 1; real Nimiq account access, signing, testnet/mainnet transactions, wallet-funded allowances, or payment request execution belong to later milestones.
 
+Because this is a competition prototype, non-standard resources and design
+sources must be explicitly attributed. The source register is
+`docs/product/source_attribution.md`. It must include local design sources such
+as the CRPM repo and Agent Desktop Automation MCP Server repo, external
+documentation such as Nimiq Mini Apps docs, implementation dependencies, model
+or API sources, generated assets, and any other resource that is not plain
+standard implementation work.
+
 The project should avoid heavy enterprise language. It should feel closer to:
 
 > A playful Nimiq mini app where an independent individual gives a small robot helper a prepaid allowance, sets simple spending rules, approves actions, and sees clear receipts.
@@ -550,6 +558,7 @@ The first milestone is complete when:
 - Nimiq Pocket value is visible as local fallback and/or testnet pocket value.
 - No Nimiq mainnet value, uncontrolled wallet operation, checkout, x402 flow, persistent memory, real paid external service, or autonomous spending occurs.
 - Existing Phaser/Vite foundation remains intact.
+- Non-standard implementation resources, design sources, local source repos, model/API sources, and generated assets used by the prototype are listed in `docs/product/source_attribution.md`.
 - The wording and UI framing emphasize user control, Bot Attention, Nimiq pocket value, and independent individuals.
 
 ## 17. Open Questions

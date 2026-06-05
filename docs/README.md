@@ -4,7 +4,7 @@ This folder keeps project documentation grouped by purpose. Avoid placing new Ma
 
 ## Current Structure
 
-- `product/` - product requirements, roadmap, Phase 0 handoff, product scope, user-facing behavior, MVP acceptance criteria.
+- `product/` - product requirements, roadmap, Phase 0 handoff, product scope, user-facing behavior, MVP acceptance criteria, source attribution.
 - `process/` - development workflow, agent workflow, coding conventions.
 - `planning/` - milestone plans, feature breakdowns, implementation plans.
 - `testing/` - test strategy, test plans, acceptance checklists.
@@ -22,6 +22,7 @@ Create these folders only when a document in that category is needed:
 ## Placement Rules
 
 - Product decisions belong in `product/`.
+- Competition-facing source attribution belongs in `product/source_attribution.md`.
 - How-we-work instructions belong in `process/`.
 - Build sequencing belongs in `planning/`.
 - Test approach and test cases belong in `testing/`.

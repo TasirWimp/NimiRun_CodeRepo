@@ -75,6 +75,30 @@ Do not update product scope just because implementation succeeded. A successful 
 
 The documentation update should cite the verification result it reflects, for example `npm run test`, `npm run build`, or a browser/manual interaction check. If the implementation worker already ran the checks, the docs keeper may rely on that report instead of rerunning commands.
 
+## Source Attribution Gate
+
+Competition-facing documentation must make non-standard sources explicit.
+Maintain `docs/product/source_attribution.md` as the attribution register.
+
+For each feature or documentation change, check whether it uses or introduces:
+
+- a local source repo, such as CRPM or Agent Desktop Automation MCP Server,
+- external product, SDK, API, model, pricing, or protocol documentation,
+- a framework, plugin, library, or test tool beyond plain JavaScript/HTML/CSS,
+- a copied pattern from a tutorial, example, paper, or starter template,
+- generated assets, asset packs, fonts, icon libraries, music, sound effects, or AI-generated images,
+- backend, relay, wallet, testnet, faucet, explorer, or hosting infrastructure.
+
+If yes, update the attribution register before or in the same commit as the
+feature. State whether the source is an implementation dependency, design
+influence, research context, test/tooling dependency, or future-planning
+reference. Also state whether it is bundled, called at runtime, development-only,
+or documentation-only.
+
+The documentation sub-agent should run a source-attribution audit before
+competition submission and verify that `package.json`, `src/`, public assets,
+planning docs, product docs, and final submission text are covered.
+
 ## TDD Rules
 
 - Prefer tests before implementation for domain behavior.
@@ -95,6 +119,7 @@ Use this shape in planning docs or implementation summaries:
 ID:
 Goal:
 Requirement link:
+Source attribution:
 User-visible behavior:
 Non-goals:
 

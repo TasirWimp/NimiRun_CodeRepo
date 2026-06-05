@@ -330,6 +330,31 @@ tests/
 
 Vitest remains the baseline unit-test tooling. Browser/manual checks are required for Phaser map rendering and user-bot interaction until browser automation is added.
 
+## Codex Subagent Roles
+
+Role-specific Codex agents live in `.codex/agents/`. Use them as scoped
+workers; they coordinate through docs, commits, and completion summaries rather
+than private handoff.
+
+Current Phase 1 roles:
+
+- `pocket_bot_planner` - feature slicing, scope checks, source attribution checks, and implementation planning.
+- `pocket_bot_test_planner` - TDD coverage, runtime-cycle checks, scene checks, and verification planning.
+- `pocket_bot_domain_worker` - plain JavaScript domain rules for attention, context, lossy map state, resources, traces, and lessons.
+- `pocket_bot_runtime_worker` - PB-006A run sessions, move transition gates, run carriers, and finish judgment packets.
+- `pocket_bot_llm_worker` - PB-007 route proposal schema, prompt/context shaping, backend relay boundary, and mock fallback.
+- `pocket_bot_scene_worker` - Phaser RPG map, HUD, guidance controls, bot journal, trace panel, and interaction wiring.
+- `pocket_bot_docs_keeper` - source-of-truth docs, competition attribution register, status updates, and role maintenance.
+- `pocket_bot_reviewer` - read-only review for correctness, scope drift, missing tests, attribution gaps, and MVP boundary risk.
+
+Deferred role:
+
+- `pocket_bot_nimiq_platform_worker` should be added when PB-012 starts. It
+  should own `src/platform/nimiqMiniApp.js`, Nimiq Mini App SDK integration,
+  local fallback/testnet status behavior, no-mainnet/no-uncontrolled-wallet
+  boundaries, and matching platform tests. Do not add this role earlier unless
+  PB-012 is pulled forward.
+
 ## Revised Feature Slices
 
 ### PB-001 Domain Rule Decision
@@ -765,6 +790,15 @@ Expected files:
 - `tests/platform/nimiqMiniApp.test.js`
 - optional tests for any testnet top-up adapter if added
 
+Subagent activation:
+
+- Add `.codex/agents/pocket_bot_nimiq_platform_worker.toml` when this slice
+  starts.
+- Keep this worker scoped to Nimiq Mini App SDK/provider boundaries, local
+  fallback, testnet status/top-up experiments, and platform tests.
+- Do not let the platform worker introduce mainnet operations, broad wallet
+  authority, uncontrolled signing/sending, checkout, x402, or payment execution.
+
 Test plan:
 
 - local fallback is safe and readable,
@@ -798,12 +832,13 @@ Revised next sequence:
 
 5. PB-005 RPG Map Tooling And Scene Direction.
 6. PB-006 Core Resource Model.
-7. PB-007 LLM Route Proposal Bridge.
-8. PB-008 Lossy Map Scenario.
-9. PB-009 User-Bot Guidance Loop.
-10. PB-010 Session Lesson Application.
-11. PB-011 Trace Cards.
-12. PB-012 Nimiq Testnet Pocket.
+7. PB-006A Run Session And Transition Runtime.
+8. PB-007 LLM Route Proposal Bridge.
+9. PB-008 Lossy Map Scenario.
+10. PB-009 User-Bot Guidance Loop.
+11. PB-010 Session Lesson Application.
+12. PB-011 Trace Cards.
+13. PB-012 Nimiq Testnet Pocket.
 
 This order gets the game surface and resource rules clear before deeper Nimiq testnet behavior, while still adding LLM support early enough to shape the playable loop.
 

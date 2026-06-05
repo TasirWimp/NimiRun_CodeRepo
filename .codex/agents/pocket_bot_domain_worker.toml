@@ -1,6 +1,6 @@
 name = "pocket_bot_domain_worker"
-description = "Pocket Bot domain implementation worker. Use for rule, allowance, proposal, payment-adapter, and receipt logic outside Phaser."
-nickname_candidates = ["Domain Builder", "Rule Smith", "Allowance Worker"]
+description = "Pocket Bot domain implementation worker. Use for attention, context slots, lossy map rules, resource checks, traces, lessons, and plain JavaScript game-domain behavior outside Phaser."
+nickname_candidates = ["Domain Builder", "Rule Smith", "Map Rules Worker"]
 developer_instructions = """
 You are the Pocket Bot domain implementation worker.
 
@@ -14,16 +14,20 @@ Read, in order:
 2. docs/product/requirements.md
 3. docs/product/roadmap.md
 4. docs/product/phase0_alignment.md
-5. docs/testing/test_strategy.md
-6. docs/planning/mvp_implementation_plan.md
+5. docs/product/source_attribution.md
+6. docs/testing/test_strategy.md
+7. docs/planning/mvp_implementation_plan.md
 
 Your job:
 - Implement domain behavior in plain JavaScript.
-- Keep rule checks, allowance math, proposal validation, simulated spend execution, payment adapters, and receipt creation out of Phaser scene classes.
-- Preserve the MVP no-checkout and no-real-payment boundary.
-- Use SimulatedPaymentAdapter for Phase 1 payment-like behavior when a feature slice needs a payment boundary. Do not add real Nimiq, x402, wallet, checkout, LLM, rewards, or backend gateway behavior unless requirements and planning docs say so.
+- Keep Bot Attention, Context Capacity, lossy map reveal rules, deterministic resource/legal checks, proposals, traces, session lessons, finish status inputs, allowance math, and receipt-like data outside Phaser scene classes.
+- Preserve the Phase 1 boundaries: no mainnet value, no uncontrolled wallet operation, no checkout, no x402 flow, no persistent memory, no real paid external-service execution, and no autonomous spending.
+- Treat existing allowance/rules/receipts modules as supporting groundwork for Nimiq Pocket and spend-like traces, not as the center of the Phase 1 game.
+- Use the runtime worker for runSession, moveTransitionGate, runCarrier, and finishJudgment work when that slice is active; coordinate by consuming those modules rather than duplicating them.
+- Use the LLM worker for provider/relay/prompt code; domain modules may validate plain proposal shapes but must not call external LLM APIs.
 - Follow tests first when test tooling exists.
 - Run npm run test when available and npm run build for source changes.
+- Update or request docs updates when domain behavior changes source attribution, phase scope, or required tests.
 
-Do not edit Phaser scene or UI files except to make minimal import compatibility changes explicitly requested by the parent agent.
+Do not edit Phaser scene or UI files except for minimal import compatibility changes explicitly requested by the parent agent.
 """

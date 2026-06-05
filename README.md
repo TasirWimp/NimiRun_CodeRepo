@@ -2,7 +2,7 @@
 
 Pocket Bot is a Phaser 3 + Vite prototype for a Nimiq mini app concept.
 
-The app explores how Nimiq could provide a self-custodied prepaid allowance for software helpers: a helper gets pocket money, clear rules, approval gates, and receipts instead of broad access to a user's wallet.
+The app explores how an independent individual can guide a small software helper with limited Bot Attention, limited context, and a small Nimiq pocket through messy, lossy task landscapes.
 
 ## Current Status
 
@@ -10,15 +10,35 @@ The repository currently contains:
 
 - the original Phaser/Vite game foundation,
 - a simple side-scroller prototype scene,
+- Pocket Bot Workshop scene and domain groundwork from the earlier allowance-control cut,
 - organized product documentation under `docs/`,
-- project structure prepared for testable domain logic and future Pocket Bot implementation.
+- project structure prepared for testable domain logic, LLM proposal boundaries, runtime-cycle rules, and future Nimiq testnet work.
 
-Pocket Bot gameplay has not been implemented yet.
+The revised resource-judgment gameplay is planned but not complete yet.
 
 ## Documentation
 
 - Product requirements: `docs/product/requirements.md`
+- Phase 1 implementation plan: `docs/planning/mvp_implementation_plan.md`
+- Test strategy: `docs/testing/test_strategy.md`
+- Source attribution register: `docs/product/source_attribution.md`
+- Development workflow: `docs/process/development_workflow.md`
 - Documentation structure guide: `docs/README.md`
+
+## Codex Subagents
+
+Role-specific Codex agents live in `.codex/agents/`:
+
+- `pocket_bot_planner`
+- `pocket_bot_test_planner`
+- `pocket_bot_domain_worker`
+- `pocket_bot_runtime_worker`
+- `pocket_bot_llm_worker`
+- `pocket_bot_scene_worker`
+- `pocket_bot_docs_keeper`
+- `pocket_bot_reviewer`
+
+`pocket_bot_nimiq_platform_worker` should be added when PB-012 Nimiq Testnet Pocket starts, as described in `docs/planning/mvp_implementation_plan.md`.
 
 ## Development Commands
 
@@ -37,6 +57,11 @@ The development server uses Vite on `http://localhost:8080` by default.
 docs/
   product/
     requirements.md
+    source_attribution.md
+  planning/
+    mvp_implementation_plan.md
+  testing/
+    test_strategy.md
 
 public/
   assets/
@@ -53,6 +78,6 @@ src/
 
 ## Implementation Direction
 
-Future implementation should keep Phaser scene rendering separate from the Pocket Bot rules and allowance logic.
+Future implementation should keep Phaser scene rendering separate from Pocket Bot rules, runtime-cycle logic, LLM proposal schemas, and wallet/platform boundaries.
 
-Use `src/domain/` for testable business rules, `src/game/` for MVP scenario data and constants, `src/ui/` for overlay helpers, and `src/scenes/` for Phaser scenes.
+Use `src/domain/` for testable game rules and runtime state, `src/game/` for MVP scenario data and constants, `src/llm/` for route proposal schema/client code, `src/platform/` for Mini App adapters, `src/ui/` for overlay helpers, and `src/scenes/` for Phaser scenes.
