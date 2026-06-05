@@ -30,7 +30,10 @@ from the relevant planning or product document.
 
 | Source | Type | How Pocket Bot uses it | Shipping / runtime status |
 |---|---|---|---|
+| Nimiq homepage: https://www.nimiq.com/ | Brand/product framing source | Supports the public "Universal Money for Independent Individuals" framing and the name meaning that Nimiq is an object or force that binds things together. Pocket Bot uses this to frame Nimiq as a binding layer for attention, value, user judgment, trace, and re-entry. | Documentation source only; not a software dependency. |
+| Nimiq About page: https://www.nimiq.com/about | Brand/product framing source | Supports the accessible "crypto for humans" positioning and reinforces the name meaning used by the product metaphor. | Documentation source only; not a software dependency. |
 | Nimiq Mini Apps documentation: https://nimiq.dev/mini-apps/ | Platform documentation | Competition framework target and Mini App compatibility guidance. | Intended platform target; Mini App SDK may be used at runtime behind `src/platform/nimiqMiniApp.js`. |
+| Nimiq Mini Apps Competition announcement: https://www.nimiq.com/blog/the-nimiq-mini-apps-competition-registration-is-open/ | Competition framing source | Supports the competition requirement that Mini Apps use the framework and run inside Nimiq Pay as useful, user-facing apps. | Documentation source only; not a software dependency. |
 | `@nimiq/mini-app-sdk` | Implementation dependency | Mini App provider initialization boundary. | Listed in `package.json`; runtime use stays behind the platform adapter. |
 | Phaser 3: https://phaser.io/ | Implementation dependency | 2D game framework for the playable Pocket Bot scene. | Listed in `package.json`; shipped in the client bundle. |
 | Vite: https://vite.dev/ | Build tooling | Local development and production bundling. | Listed in `package.json`; development/build dependency. |

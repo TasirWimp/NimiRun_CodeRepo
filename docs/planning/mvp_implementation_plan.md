@@ -16,6 +16,25 @@ The bot has limited resources:
 - **Context Capacity**: limited short-term memory slots for the current run.
 - **Skills / Persistent Memory**: durable upgrades for Phase 2, not Phase 1.
 
+## Nimiq Binding Layer
+
+The product should use Nimiq as more than a crypto/payment label. Nimiq's
+public framing around independent individuals and its name meaning as a binding
+force support the game metaphor:
+
+```text
+Bot Attention binds uncertainty to effort.
+Nimiq Pocket binds value to controlled capacity.
+User Attention binds human judgment to bot proposals.
+Context Capacity binds selected residue to future moves.
+Trace Cards bind action, cost, reveal, residue, and lesson.
+Session Lessons bind user correction to the next proposal.
+```
+
+This should shape mechanics and pitch language. Normal player UI should still
+use simple game terms: attention, pocket, guidance, trace, clue, remaining
+unknown, partial finish, and safe finish.
+
 The milestone goal is a playable **Pocket Bot Workshop** or equivalent RPG-style map scene inside a Nimiq Mini App-compatible Phaser/Vite shell. The scene should demonstrate:
 
 1. a small lossy environment with fog, ambiguous paths, and hidden assumptions,
@@ -37,6 +56,7 @@ Phase 1 may use Nimiq testnet for wallet/status/top-up experiments because testn
 - Phase 0 alignment: `docs/product/phase0_alignment.md`
 - Product pitch: `docs/product/pitch.md`
 - Infrastructure context: `docs/product/infrastructure_context.md`
+- Source attribution: `docs/product/source_attribution.md`
 - Development workflow: `docs/process/development_workflow.md`
 - Test strategy: `docs/testing/test_strategy.md`
 

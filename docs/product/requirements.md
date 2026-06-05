@@ -22,7 +22,7 @@ When older allowance-control examples appear in this document, treat them as sup
 
 Tagline:
 
-> Train your bot to spend attention wisely.
+> Train your bot to bind attention to judgment.
 >
 > Independent individuals should be able to guide what their bot pays attention to, when it asks, what it remembers, when it spends pocket value, and what trace it leaves behind.
 
@@ -34,16 +34,16 @@ The project is intentionally framed around **personal control for independent in
 
 This project is being developed for the **Nimiq Mini Apps Competition**.
 
-Nimiq publicly frames itself as **"Universal Money for Independent Individuals"** and emphasizes accessible, intuitive apps that put people back in control. Pocket Bot should align with that framing by exploring how Nimiq could provide a self-custodied prepaid allowance for software helpers.
+Nimiq publicly frames itself as **"Universal Money for Independent Individuals"** and emphasizes accessible, intuitive apps that put people back in control. Nimiq also explains its name as an object or force that binds things together. Pocket Bot should align with both meanings: independent individuals keep control, and the game makes the binding between attention, pocket value, user judgment, hidden uncertainty, trace, and re-entry visible.
 
 The goal is not to build a full autonomous agent economy. The goal is to create a small, playful, competition-ready prototype that demonstrates:
 
-- a simulated helper allowance for the MVP, later user- or sponsor-funded,
-- simple spending rules,
-- visible spending boundaries,
-- human approval before sensitive actions,
-- automatic receipts,
-- and clear review of what happened.
+- a helper with limited Bot Attention,
+- a Nimiq pocket value surface that stays under user control,
+- visible resource and context boundaries,
+- human guidance before ambiguous or costly actions,
+- trace cards that bind action, cost, reveal, residue, and lesson,
+- and clear review of why the bot did or did not finish safely.
 
 The current repository already contains a Phaser 3 + Vite game foundation. The requirements in this document guide the first product milestone before implementing new features.
 
@@ -51,7 +51,7 @@ The current repository already contains a Phaser 3 + Vite game foundation. The r
 
 Pocket Bot should be suitable as a Nimiq mini app competition entry.
 
-The competition-relevant idea is that Nimiq can provide the wallet and payment layer, while the game world provides the human interface layer. The prototype should demonstrate how a wallet-funded allowance can become an understandable, guided interaction in a mini app.
+The competition-relevant idea is that Nimiq can provide the wallet and value layer, while the game world provides the human interface layer. The prototype should demonstrate how pocket value, limited attention, user guidance, and trace can become an understandable, guided interaction in a mini app.
 
 As of the public competition guidance on June 3, 2026, Pocket Bot must use the Nimiq Mini App framework. The Phaser/Vite app should be built as a web app that can run inside Nimiq Pay's Mini App WebView, with Nimiq provider access isolated behind a small adapter when it is introduced.
 
@@ -67,7 +67,7 @@ standard implementation work.
 
 The project should avoid heavy enterprise language. It should feel closer to:
 
-> A playful Nimiq mini app where an independent individual gives a small robot helper a prepaid allowance, sets simple spending rules, approves actions, and sees clear receipts.
+> A playful Nimiq mini app where an independent individual teaches a small robot helper to bind limited attention, pocket value, guidance, and trace into better decisions.
 
 ## 4. Problem Statement
 
@@ -388,22 +388,23 @@ These may be considered future features after the first milestone demonstrates t
 - Show the current action state at all times.
 - Treat the user as the final authority for ambiguous or rule-changing decisions.
 - Align with Nimiq's accessible, non-jargon product style.
-- Reinforce the central message: the helper has pocket money, not full wallet access.
+- Reinforce the central message: the helper has limited attention and pocket value, not full wallet access or broad authority.
 
 ## 13. Game Metaphor
 
-The game metaphor is a compact 2D workshop where prepaid helper allowances become spatial.
+The game metaphor is a compact 2D task landscape where the Nimiq binding idea becomes spatial: attention, value, user guidance, hidden uncertainty, context, trace, and re-entry are visibly connected instead of collapsing into blind bot action.
 
 Suggested mapping:
 
 - Robot = personal software helper.
-- Prepaid allowance = pocket, pouch, backpack, crate, or resource container.
-- Paid helper tool = stall, vending machine, lab bench, or service counter.
-- Approval rule = gate, checkpoint, scanner, or safety barrier.
-- Receipt archive = filing cabinet, ledger desk, wall board, or card stack.
-- Action trace = path the robot took plus receipt records.
+- Bot Attention = effort spent to reduce uncertainty.
+- Nimiq Pocket = pocket, pouch, backpack, or small fund controlled by the user.
+- User Attention = guidance, correction, approval, and preference feedback.
+- Context Capacity = limited slots that carry selected clues, residue, and lessons.
+- Trace Cards = visible bindings between action, cost, reveal, residue, and lesson.
+- Finish Judgment = safe finish, partial finish, false finish, or open run.
 
-The metaphor should make constraints easier to understand. It should not turn financial control into an unrelated arcade challenge.
+The metaphor should make constraints easier to understand. It should not turn Nimiq into only coin collecting, crypto branding, or an unrelated arcade challenge.
 
 ## 14. Domain Model / Key Objects
 

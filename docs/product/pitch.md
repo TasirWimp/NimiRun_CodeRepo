@@ -2,19 +2,19 @@
 
 ## One-Line Pitch
 
-Train your bot to spend attention wisely.
+Train your bot to bind attention to judgment.
 
 ## Short Pitch
 
 Pocket Bot is a playful Nimiq mini app where users guide a software helper through messy, lossy task landscapes. The bot has limited attention, limited context, and a small Nimiq pocket. The player teaches it when to inspect, ask, remember, skip, or act.
 
-Pocket Bot turns user-bot alignment into a small RPG-style game: the bot proposes a move, the player redirects or approves it, resources are spent, hidden assumptions are revealed, and trace cards show what the bot learned during the run.
+Pocket Bot turns user-bot alignment into a small RPG-style game: the bot proposes a move, the player redirects or approves it, resources are spent, hidden assumptions are revealed, and trace cards bind the action, cost, reveal, residue, and lesson into something the user can inspect later.
 
-Nimiq is the value carrier. Pocket money can be collected, topped up on testnet, or later converted into Bot Attention. Bot Attention is the resource the helper spends while trying to reach a goal.
+Nimiq is the value carrier and binding layer. Pocket money can be collected, topped up on testnet, or later converted into Bot Attention. Bot Attention is the resource the helper spends while trying to reach a goal.
 
 ## Competition Framing
 
-Nimiq stands for universal money for independent individuals. Pocket Bot extends that idea into a future where independent individuals train their own software helpers, instead of granting opaque systems broad authority.
+Nimiq publicly frames itself as universal money for independent individuals, and its name points to an object or force that binds things together. Pocket Bot extends that idea into a future where independent individuals train their own software helpers by binding attention, pocket value, user guidance, and trace into visible decisions instead of granting opaque systems broad authority.
 
 The competition prototype should use the Nimiq Mini App framework: a Phaser/Vite web app that can run inside Nimiq Pay's Mini App WebView while preserving local browser development.
 
@@ -26,7 +26,7 @@ The project asks:
 
 ## Product Promise
 
-Train your bot's attention. Keep control of the pocket.
+Bind attention to judgment. Keep control of the pocket.
 
 ## What Phase 1 Demonstrates
 
@@ -76,6 +76,16 @@ Pocket Bot
 
 LLM / tools / APIs
   = attention-consuming resources the bot may use under user-controlled limits
+```
+
+Nimiq should not appear only as coin collecting or crypto decoration. In Pocket Bot, it is the binding layer that makes value, control, and trace legible:
+
+```text
+Bot Attention binds uncertainty to effort.
+Nimiq Pocket binds value to controlled capacity.
+User Attention binds human judgment to bot proposals.
+Context Capacity binds selected residue to future moves.
+Trace Cards bind action, cost, reveal, residue, and lesson.
 ```
 
 Pocket Bot should not create meaningless transactions for its own sake. The natural Nimiq action is funding or collecting pocket value that can recharge Bot Attention or unlock later helper capacity. Phase 1 can use testnet or local fallback value to avoid real high-stake exposure.

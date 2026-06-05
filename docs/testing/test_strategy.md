@@ -84,6 +84,8 @@ Primary targets:
 - session lessons are visible and applied later in the run,
 - trace cards appear where the user expects them,
 - trace cards make revealed information, remaining residue, and re-entry notes readable,
+- trace cards visibly bind action, cost, reveal, residue, and lesson,
+- Nimiq is not reduced to coin collecting; pocket value remains connected to control, attention, and trace,
 - testnet/local Nimiq pocket mode is clear and low-stakes.
 
 Until browser automation exists, interaction checks may be manual or browser-smoke checks. Each check must include a concrete user action and an observable result.
@@ -193,8 +195,9 @@ Manual checks must be concrete, for example:
 - confirm skipped or unresolved information remains visible as residue,
 - correct the bot toward a cheaper/safer route,
 - confirm the later proposal references the session lesson,
-- confirm a trace card records the move, residue, and lesson,
+- confirm a trace card records and binds the move, cost, reveal, residue, and lesson,
 - confirm final run status distinguishes safe finish, partial finish, false finish, or open run,
+- confirm UI copy does not reduce Nimiq to coin collecting or crypto branding only,
 - confirm player-facing UI does not expose CRPM jargon such as source ocean, cut, protected family, landfall, or re-entry in the normal play surface.
 
 Avoid vague manual checks such as "looks good."
@@ -353,6 +356,7 @@ Expected checks:
 
 - latest trace can be inspected,
 - trace content is readable,
+- trace card binds action, resource cost, revealed information, remaining unknown, and lesson in one recoverable record,
 - user can reconstruct why the bot acted and what remains unknown.
 
 ### PB-012 Nimiq Testnet Pocket
