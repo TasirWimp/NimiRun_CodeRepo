@@ -33,6 +33,10 @@ Implementation plans must describe the intended tests for each feature slice bef
 - Map-node tests should distinguish revealed information from residue that remains unresolved.
 - Trace tests should prove that residue carries into the next proposal context when relevant.
 - Goal arrival should not automatically count as success; tests must distinguish safe finish, partial finish, false finish, and open run.
+- Accepted moves should be testable as runtime cycles: before-state, proposed move, deterministic rule result, after-state, transition classification, carrier update, and residue.
+- Expected map/resource deltas are evidence, not success; finish tests must prove the final judgment checks protected outcomes and remaining residue before `safe_finish`.
+- Player-facing UI should use the game glossary from `docs/planning/mvp_implementation_plan.md`; CRPM terms should remain internal scaffolding unless a debug/dev surface explicitly asks for them.
+- UI copy, LLM response rendering, and trace summaries must not say "done", "solved", or "safe" unless the final status check has classified the run as `safe_finish`.
 
 ## Two Test Tracks
 
@@ -45,6 +49,9 @@ Primary targets:
 - Bot Attention budget and spend rules,
 - Nimiq Pocket / allowance math,
 - Context Capacity slots,
+- run session / scenario contract validation,
+- move transition gate classification,
+- run carrier updates,
 - lossy map reveal state,
 - route/action proposal validation,
 - deterministic resource checks,
@@ -52,6 +59,7 @@ Primary targets:
 - session lesson creation,
 - trace card creation,
 - final landfall / partial / false-finish classification,
+- finish judgment packet creation,
 - LLM route proposal schema validation,
 - relay/client behavior using mocks.
 
@@ -69,6 +77,7 @@ Primary targets:
 - user can inspect why the bot chose a route,
 - user can see what remains unknown before approving,
 - user can approve, redirect, correct, inspect first, or mark partial finish,
+- player-facing controls use game terms such as inspect, ask, remember, skip, act, partial finish, safe finish, and remaining unknown,
 - accepted moves visibly spend Bot Attention,
 - inspect actions reveal hidden information while leaving some uncertainty when appropriate,
 - skipped nodes preserve uncertainty as residue,
@@ -144,6 +153,7 @@ Minimum checks:
 - proposal with missing considered alternative, cut price, residue, or stop condition is rejected,
 - proposal cannot request unchecked payment, checkout, or wallet authority,
 - proposal cannot claim that its chosen route proves the whole terrain,
+- proposal cannot render `safe_finish` wording unless the deterministic finish check has assigned that status,
 - browser client calls only the backend relay,
 - relay reads model id and API key from environment,
 - offline/mock mode works without a provider key.
@@ -184,7 +194,8 @@ Manual checks must be concrete, for example:
 - correct the bot toward a cheaper/safer route,
 - confirm the later proposal references the session lesson,
 - confirm a trace card records the move, residue, and lesson,
-- confirm final run status distinguishes safe finish, partial finish, false finish, or open run.
+- confirm final run status distinguishes safe finish, partial finish, false finish, or open run,
+- confirm player-facing UI does not expose CRPM jargon such as source ocean, cut, protected family, landfall, or re-entry in the normal play surface.
 
 Avoid vague manual checks such as "looks good."
 
@@ -238,6 +249,19 @@ Expected automated tests:
 - replacement distinguishes safely trace-backed residue from dangerously lost context,
 - Nimiq Pocket and Bot Attention are represented separately.
 
+### PB-006A Run Session And Transition Runtime
+
+Expected automated tests:
+
+- scenario contract validates goal, allowed moves, resource budgets, protected outcomes, and stop conditions,
+- run session starts only from a valid scenario contract,
+- accepted move creates a transition gate with before-state, proposal, deterministic rule result, and expected evidence,
+- transition gate remains pending until after-state is attached and classified,
+- `expected_reveal` updates the run carrier but cannot mark the run as safe finish by itself,
+- `no_effect`, `wrong_route`, `risk_boundary`, `unreadable_state`, and `repair_needed` carry explicit residue,
+- run carrier serializes compactly for the next LLM prompt,
+- finish judgment packet distinguishes safe finish, partial finish, false finish, and open run from protected outcomes and residue.
+
 ### PB-007 LLM Route Proposal Bridge
 
 Expected automated tests:
@@ -247,6 +271,7 @@ Expected automated tests:
 - missing cost, considered alternatives, cut price, residue, or stop condition is rejected,
 - unbounded payment/tool/wallet requests are rejected,
 - proposal cannot claim full terrain certainty from one route choice,
+- proposal prompt uses the run carrier rather than hidden scene state,
 - client calls backend relay only,
 - relay uses environment configuration,
 - mock/offline fallback works.
@@ -321,7 +346,8 @@ Expected automated tests:
 - trace card records residue carried forward,
 - trace history order is stable,
 - money-like actions can reference existing receipt data,
-- final run trace can distinguish safe finish, partial finish, false finish, and open run.
+- final run trace can distinguish safe finish, partial finish, false finish, and open run,
+- trace summary wording cannot overclaim safe completion when the final status is partial, false, open, or not evaluated.
 
 Expected checks:
 
@@ -398,6 +424,7 @@ Phase 1 should be considered tested enough for the first milestone when:
 
 - resource rules have unit coverage,
 - LLM proposal schemas have unit coverage,
+- run-session / transition-gate / carrier / finish-judgment behavior has unit coverage,
 - lossy-map reveal / residue behavior has unit coverage,
 - trace creation and residue carry-forward have unit coverage,
 - existing allowance/receipt tests still pass,
@@ -406,4 +433,5 @@ Phase 1 should be considered tested enough for the first milestone when:
 - Mini App/testnet compatibility has at least one documented check or skipped check with reason,
 - manual acceptance checks cover the goal -> lossy map -> LLM proposal -> user guidance -> attention spend -> reveal/outcome -> trace -> session lesson loop,
 - manual acceptance checks include at least one inspect-first correction and one visible remaining-unknown/residue case,
-- final status can distinguish safe finish, partial finish, false finish, and open run.
+- final status can distinguish safe finish, partial finish, false finish, and open run,
+- normal player-facing UI uses the game glossary rather than raw CRPM terms.

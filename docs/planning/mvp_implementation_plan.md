@@ -136,6 +136,130 @@ Make every accepted move answer four questions:
 
 The UI should keep the simple product language: goal, attention, pocket, context, guidance, trace, clue, shortcut, ask, inspect, remember, skip, act, partial finish, and safe finish.
 
+### Game Glossary For CRPM Terms
+
+Use this glossary when implementing domain objects, LLM schemas, prompts, and UI labels. CRPM terms may appear in internal planning docs and code comments where they clarify structure, but player-facing UI should prefer the game terms.
+
+| Internal CRPM term | Game-facing term | Implementation meaning |
+|---|---|---|
+| source ocean | task landscape | The richer goal situation beyond what Pocket Bot currently sees. The visible map is only a partial access surface. |
+| pressure | unresolved decision pressure | A question, risk, pull, or hidden assumption that makes another move useful. |
+| cut | access mode / move lens | The chosen way of looking or acting: inspect, ask, remember, skip, or act. It reveals some things and hides others. |
+| cut price | move tradeoff | The attention/user/pocket cost plus what the move reveals, suppresses, and leaves unresolved. |
+| probe | scouting move | A bounded, preferably reversible information-gathering move such as inspect, ask, compare, or scout. |
+| carrier | context slot / trace card | A limited state holder that preserves clues, residue, lessons, and re-entry support. It is not generic inventory. |
+| residue | remaining unknown | What is still unknown, unresolved, suppressed, or unsafe to claim after a move. |
+| protected family | what must not be lost | The user goal, safety boundary, clue, correction, wallet boundary, or preference signal that must survive the move. |
+| landfall | finish judgment | A scoped run outcome: safe finish, partial finish, false finish, or open run. Reaching a goal-looking node is not enough. |
+| re-entry | explainable return | The ability to reconstruct later why the bot moved, what it saw, what it ignored, and what remains open. |
+
+Player-facing finish rule:
+
+```text
+A finish is safe only if Pocket Bot preserved the goal, showed remaining unknowns,
+stayed inside attention and pocket boundaries, and left a trace that explains the route.
+
+Otherwise the result is partial, false, or still open.
+```
+
+Implementation rule:
+
+```text
+Do not let UI copy, LLM responses, or final trace summaries say "done", "solved",
+or "safe" unless the landfall/finish check has explicitly classified the run as safe_finish.
+```
+
+### Runtime Discipline Source
+
+This runtime shape is adapted from the local `Agent_Desktop_Automation_MCP_Server`
+repo as a design source, not as a software dependency. The relevant source
+documents are:
+
+- `C:\Users\jensb\Desktop\Projects\Agent_Desktop _Automation_MCP_Server\docs\architecture\licensed_desktop_interaction_sessions.md`
+- `C:\Users\jensb\Desktop\Projects\Agent_Desktop _Automation_MCP_Server\docs\planning\licensed_desktop_interaction_feature_design.md`
+
+The source-supported pattern from that repo is:
+
+```text
+bounded session
+  -> observe
+    -> infer
+      -> licensed probe or action
+        -> observe transition
+          -> classify delta
+            -> carry residue
+              -> continue / repair / ask / partial landfall / close
+```
+
+Pocket Bot should borrow the runtime discipline, not the desktop-control
+machinery. No Phase 1 gameplay code should depend on the MCP server, desktop
+observation tools, mouse/click automation, OCR, app launching, or raw desktop
+authority.
+
+Pocket Bot translation:
+
+| Agent Desktop runtime idea | Pocket Bot runtime idea |
+|---|---|
+| bounded task license | bounded run session / scenario contract |
+| observed app-under-test scope | observed map state and current goal scope |
+| licensed probes/actions | allowed bot moves: inspect, ask, remember, skip, act |
+| interaction transition gate | bot move transition gate |
+| post-action observation | map/resource/trace state after the move |
+| post-action classification | move delta classification |
+| run-level carrier | session trace, context slots, and unresolved residue |
+| closure / landfall packet | finish judgment packet |
+
+Phase 1 run loop:
+
+```text
+scenario contract
+  -> start run session
+    -> observe map state
+      -> LLM proposes a move
+        -> deterministic resource and safety rules license or block the move
+          -> execute accepted move
+            -> observe map/resource/trace delta
+              -> classify transition
+                -> update run carrier and residue
+                  -> continue / repair / ask / partial_finish / safe_finish / false_finish / open_run
+```
+
+Required runtime artifacts:
+
+- **Scenario contract**: goal, allowed moves, resource budgets, context capacity,
+  hidden-pressure rules, protected outcomes, stop conditions, and finish policy.
+- **Run session**: current goal scope, resources, context slots, trace ids,
+  allowed move set, and stop conditions.
+- **Move transition gate**: before-state, proposed move, deterministic rule result,
+  expected evidence, after-state, transition classification, and residue.
+- **Run carrier**: compact session model carried into the next LLM prompt,
+  including revealed clues, remaining unknowns, session lessons, and trace support.
+- **Finish judgment packet**: final status, satisfied outcomes, unsatisfied residue,
+  trace ids, stop reason, and re-entry notes.
+
+Move transition classifications should stay game-facing:
+
+- `expected_reveal`: the map/resource delta matches the move's expected evidence.
+- `no_effect`: the move spent nothing useful or changed nothing relevant.
+- `wrong_route`: the move affected an unintended route, node, or pressure.
+- `risk_boundary`: the move would cross a wallet, payment, scope, or safety boundary.
+- `unreadable_state`: the game cannot classify the result from available state.
+- `repair_needed`: a bounded correction path remains available.
+
+`expected_reveal` is evidence, not success. A finish can be called safe only after
+the finish judgment packet checks the protected outcomes and remaining residue.
+
+Optional CRPM leakage into gameplay should happen through a softened bot journal,
+not normal UI jargon:
+
+```text
+What I saw.
+What I spent.
+What I ignored.
+What still worries me.
+Why I am or am not calling this finished.
+```
+
 ## Proposed Runtime Structure
 
 ```text
@@ -144,9 +268,13 @@ src/
     allowance.js              # existing Nimiq pocket / money-resource groundwork
     attention.js              # Bot Attention budget and spend rules
     contextSlots.js           # short-term memory slot rules and carrier behavior
+    finishJudgment.js         # safe / partial / false / open run closure rules
     lossyMap.js               # map node state, pressure, reveal, residue, and landfall rules
+    moveTransitionGate.js     # accepted-move before/after state, delta classification, and repair pressure
     proposals.js              # broader action / route proposal shape, cut price, and path-set residue
     resourceRules.js          # deterministic resource/legal checks
+    runCarrier.js             # compact state carried into the next proposal prompt
+    runSession.js             # scenario contract, run scope, allowed moves, stop conditions
     traces.js                 # action trace, residue, re-entry, and lesson cards
     rules.js                  # existing allowance rule checks retained for money gates
     receipts.js               # existing receipt groundwork retained for spend-like traces
@@ -181,8 +309,12 @@ tests/
     allowance.test.js
     attention.test.js
     contextSlots.test.js
+    finishJudgment.test.js
     lossyMap.test.js
+    moveTransitionGate.test.js
     resourceRules.test.js
+    runCarrier.test.js
+    runSession.test.js
     traces.test.js
     rules.test.js
     receipts.test.js
@@ -292,6 +424,50 @@ Acceptance:
 - Nimiq Pocket and Bot Attention are not conflated,
 - Context Capacity behaves like a limited carrier for clues, residue, and session lessons,
 - user-facing labels make clear that Bot Attention is the spendable thinking/action energy.
+
+### PB-006A Run Session And Transition Runtime
+
+Goal:
+
+Add the Phase 1 runtime discipline adapted from
+`Agent_Desktop_Automation_MCP_Server`: bounded run session, move transition
+gate, run carrier, and finish judgment packet.
+
+User-visible behavior:
+
+No new major scene feature is required in this slice. It makes later bot moves
+behave consistently: every accepted move has a before-state, expected evidence,
+after-state, transition classification, visible residue, and bounded next step.
+
+Expected files:
+
+- `src/domain/runSession.js`
+- `src/domain/moveTransitionGate.js`
+- `src/domain/runCarrier.js`
+- `src/domain/finishJudgment.js`
+- `tests/domain/runSession.test.js`
+- `tests/domain/moveTransitionGate.test.js`
+- `tests/domain/runCarrier.test.js`
+- `tests/domain/finishJudgment.test.js`
+
+Test plan:
+
+- scenario contract validates goal, allowed moves, resource budgets, protected outcomes, and stop conditions,
+- run session starts only from a valid scenario contract,
+- accepted move creates a transition gate with before-state, proposal, rule result, and expected evidence,
+- transition gate cannot be treated as closed until after-state is attached and classified,
+- `expected_reveal` updates the run carrier but does not mark the run safe by itself,
+- `no_effect`, `wrong_route`, `risk_boundary`, `unreadable_state`, and `repair_needed` carry explicit residue,
+- run carrier serializes compactly for the next LLM prompt,
+- finish judgment distinguishes safe finish, partial finish, false finish, and open run from protected outcomes and residue.
+
+Acceptance:
+
+- LLM proposals have a deterministic runtime boundary before they can affect game state,
+- every accepted move can produce a traceable cycle packet,
+- remaining unknowns carry forward into the next proposal context,
+- success claims are impossible without a finish judgment packet,
+- runtime terms remain internal unless a debug/dev surface exposes them deliberately.
 
 ### PB-007 LLM Route Proposal Bridge
 
