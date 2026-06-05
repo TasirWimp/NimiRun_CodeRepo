@@ -24,7 +24,7 @@ The milestone goal is a playable **Pocket Bot Workshop** or equivalent RPG-style
 4. user guidance that changes the bot's next move within the same session,
 5. Nimiq testnet pocket money shown as low-stakes value or recharge potential,
 6. context-window memory only, with no persistent memory until Phase 2,
-7. trace cards that record what was spent, what was revealed, and what lesson was applied.
+7. trace cards that record what was spent, what was revealed, what residue remains, and what lesson was applied.
 
 Phase 1 may use real LLM API calls through a small server-side relay. API keys must never live in the browser client. The first model should be a low-cost GPT model selected from current official OpenAI model/pricing guidance during implementation; the model id must be configurable and not hard-coded into gameplay logic.
 
@@ -85,6 +85,57 @@ These assumptions are binding for the revised Phase 1 unless the product require
 - Scenario constants and scene-independent setup belong under `src/game/`.
 - Phaser scenes should orchestrate and display state, not own resource rules, LLM schemas, or wallet logic.
 
+## CRPM-Compatible Navigation Teaching Rules
+
+Pocket Bot should teach source-ocean navigation through gameplay without exposing CRPM jargon to the player.
+
+Use the CRPM reading as design scaffolding only:
+
+```text
+foggy map / hidden assumptions
+  -> selected move or probe
+    -> revealed information plus residue
+      -> trace and context carrier
+        -> later re-entry or landfall judgment
+```
+
+Player-facing translation:
+
+| CRPM design idea | Player-facing term |
+|---|---|
+| source ocean | foggy / lossy map |
+| pressure | uncertainty, pull, question, or risk |
+| cut | way to look / chosen move type |
+| probe | inspect, ask, scout, or compare |
+| carrier | context slot or trace card |
+| residue | still unknown / not settled |
+| protected family | what must not be lost |
+| landfall | safe finish / partial finish / false finish |
+| re-entry | can we explain this later? |
+
+Gameplay rules:
+
+1. Fog is source pressure, not merely hidden objects.
+2. Every move has a cut price: it reveals, suppresses, and leaves residue.
+3. Residue is carried forward as next decision pressure.
+4. Context slots are carriers, not inventory.
+5. Bot proposals are compressed path sets, not proof of the terrain.
+6. Goal arrival is not automatically landfall.
+7. Trace cards must preserve what changed, what was spent, what was revealed, what remains unknown, and why re-entry is possible.
+8. User lessons should teach cut preferences and stop conditions, not only surface preferences.
+
+Design target:
+
+```text
+Make every accepted move answer four questions:
+  What did we reveal?
+  What did we suppress or leave unresolved?
+  What residue do we carry?
+  Can we re-enter later and explain why this was a good move?
+```
+
+The UI should keep the simple product language: goal, attention, pocket, context, guidance, trace, clue, shortcut, ask, inspect, remember, skip, act, partial finish, and safe finish.
+
 ## Proposed Runtime Structure
 
 ```text
@@ -92,16 +143,16 @@ src/
   domain/
     allowance.js              # existing Nimiq pocket / money-resource groundwork
     attention.js              # Bot Attention budget and spend rules
-    contextSlots.js           # short-term memory slot rules
-    lossyMap.js               # map node state and reveal rules
-    proposals.js              # broader action / route proposal shape
+    contextSlots.js           # short-term memory slot rules and carrier behavior
+    lossyMap.js               # map node state, pressure, reveal, residue, and landfall rules
+    proposals.js              # broader action / route proposal shape, cut price, and path-set residue
     resourceRules.js          # deterministic resource/legal checks
-    traces.js                 # action trace and lesson cards
+    traces.js                 # action trace, residue, re-entry, and lesson cards
     rules.js                  # existing allowance rule checks retained for money gates
     receipts.js               # existing receipt groundwork retained for spend-like traces
   game/
     mvpScenario.js            # existing scenario, to be replaced or wrapped
-    resourceMapScenario.js
+    resourceMapScenario.js    # first source-ocean navigation teaching scenario
     pocketBotState.js
   llm/
     routeProposalSchema.js
@@ -194,6 +245,7 @@ Test plan:
 
 - compare Phaser-native tilemap support, Tiled, LDtk, or equivalent Vite-friendly RPG/tilemap approach,
 - pick the smallest workflow that supports tiles, object layers/nodes, fog/revealed state, and click/keyboard interaction,
+- verify the chosen workflow can represent pressure/residue metadata on nodes without overcomplicating art production,
 - `npm run build` passes after any dependency/config change,
 - browser/manual check confirms the scene still renders.
 
@@ -201,7 +253,7 @@ Acceptance:
 
 - selected workflow is documented,
 - the choice does not require replacing Phaser/Vite,
-- the scene can represent nodes, paths, obstacles/fog, and interaction zones,
+- the scene can represent nodes, paths, obstacles/fog, interaction zones, hidden pressure, and reveal/residue state,
 - implementation can proceed without committing to final art.
 
 ### PB-006 Core Resource Model
@@ -230,13 +282,15 @@ Test plan:
 - inspect/ask/remember/act choices spend the expected attention amount,
 - invalid spends cannot make attention negative,
 - context slots have a fixed capacity,
-- remembering a clue fails or requires replacement when slots are full,
+- remembering a clue or residue fails or requires replacement when slots are full,
+- replacement distinguishes safely archived trace residue from dangerously lost context,
 - Nimiq Pocket is represented separately from Bot Attention.
 
 Acceptance:
 
 - resource math is deterministic and test-covered,
 - Nimiq Pocket and Bot Attention are not conflated,
+- Context Capacity behaves like a limited carrier for clues, residue, and session lessons,
 - user-facing labels make clear that Bot Attention is the spendable thinking/action energy.
 
 ### PB-007 LLM Route Proposal Bridge
@@ -247,7 +301,7 @@ Add Phase 1 LLM support for route/move proposals.
 
 User-visible behavior:
 
-Pocket Bot can propose a next move in natural language based on the current goal, visible map state, resources, context slots, and current session trace.
+Pocket Bot can propose a next move in natural language based on the current goal, visible map state, resources, context slots, residue carried from prior moves, and current session trace.
 
 Expected files:
 
@@ -259,10 +313,36 @@ Expected files:
 - `tests/llm/routeProposalClient.test.js`
 - optional `tests/platform/openaiRelay.test.js`
 
+Route proposal shape should include:
+
+```yaml
+route_proposal:
+  move_type: inspect | ask | remember | forget | skip | act
+  target_node:
+  reason:
+  resource_cost:
+    bot_attention:
+    user_attention:
+    context_slots:
+  considered_alternatives:
+    - move:
+      why_not_selected:
+  cut_price:
+    reveals:
+      - "what this move may make visible"
+    suppresses:
+      - "what this move will not inspect or decide"
+    leaves_residue:
+      - "what remains unknown after the move"
+  stop_condition:
+  trace_summary:
+```
+
 Test plan:
 
 - schema accepts a valid route proposal,
-- schema rejects unknown actions, missing costs, or unbounded tool/payment requests,
+- schema rejects unknown actions, missing costs, missing residue/cut-price fields, or unbounded tool/payment requests,
+- schema rejects proposals that treat a path choice as proof of the whole map,
 - client calls only the backend relay, not OpenAI directly from browser code,
 - relay reads API key from environment,
 - relay model id is configurable,
@@ -272,6 +352,7 @@ Test plan:
 Acceptance:
 
 - LLM proposals are structured, bounded, and validated before entering game state,
+- every proposal says what it reveals, what it leaves unresolved, and what cheaper/safer alternative was considered,
 - no provider API key is bundled into client code,
 - failure/offline states produce a readable fallback move,
 - the bot's proposal can reference only current session context and provided game state.
@@ -294,19 +375,46 @@ Expected files:
 - map data/assets as selected in PB-005
 - `tests/domain/lossyMap.test.js`
 
+Map-node shape should support:
+
+```yaml
+map_node:
+  node_id:
+  visible_label:
+  visible_clue:
+  hidden_pressure:
+    - "uncertainty before inspection"
+  possible_moves:
+    inspect:
+      cost:
+      reveals:
+      leaves_unknown:
+    skip:
+      cost: 0
+      preserves_residue:
+    act:
+      cost:
+      risk:
+  false_landfall_trap:
+    trigger:
+    why_it_is_false_closure:
+```
+
 Test plan:
 
 - unrevealed nodes hide their assumptions,
 - inspect reveals a clue at attention cost,
-- skip preserves attention but keeps uncertainty,
-- act commits to a route state,
-- map state is serializable into the LLM prompt context,
+- inspect records what remains unknown,
+- skip preserves attention and carries uncertainty as residue,
+- act commits to route state and can trigger false-landfall traps when hidden pressure was ignored,
+- map state serializes into the LLM prompt context, including residue and carried trace,
 - `npm run test` and `npm run build` pass.
 
 Acceptance:
 
 - the map makes ambiguity visible,
 - each node asks "is this worth spending attention on?",
+- at least one node teaches that reaching a goal-looking state is not automatically safe landfall,
 - the first map is small enough to finish in a short competition demo.
 
 ### PB-009 User-Bot Guidance Loop
@@ -317,7 +425,7 @@ Connect LLM proposals, deterministic resource checks, and player guidance.
 
 User-visible behavior:
 
-The bot proposes a move. The player can approve, redirect, ask for a cheaper route, ask the bot to inspect first, or tell the bot to remember/forget a clue. The bot spends resources only after a legal move is accepted.
+The bot proposes a move. The player can approve, redirect, ask why this route, ask what remains unknown, ask for a cheaper route, ask the bot to inspect first, mark a result as partial, or tell the bot to remember/forget a clue. The bot spends resources only after a legal move is accepted.
 
 Expected files:
 
@@ -335,6 +443,10 @@ Test plan:
 - approved inspect move spends Bot Attention and reveals state,
 - redirect updates the pending move without spending the original cost,
 - ask-user actions are represented as user attention prompts,
+- asking "why this route" exposes the proposal's reason and considered alternatives,
+- asking "what remains unknown" exposes the proposal's residue,
+- "inspect first" redirects from action to probe when residue controls the target,
+- "mark partial" records that a subgoal is useful but not full success,
 - illegal moves are blocked before resource state changes,
 - trace is appended after each accepted action,
 - `npm run test` and `npm run build` pass,
@@ -344,6 +456,7 @@ Acceptance:
 
 - the player can feel that guidance changes the bot's behavior,
 - resources are spent deliberately,
+- user controls teach navigation hygiene, not only yes/no approval,
 - the LLM never directly mutates game state.
 
 ### PB-010 Session Lesson Application
@@ -372,17 +485,35 @@ Expected files:
 - `tests/domain/traces.test.js`
 - `tests/llm/routeProposalSchema.test.js`
 
+Session lessons should be typed:
+
+```yaml
+session_lesson:
+  lesson_type: cut_preference | residue_rule | resource_priority | stop_condition
+  user_words:
+  operational_reading:
+    when:
+    prefer_move:
+    before_move:
+    what_must_not_be_lost:
+  applies_to_next_proposal: true
+```
+
 Test plan:
 
 - user correction creates a session lesson trace,
 - session lesson is included in the next LLM prompt context,
 - session lesson can influence a validated proposal,
+- cut-preference lessons can change inspect-before-act ordering,
+- residue-rule lessons can make the next proposal carry "what remains unknown",
+- stop-condition lessons can block premature full-success claims,
 - lesson is not persisted beyond reload/session reset,
 - `npm run test` and `npm run build` pass.
 
 Acceptance:
 
 - Phase 1 demonstrates "bot learns during this run" without persistent memory,
+- lessons teach route judgment and stop conditions, not only surface preferences,
 - UI wording does not claim durable training,
 - resetting the run clears the lesson.
 
@@ -394,7 +525,7 @@ Generalize receipts into trace cards for the broader resource-judgment loop.
 
 User-visible behavior:
 
-The player can inspect what happened: move proposed, user guidance, resource spent, information revealed, lesson applied, and outcome.
+The player can inspect what happened: move proposed, user guidance, resource spent, information revealed, residue carried, lesson applied, and outcome.
 
 Expected files:
 
@@ -403,9 +534,28 @@ Expected files:
 - `src/scenes/PocketBotWorkshop.js`
 - `tests/domain/traces.test.js`
 
+Trace cards should include:
+
+```yaml
+trace_card:
+  proposal:
+  accepted_move:
+  resource_spend:
+  revealed:
+  suppressed_or_not_checked:
+  residue_carried_forward:
+  context_changes:
+  lesson_candidate:
+  reentry_note:
+  landfall_status: open | partial | safe_finish | false_finish
+```
+
 Test plan:
 
 - trace card records proposal, accepted move, resource costs, map result, and lesson fields,
+- trace card records revealed information and remaining residue separately,
+- residue carries into the next proposal context when relevant,
+- final run trace can distinguish safe finish, partial finish, false finish, and open run,
 - money-like actions can reference existing receipt data,
 - trace history order is stable,
 - latest trace can be inspected,
@@ -416,7 +566,8 @@ Acceptance:
 
 - receipts are no longer the only trace type,
 - trace cards support both attention spending and Nimiq pocket events,
-- the user can reconstruct why the bot acted.
+- the user can reconstruct why the bot acted,
+- the user can see what remains unknown and why the next move follows from it.
 
 ### PB-012 Nimiq Testnet Pocket
 
@@ -444,8 +595,9 @@ Test plan:
 - connect/status action is explicit and user-triggered,
 - testnet-only wording is visible when applicable,
 - no mainnet operation is reachable,
-- no uncontrolled send/sign/payment is reachable,
+- no uncontrolled sign/send/payment is reachable,
 - Nimiq Pocket display remains separate from Bot Attention,
+- pocket/recharge events produce traces that distinguish value top-up from bot navigation moves,
 - `npm run test` and `npm run build` pass,
 - Nimiq Pay testnet manual check is planned or performed when device/emulator path is available.
 
@@ -453,6 +605,7 @@ Acceptance:
 
 - Nimiq testnet is integrated as low-stakes value surface,
 - pocket money can be shown as collectible or recharge potential,
+- pocket value never masks Bot Attention scarcity,
 - the bot still spends Bot Attention on moves,
 - wallet access never grants broad bot authority.
 
@@ -483,12 +636,6 @@ This order gets the game surface and resource rules clear before deeper Nimiq te
 The next implementation commit should be:
 
 ```text
-docs: revise phase 1 resource-judgment plan
-```
-
-The next code commit after the plan update should be:
-
-```text
 feat: choose rpg map workflow for pocket bot
 ```
 
@@ -508,6 +655,10 @@ feat: choose rpg map workflow for pocket bot
   **Control:** Phase 1 only uses session/context-window memory; Phase 2 owns durable memory and skills.
 - **Risk:** The RPG-map framework choice locks the app into unnecessary complexity.
   **Control:** pick the smallest Phaser/Vite-compatible workflow that supports map nodes, fog/reveal state, and interaction zones.
+- **Risk:** Goal arrival is treated as full success.
+  **Control:** trace cards and final run state must distinguish safe finish, partial finish, false finish, and open voyage.
+- **Risk:** The game teaches route choice but not navigation discipline.
+  **Control:** proposals, map nodes, guidance controls, session lessons, and trace cards must preserve cut price, residue, and re-entry information in player-facing language.
 
 ## Out Of Scope For Phase 1
 
@@ -521,7 +672,10 @@ feat: choose rpg map workflow for pocket bot
 - autonomous model self-improvement claims,
 - real-value rewards,
 - combat, inventory bloat, or large RPG content,
-- multi-bot or multi-user systems.
+- multi-bot or multi-user systems,
+- exportable cross-session trace history,
+- durable preference learning,
+- real-world task bridge execution.
 
 ## Completion Criteria
 
@@ -531,10 +685,13 @@ The revised Phase 1 implementation plan is complete when:
 - `npm run test` and `npm run build` pass,
 - the first screen is a playable Phaser RPG-style resource-navigation scene,
 - the scene shows Bot Attention, Nimiq Pocket, User Attention prompts, and Context Capacity,
+- the map contains fog, hidden pressure, ambiguous route nodes, and at least one false-landfall trap or partial-finish case,
 - the bot can request an LLM-backed structured route proposal through a safe backend relay,
-- the player can guide or correct the bot,
+- route proposals include resource cost, considered alternatives, cut price, remaining residue, and a stop condition,
+- the player can guide or correct the bot with controls that expose reasons, remaining unknowns, inspect-first redirection, and partial-finish marking,
 - accepted moves spend Bot Attention and update map state,
 - at least one session lesson changes a later proposal within the same run,
-- trace cards show resource spend, revealed information, user guidance, and lesson application,
+- trace cards show resource spend, revealed information, suppressed/not-checked information, residue carried forward, user guidance, and lesson application,
+- the final run state distinguishes safe finish, partial finish, false finish, and open run,
 - Nimiq testnet/local fallback pocket status is visible without mainnet risk,
 - no persistent memory, mainnet spend, x402 flow, real paid external service, checkout, or autonomous spending exists.
