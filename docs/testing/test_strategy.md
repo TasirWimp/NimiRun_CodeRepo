@@ -341,6 +341,8 @@ Expected checks:
 
 ### PB-009 User-Bot Guidance Loop
 
+Status: implemented.
+
 Expected automated tests:
 
 - approved inspect move spends Bot Attention and reveals state,

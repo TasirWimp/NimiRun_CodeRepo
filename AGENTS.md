@@ -78,9 +78,9 @@ Current order:
 7. PB-006A Run Session And Transition Runtime - implemented.
 8. PB-007 LLM Route Proposal Bridge - implemented.
 9. PB-008 Lossy Map Scenario - implemented.
-10. PB-009 User-Bot Guidance Loop.
-11. PB-010 Session Lesson Application.
-12. PB-011 Trace Cards.
+10. PB-009 User-Bot Guidance Loop - implemented.
+11. PB-011 Trace Cards.
+12. PB-010 Session Lesson Application.
 13. PB-012 Nimiq Testnet Pocket.
 
 Use the subagent role plan in `docs/planning/mvp_implementation_plan.md`. Add `pocket_bot_nimiq_platform_worker` only when PB-012 starts unless PB-012 is explicitly pulled forward.

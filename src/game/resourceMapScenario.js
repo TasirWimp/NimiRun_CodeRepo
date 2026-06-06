@@ -91,7 +91,9 @@ const RESOURCE_MAP_SCENARIO = Object.freeze({
     },
   },
   proposalPreview: {
+    id: 'proposal-inspect-shortcut-bridge',
     title: 'Bot Proposal',
+    targetNodeId: 'shortcut-bridge',
     move: 'Inspect the shortcut',
     reason: 'The fast path may hide a cost. Inspecting first can reveal whether it is worth the attention.',
     cost: {

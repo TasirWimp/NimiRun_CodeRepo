@@ -51,6 +51,11 @@ describe('lossy map domain rules', () => {
 
     const shortcutView = getLossyMapNodeView(result.state, 'shortcut-bridge');
     expect(shortcutView.visibleClue).toContain('Shortcut risk');
+    expect(shortcutView.pressure).toMatchObject({
+      hidden: false,
+      level: 'medium',
+      summary: 'Fast route may hide a cost.',
+    });
     expect(shortcutView.hiddenPressure).toContain('Fast route may hide a cost.');
   });
 

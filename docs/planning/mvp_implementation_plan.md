@@ -148,12 +148,12 @@ Implemented groundwork from the earlier allowance-control cut:
 - PB-006A Run Session And Transition Runtime is implemented with scenario contract validation, move transition gates, run carriers, and finish judgment packets.
 - PB-007 LLM Route Proposal Bridge is implemented with a strict route proposal schema, run-carrier prompt builder, browser relay client, Vite dev relay middleware, Vercel production function, OpenAI Responses API relay, and offline/mock fallback.
 - PB-008 Lossy Map Scenario is implemented with deterministic hidden-pressure reveal, inspect/skip/act behavior, false-landfall traps, safe-finish judgment, and prompt serialization in `src/domain/lossyMap.js`.
+- PB-009 User-Bot Guidance Loop is implemented with a testable guidance-loop domain module, scene state setup, Phaser proposal controls, redirect-by-node selection, why/unknowns/inspect-first/partial controls, deterministic approval, and HUD/map updates.
 
 This work should be retained as supporting infrastructure. It becomes one possible resource-governance mechanic inside the broader resource-judgment game, not the active center of Phase 1.
 
-Next work should pivot to connecting the playable user-bot interaction loop:
+Next work should pivot from guidance controls to the remaining playable-loop carriers:
 
-- user guidance controls,
 - session-only lesson application,
 - trace cards,
 - Nimiq testnet pocket integration.
@@ -855,24 +855,27 @@ Acceptance:
 
 ### PB-009 User-Bot Guidance Loop
 
+Status: implemented.
+
 Goal:
 
 Connect LLM proposals, deterministic resource checks, and player guidance.
 
 User-visible behavior:
 
-The bot proposes a move. The player can approve, redirect, ask why this route, ask what remains unknown, ask for a cheaper route, ask the bot to inspect first, mark a result as partial, or tell the bot to remember/forget a clue. The bot spends resources only after a legal move is accepted.
+The bot proposes a move. In the implemented PB-009 vertical slice, the player can approve, redirect by selecting a node, ask why this route, ask what remains unknown, ask the bot to inspect first, or mark a result as partial. The bot spends resources only after a legal move is accepted.
 
-Expected files:
+Cheaper-route controls and remember/forget clue controls remain later refinements tied to session lessons, context-slot handling, and trace cards.
+
+Implemented files:
 
 - `src/scenes/PocketBotWorkshop.js`
 - `src/ui/guidanceControls.js`
-- `src/ui/resourceMeters.js`
 - `src/game/pocketBotState.js`
-- `src/domain/resourceRules.js`
-- `src/domain/traces.js`
-- `tests/domain/resourceRules.test.js`
-- `tests/domain/traces.test.js`
+- `src/domain/guidanceLoop.js`
+- `src/domain/lossyMap.js`
+- `tests/domain/guidanceLoop.test.js`
+- `tests/domain/lossyMap.test.js`
 
 Test plan:
 
@@ -887,6 +890,13 @@ Test plan:
 - trace is appended after each accepted action,
 - `npm run test` and `npm run build` pass,
 - browser/manual check confirms controls update map and HUD.
+
+Implementation note:
+
+- `src/domain/guidanceLoop.js` owns proposal approval, redirect, inspect-first, remaining-unknown, why-route, partial-result, ask-user, and guidance-trace behavior.
+- `src/game/pocketBotState.js` builds the scene-independent guidance state from the lossy-map scenario.
+- `src/ui/guidanceControls.js` supplies compact Phaser controls for the proposal panel.
+- `src/scenes/PocketBotWorkshop.js` wires approve, node-click redirect, why, unknowns, inspect first, and mark partial into deterministic map/resource state.
 
 Acceptance:
 
@@ -1153,10 +1163,10 @@ Implemented groundwork:
 8. PB-006A Run Session And Transition Runtime.
 9. PB-007 LLM Route Proposal Bridge.
 10. PB-008 Lossy Map Scenario.
+11. PB-009 User-Bot Guidance Loop.
 
 Revised next sequence:
 
-11. PB-009 User-Bot Guidance Loop.
 12. PB-011 Trace Cards.
 13. PB-010 Session Lesson Application.
 14. PB-012 Nimiq Testnet Pocket.
@@ -1172,7 +1182,7 @@ vertical-slice pass rather than a product pivot.
 The next implementation commit should be:
 
 ```text
-feat: connect user bot guidance loop
+feat: add trace cards
 ```
 
 ## Risks And Controls

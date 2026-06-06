@@ -126,14 +126,14 @@ Implemented Phase 1 groundwork from the earlier allowance-control cut:
 - PB-006A Run Session And Transition Runtime with scenario contracts, transition gates, run carriers, and finish judgments.
 - PB-007 LLM Route Proposal Bridge with schema validation, run-carrier prompt shaping, browser relay client, local Vite relay middleware, and mock fallback.
 - PB-008 Lossy Map Scenario with deterministic hidden-pressure reveal, inspect/skip/act behavior, false-landfall traps, safe-finish judgment, and prompt serialization.
+- PB-009 User-Bot Guidance Loop with deterministic proposal approval, node-click redirect, why/unknowns/inspect-first/partial controls, guidance traces, and HUD/map updates.
 
 These modules should not be reverted. They are now supporting pieces for future Nimiq Pocket / paid-resource gates.
 
 Still needed for the revised Phase 1:
 
-- PB-009 User-Bot Guidance Loop.
-- PB-010 Session Lesson Application.
 - PB-011 Trace Cards.
+- PB-010 Session Lesson Application.
 - PB-012 Nimiq Testnet Pocket.
 
 PB-005 replaced the old Tool Scout visual placeholder with the first lossy-map scaffold. The earlier allowance-control modules remain useful as future Nimiq Pocket / paid-resource gate groundwork.

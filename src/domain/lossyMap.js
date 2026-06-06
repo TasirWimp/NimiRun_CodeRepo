@@ -209,7 +209,10 @@ export function getLossyMapNodeView(state, nodeId) {
           level: 'unknown',
           summary: null,
         }
-      : clone(node.pressure || { hidden: false, level: 'low', summary: null });
+      : {
+          ...clone(node.pressure || { hidden: false, level: 'low', summary: null }),
+          hidden: false,
+        };
 
   return {
     id: node.id,

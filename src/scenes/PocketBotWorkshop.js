@@ -3,11 +3,19 @@ import Phaser from 'phaser';
 import nimiRunV2AssetManifest from '../game/assets/nimirunV2AssetManifest.json';
 import { getContextSlotUsage } from '../domain/contextSlots.js';
 import {
-  createCoreResourceState,
   evaluateResourceCost,
-  getMoveResourceCost,
 } from '../domain/resourceRules.js';
+import {
+  approvePendingProposal,
+  markPartialResult,
+  redirectPendingProposal,
+  redirectToInspectFirst,
+  showRemainingUnknowns,
+  showWhyThisRoute,
+} from '../domain/guidanceLoop.js';
+import { getLossyMapNodeView } from '../domain/lossyMap.js';
 import { preloadNimiRunV2Assets } from '../game/assets/preloadNimiRunV2Assets.js';
+import { createPocketBotState } from '../game/pocketBotState.js';
 import {
   NODE_KINDS,
   NODE_VISIBILITY,
@@ -17,6 +25,7 @@ import {
   getPathEndpoints,
 } from '../game/resourceMapScenario.js';
 import { getMiniAppEnvironment } from '../platform/nimiqMiniApp.js';
+import { createGuidanceButton } from '../ui/guidanceControls.js';
 
 const COLORS = Object.freeze({
   background: 0x050b10,
@@ -148,6 +157,12 @@ function formatList(items, fallback = 'none') {
   return items.join(', ');
 }
 
+function formatGuidanceValue(userGuidance) {
+  const prompts = userGuidance.prompts || 0;
+
+  return prompts > 0 ? `${userGuidance.level} (${prompts})` : userGuidance.level;
+}
+
 export default class PocketBotWorkshop extends Phaser.Scene {
   constructor() {
     super({ key: 'PocketBotWorkshop' });
@@ -159,21 +174,18 @@ export default class PocketBotWorkshop extends Phaser.Scene {
 
   create() {
     this.mapScenario = createResourceMapScenario();
-    this.resourceState = createCoreResourceState(this.mapScenario.resources);
-    this.currentProposalCost = getMoveResourceCost(
-      this.mapScenario.proposalPreview.cost.moveType,
-      this.mapScenario.proposalPreview.cost
-    );
-    this.currentResourceEvaluation = evaluateResourceCost(this.resourceState, this.currentProposalCost);
+    this.guidanceState = createPocketBotState(this.mapScenario);
+    this.resourceState = this.guidanceState.mapState.resources;
     this.miniAppEnvironment = getMiniAppEnvironment(window);
     this.nodeMarkers = new Map();
+    this.attentionSegments = [];
 
     this.drawBackground();
     this.drawHeader();
     this.drawMap();
     this.drawHud();
     this.drawBottomPanels();
-    this.selectNode('shortcut-bridge');
+    this.selectNode('shortcut-bridge', { redirectProposal: false });
     this.setStatus(this.getDefaultStatus());
   }
 
@@ -213,6 +225,11 @@ export default class PocketBotWorkshop extends Phaser.Scene {
     this.add.text(704, 58, 'Mainnet wallet actions disabled', {
       ...createTextStyle({ fontSize: '13px', color: '#aab4bd', align: 'right' }),
       wordWrap: { width: 280 },
+    });
+
+    this.statusText = this.add.text(34, 80, '', {
+      ...createTextStyle({ fontSize: '12px', color: '#48a8ff', fontStyle: '700' }),
+      wordWrap: { width: 620 },
     });
   }
 
@@ -311,7 +328,7 @@ export default class PocketBotWorkshop extends Phaser.Scene {
 
       hitArea.on('pointerover', () => this.previewNode(node.id));
       hitArea.on('pointerout', () => this.setStatus(this.getDefaultStatus()));
-      hitArea.on('pointerdown', () => this.selectNode(node.id));
+      hitArea.on('pointerdown', () => this.selectNode(node.id, { redirectProposal: true }));
 
       this.nodeMarkers.set(node.id, marker);
     }
@@ -348,7 +365,7 @@ export default class PocketBotWorkshop extends Phaser.Scene {
   }
 
   drawHud() {
-    const resources = this.resourceState;
+    const resources = this.guidanceState.mapState.resources;
     const hud = LAYOUT.hud;
 
     createPanel(this, hud, COLORS.panelStroke, 'hud_panel_frame_v2');
@@ -362,7 +379,7 @@ export default class PocketBotWorkshop extends Phaser.Scene {
       wordWrap: { width: 246 },
     });
 
-    this.drawMeter({
+    this.attentionMeter = this.drawMeter({
       x: hud.x + 20,
       y: hud.y + 112,
       label: resources.botAttention.label,
@@ -372,7 +389,7 @@ export default class PocketBotWorkshop extends Phaser.Scene {
       max: resources.botAttention.max,
     });
 
-    this.drawValueRow({
+    this.nimiqValueText = this.drawValueRow({
       x: hud.x + 20,
       y: hud.y + 174,
       label: resources.nimiqPocket.label,
@@ -380,11 +397,11 @@ export default class PocketBotWorkshop extends Phaser.Scene {
       color: COLORS.nimiqGold,
     });
 
-    this.drawValueRow({
+    this.userGuidanceValueText = this.drawValueRow({
       x: hud.x + 20,
       y: hud.y + 224,
       label: resources.userGuidance.label,
-      value: resources.userGuidance.level,
+      value: formatGuidanceValue(resources.userGuidance),
       color: COLORS.warningRed,
     });
 
@@ -393,7 +410,7 @@ export default class PocketBotWorkshop extends Phaser.Scene {
     this.add.text(hud.x + 20, hud.y + 376, 'Trace Archive', {
       ...createTextStyle({ fontSize: '15px', color: '#f2b33d', fontStyle: '700' }),
     });
-    this.add.text(hud.x + 20, hud.y + 402, 'No trace card yet', {
+    this.traceArchiveText = this.add.text(hud.x + 20, hud.y + 402, 'No trace card yet', {
       ...createTextStyle({ fontSize: '13px', color: '#aab4bd' }),
     });
   }
@@ -402,17 +419,22 @@ export default class PocketBotWorkshop extends Phaser.Scene {
     this.add.text(x, y, label, {
       ...createTextStyle({ fontSize: '14px', color: '#f3e4c2', fontStyle: '700' }),
     });
-    this.add.text(x + 184, y, value, {
+    const valueText = this.add.text(x + 184, y, value, {
       ...createTextStyle({ fontSize: '14px', color: '#f3e4c2', align: 'right' }),
     });
 
+    const segments = [];
+
     for (let index = 0; index < max; index += 1) {
       const filled = index < current;
-      this.add
+      const segment = this.add
         .rectangle(x + index * 20, y + 30, 14, 12, filled ? color : COLORS.panelSoft, 1)
         .setOrigin(0)
         .setStrokeStyle(1, filled ? color : COLORS.panelDimStroke, 0.9);
+      segments.push(segment);
     }
+
+    return { valueText, segments, color };
   }
 
   drawValueRow({ x, y, label, value, color }) {
@@ -420,7 +442,7 @@ export default class PocketBotWorkshop extends Phaser.Scene {
     this.add.text(x + 24, y, label, {
       ...createTextStyle({ fontSize: '14px', color: '#f3e4c2', fontStyle: '700' }),
     });
-    this.add.text(x + 176, y, value, {
+    return this.add.text(x + 176, y, value, {
       ...createTextStyle({ fontSize: '14px', color: '#f3e4c2', align: 'right' }),
     });
   }
@@ -468,38 +490,69 @@ export default class PocketBotWorkshop extends Phaser.Scene {
     });
 
     this.drawProposalPreview();
-
-    this.statusText = this.add.text(LAYOUT.proposal.x + 18, LAYOUT.proposal.y + 146, '', {
-      ...createTextStyle({ fontSize: '12px', color: '#48a8ff', fontStyle: '700' }),
-      wordWrap: { width: 430 },
-    });
   }
 
   drawProposalPreview() {
-    const proposal = this.mapScenario.proposalPreview;
-    const evaluation = this.currentResourceEvaluation;
     const x = LAYOUT.proposal.x + 18;
     const y = LAYOUT.proposal.y + 16;
 
-    this.add.text(x, y, proposal.title, {
+    this.proposalTitleText = this.add.text(x, y, 'Bot Proposal', {
       ...createTextStyle({ fontSize: '17px', color: '#f2b33d', fontStyle: '700' }),
     });
-    this.add.text(x, y + 32, proposal.move, {
+    this.proposalMoveText = this.add.text(x, y + 28, '', {
       ...createTextStyle({ fontSize: '14px', color: '#f3e4c2', fontStyle: '700' }),
     });
-    this.add.text(x, y + 56, proposal.reason, {
+    this.proposalReasonText = this.add.text(x, y + 50, '', {
       ...createTextStyle({ fontSize: '13px', color: '#f3e4c2' }),
       wordWrap: { width: 430 },
     });
-    this.add.text(x, y + 104, `Cost: ${evaluation.cost.botAttention} Bot Attention | Guidance: ${evaluation.cost.userGuidance}`, {
+    this.proposalCostText = this.add.text(x, y + 88, '', {
       ...createTextStyle({ fontSize: '13px', color: '#48a8ff' }),
     });
-    this.add.text(x, y + 120, evaluation.allowed ? 'Resource check: allowed' : 'Resource check: blocked', {
-      ...createTextStyle({
-        fontSize: '13px',
-        color: evaluation.allowed ? '#80c84d' : '#ff5a3d',
-      }),
+    this.proposalCheckText = this.add.text(x, y + 104, '', {
+      ...createTextStyle({ fontSize: '13px', color: '#80c84d' }),
     });
+
+    this.drawGuidanceControls(x, y + 122);
+    this.updateProposalPanel();
+  }
+
+  drawGuidanceControls(x, y) {
+    const buttons = [
+      ['Approve', () => this.handleApproveProposal(), 76],
+      ['Why', () => this.handleWhyRoute(), 58],
+      ['Unknowns', () => this.handleRemainingUnknowns(), 78],
+      ['Inspect 1st', () => this.handleInspectFirst(), 82],
+      ['Partial', () => this.handleMarkPartial(), 66],
+    ];
+    let offsetX = 0;
+
+    for (const [label, onClick, width] of buttons) {
+      createGuidanceButton(this, {
+        x: x + offsetX,
+        y,
+        width,
+        label,
+        onClick,
+      });
+      offsetX += width + 8;
+    }
+  }
+
+  updateProposalPanel() {
+    const proposal = this.guidanceState.pendingProposal;
+    const node = getNodeById(this.mapScenario, proposal.targetNodeId);
+    const evaluation = evaluateResourceCost(this.guidanceState.mapState.resources, proposal.resourceCost);
+    const nodeLabel = node?.label || proposal.targetNodeId;
+
+    this.proposalMoveText?.setText(`${proposal.moveType.toUpperCase()} -> ${nodeLabel}`);
+    this.proposalReasonText?.setText(proposal.reason);
+    this.proposalCostText?.setText(
+      `Cost: ${evaluation.cost.botAttention} Bot Attention | Guidance: ${evaluation.cost.userGuidance}`
+    );
+    this.proposalCheckText
+      ?.setText(evaluation.allowed ? 'Resource check: allowed' : 'Resource check: blocked')
+      .setColor(evaluation.allowed ? '#80c84d' : '#ff5a3d');
   }
 
   getPathStyle(path) {
@@ -625,11 +678,12 @@ export default class PocketBotWorkshop extends Phaser.Scene {
       return;
     }
 
-    const pressure = node.pressure?.hidden ? 'risk hidden until inspected' : node.pressure?.summary;
+    const view = getLossyMapNodeView(this.guidanceState.mapState, nodeId);
+    const pressure = view.pressure?.hidden ? 'risk hidden until inspected' : view.pressure?.summary;
     this.setStatus(`${node.label}: ${pressure}`);
   }
 
-  selectNode(nodeId) {
+  selectNode(nodeId, { redirectProposal = false } = {}) {
     const node = getNodeById(this.mapScenario, nodeId);
 
     if (!node) {
@@ -652,23 +706,119 @@ export default class PocketBotWorkshop extends Phaser.Scene {
       this.selectedRing.setPosition(position.x, position.y);
     }
 
-    const knownState = node.visibility === NODE_VISIBILITY.FOGGED ? 'fogged' : 'visible';
-    const riskState = node.pressure?.hidden ? 'Hidden until inspected' : node.pressure?.summary;
-    const inspectSummary = node.reveal?.inspect?.summary || 'No inspect detail yet.';
+    if (redirectProposal) {
+      this.redirectProposalToNode(node);
+    }
+
+    const view = getLossyMapNodeView(this.guidanceState.mapState, nodeId);
+    const knownState = view.visibility === NODE_VISIBILITY.FOGGED ? 'fogged' : view.visibility;
+    const riskState = view.pressure?.hidden ? 'Hidden until inspected' : view.pressure?.summary;
+    const inspectSummary = view.visibleClue || node.reveal?.inspect?.summary || 'No inspect detail yet.';
+    const remainingUnknowns = view.remainingUnknowns.length > 0 ? view.remainingUnknowns : node.residue;
 
     this.detailTitle.setText(node.label);
     this.detailBody.setText([
       `State: ${knownState}`,
       `Risk: ${riskState}`,
       `Inspect: ${inspectSummary}`,
-      `Residue: ${formatList(node.residue)}`,
+      `Residue: ${formatList(remainingUnknowns)}`,
     ].join('\n'));
   }
 
-  getDefaultStatus() {
-    const mode = this.miniAppEnvironment.isNimiqPay ? 'Nimiq Pay Mini App shell' : 'local simulated Mini App fallback';
+  redirectProposalToNode(node) {
+    const moveType = node.possibleMoves?.[this.guidanceState.pendingProposal.moveType]
+      ? this.guidanceState.pendingProposal.moveType
+      : 'inspect';
 
-    return `${mode}. Wallet operations disabled.`;
+    this.guidanceState = redirectPendingProposal(this.guidanceState, {
+      moveType,
+      targetNodeId: node.id,
+      reason: `User redirected the bot toward ${node.label}.`,
+    });
+    this.updateProposalPanel();
+    this.setStatus(`Proposal redirected to ${node.label}.`);
+  }
+
+  renderGuidancePanel() {
+    const panel = this.guidanceState.guidancePanel;
+
+    this.detailTitle.setText(panel.title);
+    this.detailBody.setText(panel.lines.join('\n'));
+  }
+
+  updateHud() {
+    const resources = this.guidanceState.mapState.resources;
+    const attention = resources.botAttention;
+
+    this.resourceState = resources;
+    this.attentionMeter?.valueText.setText(`${attention.current}/${attention.max}`);
+    this.attentionMeter?.segments.forEach((segment, index) => {
+      const filled = index < attention.current;
+      segment
+        .setFillStyle(filled ? this.attentionMeter.color : COLORS.panelSoft, 1)
+        .setStrokeStyle(1, filled ? this.attentionMeter.color : COLORS.panelDimStroke, 0.9);
+    });
+    this.userGuidanceValueText?.setText(formatGuidanceValue(resources.userGuidance));
+    this.traceArchiveText?.setText(
+      this.guidanceState.guidanceTrace.length > 0
+        ? `${this.guidanceState.guidanceTrace.length} guidance trace(s)`
+        : 'No trace card yet'
+    );
+  }
+
+  handleApproveProposal() {
+    const targetNodeId = this.guidanceState.pendingProposal.targetNodeId;
+    const result = approvePendingProposal(this.guidanceState);
+
+    this.guidanceState = result.state;
+    this.updateHud();
+    this.updateProposalPanel();
+
+    if (result.applied) {
+      this.selectNode(targetNodeId, { redirectProposal: false });
+      this.setStatus(`Accepted ${this.guidanceState.guidanceTrace.at(-1).moveType}. Resources updated.`);
+      return;
+    }
+
+    this.renderGuidancePanel();
+    this.setStatus('Move blocked before resources were spent.');
+  }
+
+  handleWhyRoute() {
+    this.guidanceState = showWhyThisRoute(this.guidanceState);
+    this.renderGuidancePanel();
+    this.setStatus('Route rationale exposed.');
+  }
+
+  handleRemainingUnknowns() {
+    this.guidanceState = showRemainingUnknowns(this.guidanceState);
+    this.renderGuidancePanel();
+    this.setStatus('Remaining unknowns exposed.');
+  }
+
+  handleInspectFirst() {
+    this.guidanceState = redirectToInspectFirst(this.guidanceState);
+    this.updateProposalPanel();
+    this.renderGuidancePanel();
+    this.setStatus('Proposal changed to inspect first.');
+  }
+
+  handleMarkPartial() {
+    const node = getNodeById(this.mapScenario, this.selectedNodeId);
+
+    this.guidanceState = markPartialResult(
+      this.guidanceState,
+      `${node?.label || 'Selected result'} is useful, but not full success.`
+    );
+    this.updateHud();
+    this.renderGuidancePanel();
+    this.setStatus('Marked as partial progress.');
+  }
+
+  getDefaultStatus() {
+    return this.miniAppEnvironment.isNimiqPay
+      ? 'Ready in Nimiq Pay Mini App shell. Wallet actions disabled.'
+      : 'Ready in local Mini App fallback. Wallet actions disabled.';
   }
 
   setStatus(message) {
