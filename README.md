@@ -15,11 +15,12 @@ The repository currently contains:
 - PB-006 deterministic resource model for Bot Attention, Nimiq Pocket, User Guidance, and Context Slots,
 - PB-006A run-session runtime for transition gates, run carriers, residue, and finish judgment,
 - PB-007 LLM route-proposal bridge with schema validation, run-carrier prompt shaping, browser relay client, Vite dev relay middleware, and mock fallback,
+- PB-008 lossy-map domain rules for hidden-pressure reveal, inspect/skip/act behavior, false-landfall traps, safe-finish judgment, and prompt serialization,
 - NimiRun V2 runtime assets under `public/assets/nimirun-v2/`,
 - organized product documentation under `docs/`,
 - project structure prepared for testable domain logic, LLM proposal boundaries, runtime-cycle rules, and future Nimiq testnet work.
 
-The revised resource-judgment gameplay has a map scaffold, deterministic resource state, runtime-cycle groundwork, and a bounded LLM proposal bridge, but the full playable loop is not complete yet.
+The revised resource-judgment gameplay has a map scaffold, deterministic resource state, runtime-cycle groundwork, a bounded LLM proposal bridge, and lossy-map rules, but the full playable loop is not complete yet.
 
 ## Documentation
 

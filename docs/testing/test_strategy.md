@@ -321,6 +321,8 @@ Expected manual or smoke checks:
 
 ### PB-008 Lossy Map Scenario
 
+Status: implemented.
+
 Expected automated tests:
 
 - unrevealed nodes hide assumptions,

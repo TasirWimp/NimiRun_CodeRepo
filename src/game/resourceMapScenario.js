@@ -117,9 +117,27 @@ const RESOURCE_MAP_SCENARIO = Object.freeze({
         level: 'low',
         summary: 'Starting point is known, but the map is incomplete.',
       },
+      visibleClue: 'Known edge of a larger fogged task landscape.',
+      possibleMoves: {
+        inspect: {
+          cost: { botAttention: 1, userGuidance: 0, contextSlots: 0 },
+          reveals: ['route split'],
+          leavesUnknown: ['which route best protects attention'],
+        },
+        skip: {
+          cost: { botAttention: 0, userGuidance: 0, contextSlots: 0 },
+          preservesResidue: ['wider task landscape still fogged'],
+        },
+        act: {
+          cost: { botAttention: 1, userGuidance: 0, contextSlots: 0 },
+          risk: 'Leaving the source without inspection may preserve route ambiguity.',
+        },
+      },
       reveal: {
         inspect: {
           summary: 'The first visible routes split between speed, context, and caution.',
+          evidence: ['route-split-seen'],
+          resolvesUnknowns: [],
           residue: ['which route best protects attention'],
         },
       },
@@ -137,9 +155,28 @@ const RESOURCE_MAP_SCENARIO = Object.freeze({
         level: 'medium',
         summary: 'Fast route may hide a cost.',
       },
+      visibleClue: 'Fast path toward a glowing gate.',
+      hiddenPressure: ['Fast route may hide a cost.'],
+      possibleMoves: {
+        inspect: {
+          cost: { botAttention: 2, userGuidance: 1, contextSlots: 0 },
+          reveals: ['shortcut risk'],
+          leavesUnknown: ['long route safety still unknown'],
+        },
+        skip: {
+          cost: { botAttention: 0, userGuidance: 0, contextSlots: 0 },
+          preservesResidue: ['long route safety unknown'],
+        },
+        act: {
+          cost: { botAttention: 2, userGuidance: 1, contextSlots: 0 },
+          risk: 'Acting through the shortcut can reach a goal-looking gate before warnings are checked.',
+        },
+      },
       reveal: {
         inspect: {
           summary: 'Shortcut risk can be revealed before acting.',
+          evidence: ['shortcut-risk-revealed'],
+          resolvesUnknowns: ['fast path risk unresolved'],
           residue: ['long route safety still unknown'],
         },
       },
@@ -157,9 +194,27 @@ const RESOURCE_MAP_SCENARIO = Object.freeze({
         level: 'low',
         summary: 'Carrying a clue uses scarce context capacity.',
       },
+      visibleClue: 'A place to hold one useful clue or residue.',
+      possibleMoves: {
+        inspect: {
+          cost: { botAttention: 1, userGuidance: 0, contextSlots: 0 },
+          reveals: ['context slot lesson'],
+          leavesUnknown: ['only four slots can be carried'],
+        },
+        skip: {
+          cost: { botAttention: 0, userGuidance: 0, contextSlots: 0 },
+          preservesResidue: ['context capacity remains limited'],
+        },
+        act: {
+          cost: { botAttention: 1, userGuidance: 0, contextSlots: 1 },
+          risk: 'Holding a clue consumes scarce context capacity.',
+        },
+      },
       reveal: {
         inspect: {
           summary: 'The shrine can hold one clue or residue for later proposals.',
+          evidence: ['critical-clue-held', 'residue-reviewed'],
+          resolvesUnknowns: ['safe finish conditions unknown'],
           residue: ['only four slots can be carried'],
         },
       },
@@ -177,9 +232,28 @@ const RESOURCE_MAP_SCENARIO = Object.freeze({
         level: 'high',
         summary: 'A warning exists behind fog.',
       },
+      visibleClue: 'Fog hides whether the shortcut is safe.',
+      hiddenPressure: ['A warning exists behind fog.'],
+      possibleMoves: {
+        inspect: {
+          cost: { botAttention: 2, userGuidance: 1, contextSlots: 0 },
+          reveals: ['false finish warning'],
+          leavesUnknown: ['safe finish still needs a held clue'],
+        },
+        skip: {
+          cost: { botAttention: 0, userGuidance: 0, contextSlots: 0 },
+          preservesResidue: ['warning not inspected'],
+        },
+        act: {
+          cost: { botAttention: 2, userGuidance: 1, contextSlots: 0 },
+          risk: 'Acting without reading the warning can preserve false-finish risk.',
+        },
+      },
       reveal: {
         inspect: {
           summary: 'Warning explains why the glowing gate may be a false finish.',
+          evidence: ['warning-inspected'],
+          resolvesUnknowns: ['warning not inspected', 'warning hidden behind fog'],
           residue: ['safe finish still needs a held clue'],
         },
       },
@@ -197,9 +271,27 @@ const RESOURCE_MAP_SCENARIO = Object.freeze({
         level: 'low',
         summary: 'Pocket value can become controlled capacity later.',
       },
+      visibleClue: 'A local/testnet pocket signal, not broad wallet authority.',
+      possibleMoves: {
+        inspect: {
+          cost: { botAttention: 1, userGuidance: 0, contextSlots: 0 },
+          reveals: ['pocket boundary'],
+          leavesUnknown: ['recharge rules are future scope'],
+        },
+        skip: {
+          cost: { botAttention: 0, userGuidance: 0, contextSlots: 0 },
+          preservesResidue: ['recharge rules not active'],
+        },
+        act: {
+          cost: { botAttention: 1, userGuidance: 1, contextSlots: 0 },
+          risk: 'Pocket value cannot replace judgment in Phase 1.',
+        },
+      },
       reveal: {
         inspect: {
           summary: 'Pocket spark is a testnet/local value signal, not broad wallet authority.',
+          evidence: ['pocket-boundary-seen'],
+          resolvesUnknowns: ['recharge rules not active'],
           residue: ['recharge rules are future scope'],
         },
       },
@@ -217,9 +309,34 @@ const RESOURCE_MAP_SCENARIO = Object.freeze({
         level: 'high',
         summary: 'Looks complete before warnings are checked.',
       },
+      visibleClue: 'A tempting goal-looking gate.',
+      hiddenPressure: ['Looks complete before warnings are checked.'],
+      possibleMoves: {
+        inspect: {
+          cost: { botAttention: 2, userGuidance: 1, contextSlots: 0 },
+          reveals: ['false finish risk'],
+          leavesUnknown: ['warning not inspected', 'lesson incomplete'],
+        },
+        skip: {
+          cost: { botAttention: 0, userGuidance: 0, contextSlots: 0 },
+          preservesResidue: ['false finish risk'],
+        },
+        act: {
+          cost: { botAttention: 2, userGuidance: 1, contextSlots: 0 },
+          risk: 'Acting here can declare completion before protected evidence is present.',
+        },
+      },
+      falseLandfallTrap: {
+        trigger: 'act before warning-inspected, critical-clue-held, and residue-reviewed evidence are present',
+        whyItIsFalseClosure: 'The glowing gate is a false finish because protected evidence or residue remains unresolved.',
+        residue: ['false finish risk'],
+        remainingUnknowns: ['warning not inspected', 'lesson incomplete'],
+      },
       reveal: {
         inspect: {
           summary: 'The gate looks like a finish, but unresolved warning residue remains.',
+          evidence: ['false-finish-risk-seen'],
+          resolvesUnknowns: [],
           residue: ['warning not inspected', 'lesson incomplete'],
         },
       },
@@ -237,10 +354,28 @@ const RESOURCE_MAP_SCENARIO = Object.freeze({
         level: 'protected',
         summary: 'Safe finish requires inspected warnings and carried clues.',
       },
+      visibleClue: 'A finish that only counts after warnings, clues, and residue are checked.',
+      possibleMoves: {
+        inspect: {
+          cost: { botAttention: 1, userGuidance: 1, contextSlots: 0 },
+          reveals: ['safe finish conditions'],
+          leavesUnknown: ['finish judgment still needs protected evidence'],
+        },
+        skip: {
+          cost: { botAttention: 0, userGuidance: 0, contextSlots: 0 },
+          preservesResidue: ['safe finish conditions unknown'],
+        },
+        act: {
+          cost: { botAttention: 2, userGuidance: 1, contextSlots: 0 },
+          risk: 'Safe finish fails if protected evidence or residue remains unresolved.',
+        },
+      },
       reveal: {
         inspect: {
           summary: 'A safe finish becomes legible after warnings, clues, and residue are checked.',
-          residue: ['finish judgment not implemented until PB-006A/PB-008'],
+          evidence: ['safe-finish-conditions-seen'],
+          resolvesUnknowns: ['safe finish conditions unknown'],
+          residue: ['finish judgment still needs protected evidence'],
         },
       },
       residue: ['safe finish conditions unknown'],

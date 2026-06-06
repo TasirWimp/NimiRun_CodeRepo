@@ -616,13 +616,12 @@ The first milestone is complete when:
 
 Recommended next task:
 
-1. PB-008: create the first lossy map scenario.
-2. PB-009: connect user guidance controls to validated bot moves.
-3. PB-011: generalize receipts into trace cards.
-4. PB-010: add one session lesson that affects a later proposal.
-5. PB-012: close the NIM/USDT support path inside the Nimiq pocket surface.
-6. PB-POLISH: finish the 60-second judge path.
-7. PB-MARKET: prepare submission materials and record external feedback.
+1. PB-009: connect user guidance controls to validated bot moves.
+2. PB-011: generalize receipts into trace cards.
+3. PB-010: add one session lesson that affects a later proposal.
+4. PB-012: close the NIM/USDT support path inside the Nimiq pocket surface.
+5. PB-POLISH: finish the 60-second judge path.
+6. PB-MARKET: prepare submission materials and record external feedback.
 
 Run `npm run test`, `npm run build`, and browser/manual scene checks for source
 changes, including a Mini App/testnet compatibility check when available.

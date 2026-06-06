@@ -147,12 +147,12 @@ Implemented groundwork from the earlier allowance-control cut:
 - PB-006 Core Resource Model is implemented with deterministic Bot Attention, Nimiq Pocket, User Guidance, Context Slot, and move-cost checks in `src/domain/`.
 - PB-006A Run Session And Transition Runtime is implemented with scenario contract validation, move transition gates, run carriers, and finish judgment packets.
 - PB-007 LLM Route Proposal Bridge is implemented with a strict route proposal schema, run-carrier prompt builder, browser relay client, Vite dev relay middleware, Vercel production function, OpenAI Responses API relay, and offline/mock fallback.
+- PB-008 Lossy Map Scenario is implemented with deterministic hidden-pressure reveal, inspect/skip/act behavior, false-landfall traps, safe-finish judgment, and prompt serialization in `src/domain/lossyMap.js`.
 
 This work should be retained as supporting infrastructure. It becomes one possible resource-governance mechanic inside the broader resource-judgment game, not the active center of Phase 1.
 
 Next work should pivot to connecting the playable user-bot interaction loop:
 
-- lossy map scenario,
 - user guidance controls,
 - session-only lesson application,
 - trace cards,
@@ -770,6 +770,10 @@ Acceptance:
 
 ### PB-008 Lossy Map Scenario
 
+Status:
+
+Implemented.
+
 Goal:
 
 Create the first abstract task landscape.
@@ -1148,10 +1152,10 @@ Implemented groundwork:
 7. PB-006 Core Resource Model.
 8. PB-006A Run Session And Transition Runtime.
 9. PB-007 LLM Route Proposal Bridge.
+10. PB-008 Lossy Map Scenario.
 
 Revised next sequence:
 
-10. PB-008 Lossy Map Scenario.
 11. PB-009 User-Bot Guidance Loop.
 12. PB-011 Trace Cards.
 13. PB-010 Session Lesson Application.
@@ -1168,7 +1172,7 @@ vertical-slice pass rather than a product pivot.
 The next implementation commit should be:
 
 ```text
-feat: add lossy map scenario
+feat: connect user bot guidance loop
 ```
 
 ## Risks And Controls
