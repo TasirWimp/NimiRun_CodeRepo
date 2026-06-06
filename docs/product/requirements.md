@@ -594,7 +594,7 @@ The first milestone is complete when:
 
 ## 17. Open Questions
 
-- Which Phaser-compatible RPG/tilemap workflow should Phase 1 use: Phaser-native tilemaps, Tiled, LDtk, or another Vite-friendly option?
+- Should the Phaser-native custom node-map workflow remain through the first submission, or should it later be migrated to Tiled/LDtk after the first judge path is stable?
 - Should the first loop use keyboard/controller movement, node-click movement, UI button input, or a hybrid?
 - What exact low-cost GPT model should be selected at implementation time based on current official model and pricing docs?
 - Should the LLM relay live in this repo as a small server function, or in a separate deployment target?
@@ -609,18 +609,16 @@ The first milestone is complete when:
 
 Recommended next task:
 
-1. PB-004A: document the competition compliance floor and NIM/USDT support decision.
-2. PB-005: choose and document the Phaser-compatible RPG/tilemap workflow.
-3. PB-006: implement the core resource model for Bot Attention, Nimiq Pocket, User Attention prompts, and Context Capacity.
-4. PB-006A: implement the run-session / transition-gate / carrier / finish-judgment runtime.
-5. PB-007: add the LLM route-proposal bridge with schema validation, server-side API-key boundary, and offline/mock fallback.
-6. PB-008: create the first lossy map scenario.
-7. PB-009: connect user guidance controls to validated bot moves.
-8. PB-011: generalize receipts into trace cards.
-9. PB-010: add one session lesson that affects a later proposal.
-10. PB-012: close the NIM/USDT support path inside the Nimiq pocket surface.
-11. PB-POLISH: finish the 60-second judge path.
-12. PB-MARKET: prepare submission materials and record external feedback.
+1. PB-006: implement the core resource model for Bot Attention, Nimiq Pocket, User Attention prompts, and Context Capacity.
+2. PB-006A: implement the run-session / transition-gate / carrier / finish-judgment runtime.
+3. PB-007: add the LLM route-proposal bridge with schema validation, server-side API-key boundary, and offline/mock fallback.
+4. PB-008: create the first lossy map scenario.
+5. PB-009: connect user guidance controls to validated bot moves.
+6. PB-011: generalize receipts into trace cards.
+7. PB-010: add one session lesson that affects a later proposal.
+8. PB-012: close the NIM/USDT support path inside the Nimiq pocket surface.
+9. PB-POLISH: finish the 60-second judge path.
+10. PB-MARKET: prepare submission materials and record external feedback.
 
 Run `npm run test`, `npm run build`, and browser/manual scene checks for source
 changes, including a Mini App/testnet compatibility check when available.

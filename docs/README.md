@@ -8,6 +8,7 @@ This folder keeps project documentation grouped by purpose. Avoid placing new Ma
 - `process/` - development workflow, agent workflow, coding conventions.
 - `planning/` - milestone plans, feature breakdowns, implementation plans.
 - `testing/` - test strategy, test plans, acceptance checklists.
+- `architecture/` - technical design notes, module boundaries, integration design.
 
 ## Planned Structure
 
@@ -16,7 +17,6 @@ Create these folders only when a document in that category is needed:
 - `process/` - development workflow, agent workflow, coding conventions.
 - `planning/` - milestone plans, feature breakdowns, implementation plans.
 - `testing/` - test strategy, test plans, acceptance checklists.
-- `architecture/` - technical design notes, module boundaries, integration design.
 - `research/` - source notes, competitive references, external evidence.
 
 ## Placement Rules

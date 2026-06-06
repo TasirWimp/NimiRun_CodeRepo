@@ -143,13 +143,13 @@ Implemented groundwork from the earlier allowance-control cut:
 - PB-002 Receipt Creation is implemented, including future-facing receipt classification data.
 - PB-003 Allowance Spend Execution is implemented.
 - PB-004 Pocket Bot Workshop Scene Shell is implemented with Mini App framework compatibility, local fallback status, and a Tool Scout hover witness interaction.
+- PB-005 RPG Map Tooling And Scene Direction is implemented with a Phaser-native custom node-map workflow, documented in `docs/architecture/rpg_map_tooling.md`.
 
 This work should be retained as supporting infrastructure. It becomes one possible resource-governance mechanic inside the broader resource-judgment game, not the active center of Phase 1.
 
 Next work should pivot to the playable user-bot interaction loop:
 
 - competition compliance floor,
-- RPG-style map/tooling decision,
 - resource model,
 - LLM route-proposal bridge,
 - lossy map scenario,
@@ -566,6 +566,11 @@ Goal:
 
 Choose the Phaser/Vite 2D RPG-map workflow for Phase 1.
 
+Status:
+
+Implemented as a Phaser-native custom node-map workflow. See
+`docs/architecture/rpg_map_tooling.md`.
+
 User-visible behavior:
 
 No major player-facing feature yet. This slice establishes how the map will be authored and rendered so the next slices can build the game loop without fighting the scene foundation.
@@ -574,7 +579,8 @@ Expected files:
 
 - `docs/planning/mvp_implementation_plan.md`
 - `docs/product/art_bible.md`
-- optional `docs/architecture/rpg_map_tooling.md`
+- `docs/architecture/rpg_map_tooling.md`
+- `src/game/resourceMapScenario.js`
 - `src/scenes/PocketBotWorkshop.js`
 - optional map asset/config files under the most specific existing asset directory, or a new focused map directory if needed.
 
@@ -584,7 +590,8 @@ Test plan:
 - pick the smallest workflow that supports tiles, object layers/nodes, fog/revealed state, and click/keyboard interaction,
 - confirm the selected workflow can implement the art bible with small readable sprites, modular tiles, UI icons, and state effects,
 - verify the chosen workflow can represent pressure/residue metadata on nodes without overcomplicating art production,
-- `npm run build` passes after any dependency/config change,
+- `npm run test` covers the map scaffold data shape,
+- `npm run build` passes,
 - browser/manual check confirms the scene still renders.
 
 Acceptance:
@@ -1115,11 +1122,11 @@ Implemented groundwork:
 2. PB-002 Receipt Creation.
 3. PB-003 Allowance Spend Execution.
 4. PB-004 Pocket Bot Workshop Scene Shell.
+5. PB-004A Competition Compliance Floor.
+6. PB-005 RPG Map Tooling And Scene Direction.
 
 Revised next sequence:
 
-5. PB-004A Competition Compliance Floor.
-6. PB-005 RPG Map Tooling And Scene Direction.
 7. PB-006 Core Resource Model.
 8. PB-006A Run Session And Transition Runtime.
 9. PB-007 LLM Route Proposal Bridge.
@@ -1140,7 +1147,7 @@ vertical-slice pass rather than a product pivot.
 The next implementation commit should be:
 
 ```text
-docs: resolve competition compliance floor
+feat: add core resource model
 ```
 
 ## Risks And Controls

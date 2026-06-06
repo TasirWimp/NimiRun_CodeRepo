@@ -252,12 +252,15 @@ Keep build and browser checks as baseline scene smoke coverage.
 
 ### PB-005 RPG Map Tooling And Scene Direction
 
+Status: implemented with a Phaser-native custom node-map scaffold.
+
 Expected checks:
 
 - selected map workflow is documented,
 - map workflow can represent fog/revealed state,
 - map workflow can attach hidden pressure / residue metadata to nodes without overcomplicating art production,
-- `npm run build` passes after dependency/config changes,
+- `npm run test` covers the scene-independent map scaffold,
+- `npm run build` passes,
 - browser opens the app,
 - scene renders map or map placeholder,
 - local fallback remains readable.

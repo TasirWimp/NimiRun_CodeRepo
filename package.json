@@ -1,6 +1,6 @@
 {
     "name": "pocket-bot",
-    "description": "A Phaser 3 + Vite prototype for a Nimiq mini app about prepaid allowances for software helpers.",
+    "description": "A Phaser 3 + Vite prototype for a Nimiq mini app about training a bot to spend limited attention wisely.",
     "version": "0.1.0",
     "type": "module",
     "repository": {

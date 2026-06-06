@@ -11,15 +11,17 @@ The repository currently contains:
 - the original Phaser/Vite game foundation,
 - a simple side-scroller prototype scene,
 - Pocket Bot Workshop scene and domain groundwork from the earlier allowance-control cut,
+- PB-005 RPG map tooling and a Phaser-native node-map scaffold,
 - organized product documentation under `docs/`,
 - project structure prepared for testable domain logic, LLM proposal boundaries, runtime-cycle rules, and future Nimiq testnet work.
 
-The revised resource-judgment gameplay is planned but not complete yet.
+The revised resource-judgment gameplay has a map scaffold, but the full playable loop is not complete yet.
 
 ## Documentation
 
 - Product requirements: `docs/product/requirements.md`
 - Art bible: `docs/product/art_bible.md`
+- RPG map tooling: `docs/architecture/rpg_map_tooling.md`
 - Phase 1 implementation plan: `docs/planning/mvp_implementation_plan.md`
 - Test strategy: `docs/testing/test_strategy.md`
 - Source attribution register: `docs/product/source_attribution.md`

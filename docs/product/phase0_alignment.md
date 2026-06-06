@@ -119,12 +119,12 @@ Implemented Phase 1 groundwork from the earlier allowance-control cut:
 - PB-002 Receipt Creation.
 - PB-003 Allowance Spend Execution.
 - PB-004 Pocket Bot Workshop Scene Shell with Mini App framework-compatible app wiring.
+- PB-005 RPG Map Tooling And Scene Direction with a Phaser-native custom node-map scaffold.
 
 These modules should not be reverted. They are now supporting pieces for future Nimiq Pocket / paid-resource gates.
 
 Still needed for the revised Phase 1:
 
-- PB-005 RPG Map Tooling And Scene Direction.
 - PB-006 Core Resource Model.
 - PB-007 LLM Route Proposal Bridge.
 - PB-008 Lossy Map Scenario.
@@ -133,6 +133,6 @@ Still needed for the revised Phase 1:
 - PB-011 Trace Cards.
 - PB-012 Nimiq Testnet Pocket.
 
-PB-004 added the first visible workshop scene, a safe Mini App/local fallback environment boundary, and a Tool Scout hover witness interaction. That interaction can remain temporarily while the scene is rebuilt around the lossy-map resource loop.
+PB-005 replaced the old Tool Scout visual placeholder with the first lossy-map scaffold. The earlier allowance-control modules remain useful as future Nimiq Pocket / paid-resource gate groundwork.
 
 Receipt classification data exists as future-facing domain groundwork. Full persistent memory, durable skill unlocks, real-world task bridges, and real paid-resource governance belong to later roadmap phases unless explicitly pulled forward in a separate plan change.
