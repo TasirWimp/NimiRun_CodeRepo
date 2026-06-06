@@ -26,6 +26,10 @@ import {
 } from '../game/resourceMapScenario.js';
 import { getMiniAppEnvironment } from '../platform/nimiqMiniApp.js';
 import { createGuidanceButton } from '../ui/guidanceControls.js';
+import {
+  createTracePanelContent,
+  formatTraceArchiveLabel,
+} from '../ui/tracePanel.js';
 
 const COLORS = Object.freeze({
   background: 0x050b10,
@@ -413,6 +417,11 @@ export default class PocketBotWorkshop extends Phaser.Scene {
     this.traceArchiveText = this.add.text(hud.x + 20, hud.y + 402, 'No trace card yet', {
       ...createTextStyle({ fontSize: '13px', color: '#aab4bd' }),
     });
+    this.add
+      .rectangle(hud.x + 14, hud.y + 366, 252, 52, 0xffffff, 0.001)
+      .setOrigin(0)
+      .setInteractive({ useHandCursor: true })
+      .on('pointerdown', () => this.renderLatestTraceCard());
   }
 
   drawMeter({ x, y, label, value, color, current, max }) {
@@ -760,10 +769,17 @@ export default class PocketBotWorkshop extends Phaser.Scene {
     });
     this.userGuidanceValueText?.setText(formatGuidanceValue(resources.userGuidance));
     this.traceArchiveText?.setText(
-      this.guidanceState.guidanceTrace.length > 0
-        ? `${this.guidanceState.guidanceTrace.length} guidance trace(s)`
-        : 'No trace card yet'
+      formatTraceArchiveLabel(this.guidanceState.traceCards)
     );
+  }
+
+  renderLatestTraceCard() {
+    const traceCard = this.guidanceState.traceCards.at(-1);
+    const panel = createTracePanelContent(traceCard);
+
+    this.detailTitle.setText(panel.title);
+    this.detailBody.setText(panel.lines.join('\n'));
+    this.setStatus(traceCard ? 'Latest trace card shown.' : 'No trace card recorded yet.');
   }
 
   handleApproveProposal() {
@@ -776,7 +792,8 @@ export default class PocketBotWorkshop extends Phaser.Scene {
 
     if (result.applied) {
       this.selectNode(targetNodeId, { redirectProposal: false });
-      this.setStatus(`Accepted ${this.guidanceState.guidanceTrace.at(-1).moveType}. Resources updated.`);
+      this.renderLatestTraceCard();
+      this.setStatus(`Accepted ${this.guidanceState.guidanceTrace.at(-1).moveType}. Trace card recorded.`);
       return;
     }
 
@@ -811,7 +828,7 @@ export default class PocketBotWorkshop extends Phaser.Scene {
       `${node?.label || 'Selected result'} is useful, but not full success.`
     );
     this.updateHud();
-    this.renderGuidancePanel();
+    this.renderLatestTraceCard();
     this.setStatus('Marked as partial progress.');
   }
 

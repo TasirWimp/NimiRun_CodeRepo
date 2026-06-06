@@ -1,4 +1,5 @@
 import { serializeRunCarrierForPrompt } from '../domain/runCarrier.js';
+import { serializeTraceCardsForProposalContext } from '../domain/traces.js';
 import {
   DEFAULT_ROUTE_PROPOSAL_MOVE_TYPES,
   createRouteProposalTextFormat,
@@ -17,6 +18,7 @@ export function buildRouteProposalPrompt({
   carrier,
   allowedMoves = DEFAULT_ROUTE_PROPOSAL_MOVE_TYPES,
   visibleNodes = [],
+  traceCards = [],
   sessionLesson = null,
 } = {}) {
   if (!carrier?.sessionId) {
@@ -27,6 +29,7 @@ export function buildRouteProposalPrompt({
     run_carrier: serializeRunCarrierForPrompt(carrier),
     allowed_moves: allowedMoves,
     visible_nodes: normalizeVisibleNodes(visibleNodes),
+    trace_cards: serializeTraceCardsForProposalContext(traceCards),
     session_lesson: sessionLesson,
     proposal_rules: {
       propose_one_move_only: true,
@@ -40,7 +43,7 @@ export function buildRouteProposalPrompt({
   return {
     system: [
       'You are Pocket Bot, a bounded route-proposal helper inside NimiRun.',
-      'Use only the supplied run_carrier, visible_nodes, allowed_moves, and session_lesson.',
+      'Use only the supplied run_carrier, visible_nodes, allowed_moves, trace_cards, and session_lesson.',
       'Propose one next move that spends attention carefully in a lossy map.',
       'Do not request wallet authority, checkout, payment execution, browser actions, external tools, or persistent memory.',
       'Do not claim certainty about uninspected terrain and do not claim safe finish.',

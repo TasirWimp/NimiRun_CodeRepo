@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { createRunSession } from '../../src/domain/runSession.js';
+import { createTraceCard } from '../../src/domain/traces.js';
 import { createResourceMapScenario } from '../../src/game/resourceMapScenario.js';
 import {
   buildRouteProposalPrompt,
@@ -38,5 +39,31 @@ describe('route proposal prompt', () => {
       strict: true,
     });
     expect(request.text.format.schema.required).toEqual(['route_proposal']);
+  });
+
+  it('includes trace-card residue in the next proposal payload', () => {
+    const session = createRunSession(createResourceMapScenario(), { id: 'run-trace-context-test' });
+    const traceCard = createTraceCard({
+      sequence: 1,
+      acceptedMove: {
+        moveType: 'inspect',
+        targetNodeId: 'shortcut-bridge',
+      },
+      residueCarriedForward: ['long route safety still unknown'],
+    });
+    const prompt = buildRouteProposalPrompt({
+      carrier: session.carrier,
+      allowedMoves: session.contract.allowedMoves,
+      traceCards: [traceCard],
+    });
+
+    expect(prompt.payload.trace_cards).toEqual([
+      expect.objectContaining({
+        id: 'trace-1',
+        move: 'inspect',
+        residue: expect.arrayContaining(['long route safety still unknown']),
+      }),
+    ]);
+    expect(prompt.user).toContain('"trace_cards"');
   });
 });

@@ -379,6 +379,8 @@ Expected checks:
 
 ### PB-011 Trace Cards
 
+Status: implemented.
+
 Expected automated tests:
 
 - trace card records proposal, accepted move, resource costs, map result, and lesson fields,

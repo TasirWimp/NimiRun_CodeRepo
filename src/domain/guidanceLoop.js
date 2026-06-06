@@ -9,6 +9,12 @@ import {
   applyResourceCost,
   getMoveResourceCost,
 } from './resourceRules.js';
+import {
+  appendTraceCard,
+  createMoveTraceCard,
+  createTraceCard,
+  markLatestTraceCardPartial,
+} from './traces.js';
 
 function clone(value) {
   return JSON.parse(JSON.stringify(value));
@@ -106,6 +112,7 @@ export function createGuidanceLoopState({
   pendingProposal,
   guidancePanel = null,
   guidanceTrace = [],
+  traceCards = [],
   partialResults = [],
 } = {}) {
   if (!mapState?.scenario) {
@@ -121,6 +128,7 @@ export function createGuidanceLoopState({
     pendingProposal,
     guidancePanel: guidancePanel || createGuidancePanel('Bot Proposal', [pendingProposal.reason]),
     guidanceTrace: guidanceTrace.map(clone),
+    traceCards: traceCards.map(clone),
     partialResults: normalizeList(partialResults),
   };
 }
@@ -155,6 +163,14 @@ function validateProposalTarget(state) {
   };
 }
 
+function getPendingGuidanceEntries(state) {
+  const lastAcceptedIndex = state.guidanceTrace.findLastIndex(
+    (entry) => entry.action === 'approve' || entry.action === 'ask-user'
+  );
+
+  return state.guidanceTrace.slice(lastAcceptedIndex + 1);
+}
+
 function applyAskMove(state) {
   const result = applyResourceCost(state.mapState.resources, getMoveResourceCost(MOVE_TYPES.ASK));
 
@@ -177,6 +193,25 @@ function applyAskMove(state) {
     }),
   };
 
+  const traceCard = createTraceCard({
+    sequence: state.traceCards.length + 1,
+    proposal: state.pendingProposal,
+    acceptedMove: {
+      moveType: MOVE_TYPES.ASK,
+      targetNodeId: state.pendingProposal.targetNodeId,
+    },
+    resourceSpend: result.cost,
+    userGuidance: getPendingGuidanceEntries(state),
+    revealed: ['user guidance prompt'],
+    suppressedOrNotChecked: ['autonomous closure'],
+    residueCarriedForward: [
+      ...state.mapState.residue,
+      ...state.mapState.remainingUnknowns,
+    ],
+    landfallStatus: nextMapState.finishJudgment.status,
+    outcome: 'ask-user',
+  });
+
   return {
     applied: true,
     state: {
@@ -190,6 +225,7 @@ function applyAskMove(state) {
         moveType: MOVE_TYPES.ASK,
         targetNodeId: state.pendingProposal.targetNodeId,
       }),
+      traceCards: appendTraceCard(state.traceCards, traceCard),
     },
   };
 }
@@ -232,6 +268,13 @@ export function approvePendingProposal(state) {
     };
   }
 
+  const traceCard = createMoveTraceCard({
+    sequence: state.traceCards.length + 1,
+    proposal: state.pendingProposal,
+    mapResult: result,
+    guidanceEntries: getPendingGuidanceEntries(state),
+  });
+
   return {
     applied: true,
     result,
@@ -249,6 +292,7 @@ export function approvePendingProposal(state) {
         resourceCost: state.pendingProposal.resourceCost,
         finishStatus: result.state.finishJudgment?.status,
       }),
+      traceCards: appendTraceCard(state.traceCards, traceCard),
     },
   };
 }
@@ -333,6 +377,7 @@ export function markPartialResult(state, note = 'Useful progress, not full succe
     ...state,
     partialResults: [...state.partialResults, note],
     guidancePanel: createGuidancePanel('Marked partial', [note]),
+    traceCards: markLatestTraceCardPartial(state.traceCards, note),
     guidanceTrace: appendGuidanceTrace(state, {
       action: 'mark-partial',
       note,

@@ -54,6 +54,15 @@ describe('guidance loop domain rules', () => {
       moveType: 'inspect',
       targetNodeId: 'shortcut-bridge',
     });
+    expect(result.state.traceCards.at(-1)).toMatchObject({
+      acceptedMove: {
+        moveType: 'inspect',
+        targetNodeId: 'shortcut-bridge',
+      },
+      resourceSpend: {
+        botAttention: 2,
+      },
+    });
   });
 
   it('redirect updates the pending move without spending the original cost', () => {
@@ -135,6 +144,17 @@ describe('guidance loop domain rules', () => {
     ]);
     expect(nextState.guidanceTrace.at(-1)).toMatchObject({
       action: 'mark-partial',
+    });
+    expect(nextState.traceCards).toHaveLength(0);
+  });
+
+  it('mark-partial updates the latest trace card when a move was already accepted', () => {
+    const accepted = approvePendingProposal(createState()).state;
+    const nextState = markPartialResult(accepted, 'Shortcut inspected, but long route safety remains unknown.');
+
+    expect(nextState.traceCards.at(-1)).toMatchObject({
+      landfallStatus: 'partial-finish',
+      outcome: 'Shortcut inspected, but long route safety remains unknown.',
     });
   });
 

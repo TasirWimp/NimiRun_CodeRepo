@@ -79,7 +79,7 @@ Current order:
 8. PB-007 LLM Route Proposal Bridge - implemented.
 9. PB-008 Lossy Map Scenario - implemented.
 10. PB-009 User-Bot Guidance Loop - implemented.
-11. PB-011 Trace Cards.
+11. PB-011 Trace Cards - implemented.
 12. PB-010 Session Lesson Application.
 13. PB-012 Nimiq Testnet Pocket.
 

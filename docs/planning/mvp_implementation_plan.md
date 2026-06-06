@@ -149,13 +149,13 @@ Implemented groundwork from the earlier allowance-control cut:
 - PB-007 LLM Route Proposal Bridge is implemented with a strict route proposal schema, run-carrier prompt builder, browser relay client, Vite dev relay middleware, Vercel production function, OpenAI Responses API relay, and offline/mock fallback.
 - PB-008 Lossy Map Scenario is implemented with deterministic hidden-pressure reveal, inspect/skip/act behavior, false-landfall traps, safe-finish judgment, and prompt serialization in `src/domain/lossyMap.js`.
 - PB-009 User-Bot Guidance Loop is implemented with a testable guidance-loop domain module, scene state setup, Phaser proposal controls, redirect-by-node selection, why/unknowns/inspect-first/partial controls, deterministic approval, and HUD/map updates.
+- PB-011 Trace Cards is implemented with player-facing trace-card records for accepted moves, receipt-backed money-like actions, residue/re-entry context serialization, latest-trace inspection, and safe/partial/false/open landfall labeling.
 
 This work should be retained as supporting infrastructure. It becomes one possible resource-governance mechanic inside the broader resource-judgment game, not the active center of Phase 1.
 
 Next work should pivot from guidance controls to the remaining playable-loop carriers:
 
 - session-only lesson application,
-- trace cards,
 - Nimiq testnet pocket integration.
 
 ## Implementation Assumptions
@@ -965,6 +965,8 @@ Acceptance:
 
 ### PB-011 Trace Cards
 
+Status: implemented.
+
 Goal:
 
 Generalize receipts into trace cards for the broader resource-judgment loop.
@@ -973,12 +975,14 @@ User-visible behavior:
 
 The player can inspect what happened: move proposed, user guidance, resource spent, information revealed, residue carried, lesson applied, and outcome.
 
-Expected files:
+Implemented files:
 
 - `src/domain/traces.js`
 - `src/ui/tracePanel.js`
 - `src/scenes/PocketBotWorkshop.js`
 - `tests/domain/traces.test.js`
+- `tests/domain/guidanceLoop.test.js`
+- `tests/llm/routeProposalPrompt.test.js`
 
 Trace cards should include:
 
@@ -1007,6 +1011,13 @@ Test plan:
 - latest trace can be inspected,
 - `npm run test` and `npm run build` pass,
 - browser/manual check confirms trace panel is readable.
+
+Implementation note:
+
+- `src/domain/traces.js` creates move trace cards, receipt-backed trace cards, trace-card summaries, latest-trace lookup, partial-trace marking, and compact next-proposal context.
+- `src/domain/guidanceLoop.js` appends a trace card after each accepted move and marks the latest trace partial when the user marks a result partial.
+- `src/ui/tracePanel.js` formats the latest trace for the Phaser detail panel and HUD archive label.
+- `src/llm/routeProposalPrompt.js` accepts trace cards as bounded prompt context so PB-010 can derive/apply session lessons without a separate state path.
 
 Acceptance:
 
@@ -1164,10 +1175,10 @@ Implemented groundwork:
 9. PB-007 LLM Route Proposal Bridge.
 10. PB-008 Lossy Map Scenario.
 11. PB-009 User-Bot Guidance Loop.
+12. PB-011 Trace Cards.
 
 Revised next sequence:
 
-12. PB-011 Trace Cards.
 13. PB-010 Session Lesson Application.
 14. PB-012 Nimiq Testnet Pocket.
 15. PB-POLISH Submission Vertical Slice.
@@ -1182,7 +1193,7 @@ vertical-slice pass rather than a product pivot.
 The next implementation commit should be:
 
 ```text
-feat: add trace cards
+feat: apply session lesson in run
 ```
 
 ## Risks And Controls

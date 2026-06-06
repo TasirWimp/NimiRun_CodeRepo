@@ -1,0 +1,228 @@
+import { describe, expect, it } from 'vitest';
+
+import { FINISH_STATUSES, createFinishJudgment } from '../../src/domain/finishJudgment.js';
+import { inspectLossyMapNode } from '../../src/domain/lossyMap.js';
+import { createReceipt } from '../../src/domain/receipts.js';
+import { evaluateRuleDecision } from '../../src/domain/rules.js';
+import {
+  appendTraceCard,
+  createMoveTraceCard,
+  createReceiptTraceCard,
+  createTraceCard,
+  createTraceCardSummary,
+  getLatestTraceCard,
+  serializeTraceCardsForProposalContext,
+} from '../../src/domain/traces.js';
+import { createLossyMapState } from '../../src/domain/lossyMap.js';
+import { createMvpScenario } from '../../src/game/mvpScenario.js';
+import { createResourceMapScenario } from '../../src/game/resourceMapScenario.js';
+
+function createInspectProposal() {
+  return {
+    id: 'proposal-inspect-shortcut',
+    moveType: 'inspect',
+    targetNodeId: 'shortcut-bridge',
+    reason: 'Inspect the shortcut before acting.',
+    resourceCost: {
+      moveType: 'inspect',
+      botAttention: 2,
+      userGuidance: 1,
+      contextSlots: 0,
+    },
+    consideredAlternatives: [
+      {
+        move: 'act:false-gate',
+        whyNotSelected: 'Acting now could skip warning residue.',
+      },
+    ],
+    cutPrice: {
+      reveals: ['shortcut risk'],
+      suppresses: ['safe finish claim'],
+      leavesResidue: ['long route safety unknown'],
+    },
+    stopCondition: 'Stop after shortcut inspection.',
+  };
+}
+
+function createApprovedReceipt() {
+  const scenario = createMvpScenario();
+  const proposal = scenario.proposals.toolScout;
+  const tool = scenario.tools.toolScout;
+  const decision = evaluateRuleDecision({
+    rule: scenario.rule,
+    allowance: scenario.allowance,
+    tool,
+    proposal,
+  });
+
+  return createReceipt({
+    proposal,
+    tool,
+    allowance: scenario.allowance,
+    decision,
+    createdAt: '2026-06-06T12:00:00.000Z',
+  });
+}
+
+describe('trace cards', () => {
+  it('records proposal, accepted move, resource costs, map result, and lesson candidate fields', () => {
+    const proposal = createInspectProposal();
+    const mapResult = inspectLossyMapNode(createLossyMapState(createResourceMapScenario()), 'shortcut-bridge');
+    const traceCard = createMoveTraceCard({
+      sequence: 1,
+      proposal,
+      mapResult,
+      guidanceEntries: [
+        {
+          action: 'redirect',
+          targetNodeId: 'shortcut-bridge',
+          reason: 'User asked the bot to inspect before acting.',
+        },
+      ],
+      createdAt: '2026-06-06T12:00:00.000Z',
+    });
+
+    expect(traceCard).toMatchObject({
+      id: 'trace-1',
+      sequence: 1,
+      createdAt: '2026-06-06T12:00:00.000Z',
+      proposal: {
+        id: 'proposal-inspect-shortcut',
+        reason: 'Inspect the shortcut before acting.',
+      },
+      acceptedMove: {
+        moveType: 'inspect',
+        targetNodeId: 'shortcut-bridge',
+      },
+      resourceSpend: {
+        botAttention: 2,
+        userGuidance: 1,
+      },
+      landfallStatus: FINISH_STATUSES.OPEN,
+    });
+    expect(traceCard.lessonCandidate).toMatchObject({
+      status: 'candidate',
+      appliesToNextProposal: false,
+    });
+  });
+
+  it('distinguishes revealed information from suppressed or unresolved information', () => {
+    const proposal = createInspectProposal();
+    const mapResult = inspectLossyMapNode(createLossyMapState(createResourceMapScenario()), 'shortcut-bridge');
+    const traceCard = createMoveTraceCard({ sequence: 1, proposal, mapResult });
+
+    expect(traceCard.revealed).toContain('Shortcut risk can be revealed before acting.');
+    expect(traceCard.revealed).toContain('shortcut-risk-revealed');
+    expect(traceCard.suppressedOrNotChecked).toContain('safe finish claim');
+    expect(traceCard.residueCarriedForward).toContain('long route safety still unknown');
+  });
+
+  it('serializes residue into the next proposal context', () => {
+    const proposal = createInspectProposal();
+    const mapResult = inspectLossyMapNode(createLossyMapState(createResourceMapScenario()), 'shortcut-bridge');
+    const traceCard = createMoveTraceCard({ sequence: 1, proposal, mapResult });
+    const promptContext = serializeTraceCardsForProposalContext([traceCard]);
+
+    expect(promptContext).toEqual([
+      expect.objectContaining({
+        id: 'trace-1',
+        move: 'inspect',
+        target: 'shortcut-bridge',
+        landfall_status: FINISH_STATUSES.OPEN,
+        residue: expect.arrayContaining(['long route safety still unknown']),
+      }),
+    ]);
+  });
+
+  it('keeps trace history order stable and exposes the latest trace', () => {
+    const first = createTraceCard({
+      sequence: 1,
+      acceptedMove: { moveType: 'inspect', targetNodeId: 'shortcut-bridge' },
+    });
+    const second = createTraceCard({
+      sequence: 2,
+      acceptedMove: { moveType: 'act', targetNodeId: 'false-gate' },
+      landfallStatus: FINISH_STATUSES.FALSE,
+    });
+    const history = appendTraceCard(appendTraceCard([], first), second);
+
+    expect(history.map((traceCard) => traceCard.id)).toEqual(['trace-1', 'trace-2']);
+    expect(getLatestTraceCard(history)).toMatchObject({
+      id: 'trace-2',
+      acceptedMove: {
+        targetNodeId: 'false-gate',
+      },
+    });
+  });
+
+  it('can distinguish safe finish, partial finish, false finish, and open run', () => {
+    const statuses = [
+      FINISH_STATUSES.SAFE,
+      FINISH_STATUSES.PARTIAL,
+      FINISH_STATUSES.FALSE,
+      FINISH_STATUSES.OPEN,
+    ];
+    const traceCards = statuses.map((status, index) =>
+      createTraceCard({
+        sequence: index + 1,
+        acceptedMove: { moveType: 'act', targetNodeId: `node-${index}` },
+        landfallStatus: createFinishJudgment({
+          goalReached: status !== FINISH_STATUSES.OPEN,
+          declaredComplete: status === FINISH_STATUSES.SAFE || status === FINISH_STATUSES.FALSE,
+          protectedOutcomes: [],
+          residue: status === FINISH_STATUSES.SAFE ? [] : ['residue remains'],
+          remainingUnknowns: [],
+        }),
+      })
+    );
+
+    expect(traceCards.map((traceCard) => traceCard.landfallStatus)).toEqual(statuses);
+  });
+
+  it('money-like actions can reference existing receipt data', () => {
+    const receipt = createApprovedReceipt();
+    const traceCard = createReceiptTraceCard({
+      sequence: 1,
+      receipt,
+      createdAt: '2026-06-06T12:00:00.000Z',
+    });
+
+    expect(traceCard).toMatchObject({
+      type: 'receipt',
+      proposal: {
+        id: 'proposal-tool-scout',
+      },
+      acceptedMove: {
+        moveType: 'receipt',
+        targetNodeId: 'tool-scout',
+      },
+      resourceSpend: {
+        amount: 0.4,
+        currency: 'NIM',
+      },
+      receipt: {
+        id: 'receipt-proposal-tool-scout',
+      },
+    });
+  });
+
+  it('summary wording does not overclaim safe completion for unresolved traces', () => {
+    const openTrace = createTraceCard({
+      sequence: 1,
+      acceptedMove: { moveType: 'inspect', targetNodeId: 'shortcut-bridge' },
+      residueCarriedForward: ['long route safety unknown'],
+      landfallStatus: FINISH_STATUSES.OPEN,
+    });
+    const partialTrace = createTraceCard({
+      sequence: 2,
+      acceptedMove: { moveType: 'act', targetNodeId: 'safe-gate' },
+      residueCarriedForward: ['critical clue missing'],
+      landfallStatus: FINISH_STATUSES.PARTIAL,
+    });
+
+    expect(createTraceCardSummary(openTrace)).toMatch(/^Open run:/);
+    expect(createTraceCardSummary(openTrace)).not.toContain('Safe finish');
+    expect(createTraceCardSummary(partialTrace)).toMatch(/^Partial finish:/);
+    expect(createTraceCardSummary(partialTrace)).not.toContain('Safe finish');
+  });
+});
