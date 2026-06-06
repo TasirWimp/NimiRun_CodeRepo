@@ -44,7 +44,7 @@ documented exception accepted by the project owner.
 
 - App runs locally through Vite:
 - App runs inside Nimiq Pay Mini Apps path:
-- NIM/USDT support path:
+- NIM/USDT support path: NIM testnet/local status path implemented in PB-012; still needs Nimiq Pay testnet device/emulator verification before pass. USDT support remains future scope.
 - Pocket Bot loop works:
 - Bot Attention spend rules work:
 - Runtime transition / finish judgment works:
@@ -74,7 +74,7 @@ documented exception accepted by the project owner.
 
 ## Bonus / 5
 
-- NIM support:
+- NIM support: native NIM status path implemented as explicit Mini App provider check; no send/sign/payment authority.
 
 ## Judge Path
 

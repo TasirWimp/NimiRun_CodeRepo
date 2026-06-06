@@ -414,6 +414,8 @@ Expected checks:
 
 ### PB-012 Nimiq Testnet Pocket
 
+Status: implemented for local fallback and explicit Nimiq Pay NIM status checks. Device/emulator testnet verification is still pending.
+
 Expected automated tests:
 
 - local fallback is safe and readable,
@@ -421,12 +423,25 @@ Expected automated tests:
 - no uncontrolled sign/send/payment action is reachable through resource rules,
 - Nimiq Pocket display remains separate from Bot Attention,
 - pocket/recharge trace cards distinguish value top-up from bot navigation moves.
+- trace panel labels pocket value as pocket status rather than move cost.
 
 Expected checks:
 
 - Nimiq Pay testnet manual check is performed or explicitly skipped,
 - testnet/local mode wording is clear,
 - Nimiq Pocket never appears to grant broad bot authority.
+
+Implemented checks:
+
+- `tests/platform/nimiqMiniApp.test.js` covers local fallback, explicit provider init/status, provider errors, and no sign/send calls.
+- `tests/domain/traces.test.js` covers pocket-status trace cards with zero Bot Attention spend.
+- `tests/ui/resourceMeters.test.js` covers local/testnet pocket meter wording.
+- `tests/ui/tracePanel.test.js` covers pocket trace display wording.
+- Browser smoke on June 6, 2026 loaded `http://127.0.0.1:8080/?pb012-smoke=1`, rendered one canvas, showed the `Check` pocket control, and reported no runtime/log/network errors or DOM key leak.
+
+Skipped manual check:
+
+- Nimiq Pay testnet device/emulator check was not performed in this slice because no device/emulator path was available in the current local environment.
 
 ## Recommended Test Tooling Roadmap
 

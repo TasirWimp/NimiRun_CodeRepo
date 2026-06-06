@@ -323,6 +323,68 @@ export function createReceiptTraceCard({
   });
 }
 
+export function createPocketTraceCard({
+  sequence = 1,
+  pocketStatus,
+  id = null,
+  createdAt = null,
+  landfallStatus = FINISH_STATUSES.OPEN,
+} = {}) {
+  if (!pocketStatus) {
+    throw new TypeError('Pocket trace card requires a pocket status.');
+  }
+
+  const accountCount = normalizeNonNegativeInteger(pocketStatus.accountsCount, 0);
+  const revealed = [
+    pocketStatus.statusLabel || 'Nimiq pocket status checked',
+    accountCount > 0
+      ? `${accountCount} Nimiq account${accountCount === 1 ? '' : 's'} connected`
+      : 'No Nimiq account connected',
+  ];
+
+  if (pocketStatus.consensusEstablished === true && pocketStatus.blockNumber != null) {
+    revealed.push(`Consensus established at block ${pocketStatus.blockNumber}`);
+  } else if (pocketStatus.consensusEstablished === false) {
+    revealed.push('Consensus not established yet');
+  }
+
+  return createTraceCard({
+    id,
+    type: TRACE_CARD_TYPES.POCKET,
+    sequence,
+    proposal: {
+      id: 'nimiq-pocket-status',
+      reason: 'User explicitly checked the Nimiq pocket/status surface.',
+    },
+    acceptedMove: {
+      moveType: 'pocket-status',
+      targetNodeId: 'nimiq-pocket',
+      label: 'Nimiq Pocket',
+    },
+    resourceSpend: {
+      botAttention: 0,
+      userGuidance: 0,
+      contextSlots: 0,
+      amount: pocketStatus.amount,
+      currency: pocketStatus.currency,
+    },
+    revealed,
+    suppressedOrNotChecked: [
+      'No NIM send, sign, checkout, or mainnet authority requested.',
+    ],
+    residueCarriedForward: [
+      'Pocket value is status/recharge context, not Bot Attention spend.',
+      pocketStatus.network === 'testnet'
+        ? 'Testnet pocket status remains low-stakes.'
+        : 'Competition testnet check still needs device or emulator verification.',
+    ],
+    contextChanges: [],
+    landfallStatus,
+    outcome: pocketStatus.status,
+    createdAt,
+  });
+}
+
 export function appendTraceCard(traceCards = [], traceCard) {
   if (!traceCard) {
     throw new TypeError('A trace card is required.');

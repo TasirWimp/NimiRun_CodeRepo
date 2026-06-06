@@ -6,6 +6,10 @@ import {
   evaluateResourceCost,
 } from '../domain/resourceRules.js';
 import {
+  appendTraceCard,
+  createPocketTraceCard,
+} from '../domain/traces.js';
+import {
   approvePendingProposal,
   markPartialResult,
   redirectPendingProposal,
@@ -24,8 +28,13 @@ import {
   getNodeById,
   getPathEndpoints,
 } from '../game/resourceMapScenario.js';
-import { getMiniAppEnvironment } from '../platform/nimiqMiniApp.js';
+import {
+  createNimiqPocketStatus,
+  getMiniAppEnvironment,
+  requestNimiqPocketStatus,
+} from '../platform/nimiqMiniApp.js';
 import { createGuidanceButton } from '../ui/guidanceControls.js';
+import { createNimiqPocketDisplay } from '../ui/resourceMeters.js';
 import {
   createTracePanelContent,
   formatTraceArchiveLabel,
@@ -114,10 +123,6 @@ const NODE_ASSETS = Object.freeze({
   },
 });
 
-function formatNim(value) {
-  return `${Number(value).toFixed(0)} NIM`;
-}
-
 function toWorldPosition(node) {
   return {
     x: LAYOUT.map.x + 5 + node.position.x,
@@ -189,6 +194,11 @@ export default class PocketBotWorkshop extends Phaser.Scene {
     this.guidanceState = createPocketBotState(this.mapScenario);
     this.resourceState = this.guidanceState.mapState.resources;
     this.miniAppEnvironment = getMiniAppEnvironment(window);
+    this.nimiqPocketStatus = createNimiqPocketStatus({
+      environment: this.miniAppEnvironment,
+      pocket: this.resourceState.nimiqPocket,
+      status: this.miniAppEnvironment.providerStatus,
+    });
     this.nodeMarkers = new Map();
     this.attentionSegments = [];
 
@@ -226,7 +236,7 @@ export default class PocketBotWorkshop extends Phaser.Scene {
     });
 
     const environmentText = this.miniAppEnvironment.isNimiqPay
-      ? `Mini App: Nimiq Pay detected | ${this.miniAppEnvironment.language}`
+      ? `Mini App: Nimiq Pay detected | ${this.miniAppEnvironment.language} | ${this.miniAppEnvironment.network}`
       : `Mini App: local simulated mode | ${this.miniAppEnvironment.language}`;
 
     this.add.text(704, 28, environmentText, {
@@ -401,23 +411,36 @@ export default class PocketBotWorkshop extends Phaser.Scene {
       max: resources.botAttention.max,
     });
 
+    const pocketDisplay = createNimiqPocketDisplay(this.nimiqPocketStatus);
+
     this.nimiqValueText = this.drawValueRow({
       x: hud.x + 20,
       y: hud.y + 174,
       label: resources.nimiqPocket.label,
-      value: formatNim(resources.nimiqPocket.amount),
+      value: pocketDisplay.value,
       color: COLORS.nimiqGold,
+    });
+    this.nimiqPocketStatusText = this.add.text(hud.x + 44, hud.y + 196, pocketDisplay.status, {
+      ...createTextStyle({ fontSize: '11px', color: '#aab4bd' }),
+      wordWrap: { width: 144 },
+    });
+    createGuidanceButton(this, {
+      x: hud.x + 196,
+      y: hud.y + 192,
+      width: 56,
+      label: 'Check',
+      onClick: () => this.handleCheckPocketStatus(),
     });
 
     this.userGuidanceValueText = this.drawValueRow({
       x: hud.x + 20,
-      y: hud.y + 224,
+      y: hud.y + 238,
       label: resources.userGuidance.label,
       value: formatGuidanceValue(resources.userGuidance),
       color: COLORS.warningRed,
     });
 
-    this.drawContextSlots(hud.x + 20, hud.y + 278, resources.contextSlots);
+    this.drawContextSlots(hud.x + 20, hud.y + 292, resources.contextSlots);
 
     this.add.text(hud.x + 20, hud.y + 376, 'Trace Archive', {
       ...createTextStyle({ fontSize: '15px', color: '#f2b33d', fontStyle: '700' }),
@@ -776,9 +799,25 @@ export default class PocketBotWorkshop extends Phaser.Scene {
         .setStrokeStyle(1, filled ? this.attentionMeter.color : COLORS.panelDimStroke, 0.9);
     });
     this.userGuidanceValueText?.setText(formatGuidanceValue(resources.userGuidance));
+    this.updateNimiqPocketDisplay();
     this.traceArchiveText?.setText(
       formatTraceArchiveLabel(this.guidanceState.traceCards)
     );
+  }
+
+  updateNimiqPocketDisplay() {
+    const resources = this.guidanceState.mapState.resources;
+    const pocketDisplay = createNimiqPocketDisplay(
+      this.nimiqPocketStatus ||
+        createNimiqPocketStatus({
+          environment: this.miniAppEnvironment,
+          pocket: resources.nimiqPocket,
+          status: this.miniAppEnvironment.providerStatus,
+        })
+    );
+
+    this.nimiqValueText?.setText(pocketDisplay.value);
+    this.nimiqPocketStatusText?.setText(pocketDisplay.status);
   }
 
   renderLatestTraceCard() {
@@ -844,6 +883,37 @@ export default class PocketBotWorkshop extends Phaser.Scene {
     this.updateHud();
     this.renderLatestTraceCard();
     this.setStatus('Marked as partial progress.');
+  }
+
+  async handleCheckPocketStatus() {
+    this.setStatus('Checking Nimiq pocket status. No send, sign, or payment action will run.');
+
+    const result = await requestNimiqPocketStatus({
+      globalObject: window,
+      pocket: this.guidanceState.mapState.resources.nimiqPocket,
+      initializeProvider: true,
+    });
+
+    this.miniAppEnvironment = result.environment;
+    this.nimiqPocketStatus = result.pocket;
+    this.updateNimiqPocketDisplay();
+
+    const traceCard = createPocketTraceCard({
+      sequence: this.guidanceState.traceCards.length + 1,
+      pocketStatus: result.pocket,
+    });
+    this.guidanceState = {
+      ...this.guidanceState,
+      traceCards: appendTraceCard(this.guidanceState.traceCards, traceCard),
+    };
+    this.updateHud();
+    this.renderLatestTraceCard();
+
+    this.setStatus(
+      result.status === 'provider-ready'
+        ? 'Nimiq pocket status checked. No send, sign, or payment authority granted.'
+        : `${result.pocket.statusLabel}. Pocket remains local/testnet status only.`
+    );
   }
 
   getDefaultStatus() {

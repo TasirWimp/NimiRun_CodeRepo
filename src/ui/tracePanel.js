@@ -67,9 +67,10 @@ export function createTracePanelContent(traceCard) {
     costParts.push(`${traceCard.resourceSpend.amount} ${traceCard.resourceSpend.currency || ''}`.trim());
   }
 
+  const valueLabel = traceCard.type === 'pocket' ? 'Pocket' : 'Cost';
   const moveCostLine = [
     `Move: ${traceCard.acceptedMove.moveType} -> ${traceCard.acceptedMove.label || traceCard.acceptedMove.targetNodeId}`,
-    `Cost: ${costParts.join(', ') || 'none'}`,
+    `${valueLabel}: ${costParts.join(', ') || 'none'}`,
   ].join(' | ');
   const reentryNote =
     traceCard.reentryNote === 'Run remains open because the goal has not been reached.'

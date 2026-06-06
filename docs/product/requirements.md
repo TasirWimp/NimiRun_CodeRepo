@@ -616,9 +616,9 @@ The first milestone is complete when:
 
 Recommended next task:
 
-1. PB-012: close the NIM/USDT support path inside the Nimiq pocket surface.
-2. PB-POLISH: finish the 60-second judge path.
-3. PB-MARKET: prepare submission materials and record external feedback.
+1. PB-POLISH: finish the 60-second judge path.
+2. PB-MARKET: prepare submission materials and record external feedback.
+3. Nimiq Pay testnet device/emulator check: verify the PB-012 NIM status path before marking competition readiness as pass.
 
 Run `npm run test`, `npm run build`, and browser/manual scene checks for source
 changes, including a Mini App/testnet compatibility check when available.

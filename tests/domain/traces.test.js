@@ -8,6 +8,7 @@ import {
   appendTraceCard,
   applySessionLessonToTraceCard,
   createMoveTraceCard,
+  createPocketTraceCard,
   createReceiptTraceCard,
   createSessionLessonFromTraceCard,
   createTraceCard,
@@ -207,6 +208,48 @@ describe('trace cards', () => {
       receipt: {
         id: 'receipt-proposal-tool-scout',
       },
+    });
+  });
+
+  it('pocket status checks create value traces without spending Bot Attention', () => {
+    const traceCard = createPocketTraceCard({
+      sequence: 1,
+      pocketStatus: {
+        mode: 'nimiq-pay',
+        network: 'testnet',
+        amount: 23,
+        currency: 'NIM',
+        accountsCount: 1,
+        consensusEstablished: true,
+        blockNumber: 12345,
+        statusLabel: 'Nimiq Pay testnet status',
+      },
+      createdAt: '2026-06-06T12:00:00.000Z',
+    });
+
+    expect(traceCard).toMatchObject({
+      type: 'pocket',
+      acceptedMove: {
+        moveType: 'pocket-status',
+        targetNodeId: 'nimiq-pocket',
+      },
+      resourceSpend: {
+        botAttention: 0,
+        amount: 23,
+        currency: 'NIM',
+      },
+      revealed: expect.arrayContaining([
+        'Nimiq Pay testnet status',
+        '1 Nimiq account connected',
+        'Consensus established at block 12345',
+      ]),
+      suppressedOrNotChecked: expect.arrayContaining([
+        'No NIM send, sign, checkout, or mainnet authority requested.',
+      ]),
+      residueCarriedForward: expect.arrayContaining([
+        'Pocket value is status/recharge context, not Bot Attention spend.',
+      ]),
+      landfallStatus: FINISH_STATUSES.OPEN,
     });
   });
 

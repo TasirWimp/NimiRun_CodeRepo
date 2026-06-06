@@ -129,12 +129,14 @@ Implemented Phase 1 groundwork from the earlier allowance-control cut:
 - PB-009 User-Bot Guidance Loop with deterministic proposal approval, node-click redirect, why/unknowns/inspect-first/partial controls, guidance traces, and HUD/map updates.
 - PB-010 Session Lesson Application with trace-derived session lessons, next-proposal rewrite, prompt/relay pass-through, and no persistence beyond the active run.
 - PB-011 Trace Cards with accepted-move trace cards, receipt-backed money-like trace support, residue/re-entry context, latest-trace inspection, and landfall status labels.
+- PB-012 Nimiq Testnet Pocket with safe local fallback, explicit Nimiq Pay NIM status check, testnet/local pocket HUD wording, pocket-status trace cards, and no sign/send/payment authority.
 
 These modules should not be reverted. They are now supporting pieces for future Nimiq Pocket / paid-resource gates.
 
-Still needed for the revised Phase 1:
+Still needed for the revised Phase 1 submission path:
 
-- PB-012 Nimiq Testnet Pocket.
+- Nimiq Pay testnet device/emulator verification for the PB-012 NIM status path.
+- PB-POLISH Submission Vertical Slice.
 
 PB-005 replaced the old Tool Scout visual placeholder with the first lossy-map scaffold. The earlier allowance-control modules remain useful as future Nimiq Pocket / paid-resource gate groundwork.
 

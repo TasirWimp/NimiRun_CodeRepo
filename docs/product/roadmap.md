@@ -305,4 +305,4 @@ The immediate next step is **Phase 1**:
 
 > Implement a Nimiq Mini App-compatible Phaser/Vite resource-judgment mini game with RPG-style map navigation, LLM-backed route proposals, Bot Attention, Nimiq testnet pocket value, user guidance, session-only lessons, and trace cards.
 
-The next code slice should choose the RPG/tilemap workflow before expanding the scene.
+PB-001 through PB-012 are implemented as a playable local/browser slice. The next code slice should be **PB-POLISH Submission Vertical Slice**, with a separate Nimiq Pay testnet device/emulator check for the PB-012 NIM status path before competition readiness is marked pass.
