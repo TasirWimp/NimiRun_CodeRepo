@@ -145,13 +145,12 @@ Implemented groundwork from the earlier allowance-control cut:
 - PB-004 Pocket Bot Workshop Scene Shell is implemented with Mini App framework compatibility, local fallback status, and a Tool Scout hover witness interaction.
 - PB-005 RPG Map Tooling And Scene Direction is implemented with a Phaser-native custom node-map workflow and NimiRun V2 runtime assets, documented in `docs/architecture/rpg_map_tooling.md`.
 - PB-006 Core Resource Model is implemented with deterministic Bot Attention, Nimiq Pocket, User Guidance, Context Slot, and move-cost checks in `src/domain/`.
+- PB-006A Run Session And Transition Runtime is implemented with scenario contract validation, move transition gates, run carriers, and finish judgment packets.
 
 This work should be retained as supporting infrastructure. It becomes one possible resource-governance mechanic inside the broader resource-judgment game, not the active center of Phase 1.
 
-Next work should pivot to the playable user-bot interaction loop:
+Next work should pivot to connecting the playable user-bot interaction loop:
 
-- competition compliance floor,
-- resource model,
 - LLM route-proposal bridge,
 - lossy map scenario,
 - user guidance controls,
@@ -650,6 +649,10 @@ Acceptance:
 
 ### PB-006A Run Session And Transition Runtime
 
+Status:
+
+Implemented.
+
 Goal:
 
 Add the Phase 1 runtime discipline adapted from
@@ -1134,10 +1137,10 @@ Implemented groundwork:
 5. PB-004A Competition Compliance Floor.
 6. PB-005 RPG Map Tooling And Scene Direction.
 7. PB-006 Core Resource Model.
+8. PB-006A Run Session And Transition Runtime.
 
 Revised next sequence:
 
-8. PB-006A Run Session And Transition Runtime.
 9. PB-007 LLM Route Proposal Bridge.
 10. PB-008 Lossy Map Scenario.
 11. PB-009 User-Bot Guidance Loop.
@@ -1156,7 +1159,7 @@ vertical-slice pass rather than a product pivot.
 The next implementation commit should be:
 
 ```text
-feat: add run session runtime
+feat: add llm route proposal bridge
 ```
 
 ## Risks And Controls

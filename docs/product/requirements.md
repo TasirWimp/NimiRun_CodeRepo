@@ -609,15 +609,14 @@ The first milestone is complete when:
 
 Recommended next task:
 
-1. PB-006A: implement the run-session / transition-gate / carrier / finish-judgment runtime.
-2. PB-007: add the LLM route-proposal bridge with schema validation, server-side API-key boundary, and offline/mock fallback.
-3. PB-008: create the first lossy map scenario.
-4. PB-009: connect user guidance controls to validated bot moves.
-5. PB-011: generalize receipts into trace cards.
-6. PB-010: add one session lesson that affects a later proposal.
-7. PB-012: close the NIM/USDT support path inside the Nimiq pocket surface.
-8. PB-POLISH: finish the 60-second judge path.
-9. PB-MARKET: prepare submission materials and record external feedback.
+1. PB-007: add the LLM route-proposal bridge with schema validation, server-side API-key boundary, and offline/mock fallback.
+2. PB-008: create the first lossy map scenario.
+3. PB-009: connect user guidance controls to validated bot moves.
+4. PB-011: generalize receipts into trace cards.
+5. PB-010: add one session lesson that affects a later proposal.
+6. PB-012: close the NIM/USDT support path inside the Nimiq pocket surface.
+7. PB-POLISH: finish the 60-second judge path.
+8. PB-MARKET: prepare submission materials and record external feedback.
 
 Run `npm run test`, `npm run build`, and browser/manual scene checks for source
 changes, including a Mini App/testnet compatibility check when available.

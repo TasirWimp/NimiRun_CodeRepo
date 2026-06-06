@@ -41,6 +41,32 @@ const RESOURCE_MAP_SCENARIO = Object.freeze({
     height: 420,
     tileSize: MAP_WORKFLOW.tileSize,
   },
+  runtimeContract: {
+    startNodeId: 'source-edge',
+    goalNodeId: 'safe-gate',
+    allowedMoves: ['inspect', 'ask', 'remember', 'act', 'skip'],
+    protectedOutcomes: [
+      {
+        id: 'safe-finish-requires-warning-and-clue',
+        label: 'Safe finish requires inspected warnings and carried clues.',
+        requiredEvidence: ['warning-inspected', 'critical-clue-held', 'residue-reviewed'],
+      },
+    ],
+    stopConditions: [
+      {
+        id: 'bot-attention-empty',
+        label: 'Stop when Bot Attention is exhausted.',
+      },
+      {
+        id: 'safe-finish',
+        label: 'Stop when finish judgment confirms safe finish.',
+      },
+      {
+        id: 'false-finish',
+        label: 'Stop and repair when a goal-looking state has unresolved protected-outcome residue.',
+      },
+    ],
+  },
   resources: {
     botAttention: {
       current: 10,

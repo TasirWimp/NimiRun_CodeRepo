@@ -282,6 +282,8 @@ Expected automated tests:
 
 ### PB-006A Run Session And Transition Runtime
 
+Status: implemented.
+
 Expected automated tests:
 
 - scenario contract validates goal, allowed moves, resource budgets, protected outcomes, and stop conditions,
