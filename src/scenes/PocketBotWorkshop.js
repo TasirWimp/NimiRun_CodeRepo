@@ -1,6 +1,12 @@
 import Phaser from 'phaser';
 
 import nimiRunV2AssetManifest from '../game/assets/nimirunV2AssetManifest.json';
+import { getContextSlotUsage } from '../domain/contextSlots.js';
+import {
+  createCoreResourceState,
+  evaluateResourceCost,
+  getMoveResourceCost,
+} from '../domain/resourceRules.js';
 import { preloadNimiRunV2Assets } from '../game/assets/preloadNimiRunV2Assets.js';
 import {
   NODE_KINDS,
@@ -153,6 +159,12 @@ export default class PocketBotWorkshop extends Phaser.Scene {
 
   create() {
     this.mapScenario = createResourceMapScenario();
+    this.resourceState = createCoreResourceState(this.mapScenario.resources);
+    this.currentProposalCost = getMoveResourceCost(
+      this.mapScenario.proposalPreview.cost.moveType,
+      this.mapScenario.proposalPreview.cost
+    );
+    this.currentResourceEvaluation = evaluateResourceCost(this.resourceState, this.currentProposalCost);
     this.miniAppEnvironment = getMiniAppEnvironment(window);
     this.nodeMarkers = new Map();
 
@@ -336,7 +348,7 @@ export default class PocketBotWorkshop extends Phaser.Scene {
   }
 
   drawHud() {
-    const { resources } = this.mapScenario;
+    const resources = this.resourceState;
     const hud = LAYOUT.hud;
 
     createPanel(this, hud, COLORS.panelStroke, 'hud_panel_frame_v2');
@@ -414,23 +426,30 @@ export default class PocketBotWorkshop extends Phaser.Scene {
   }
 
   drawContextSlots(x, y, contextSlots) {
-    this.add.text(x, y, `${contextSlots.label} ${contextSlots.used}/${contextSlots.max}`, {
+    const usage = getContextSlotUsage(contextSlots);
+
+    this.add.text(x, y, `${contextSlots.label} ${usage.used}/${usage.capacity}`, {
       ...createTextStyle({ fontSize: '14px', color: '#f3e4c2', fontStyle: '700' }),
     });
 
-    for (let index = 0; index < contextSlots.max; index += 1) {
-      const slotKey = index < contextSlots.used ? 'context_slot_context_v2' : 'context_slot_empty_v2';
+    for (let index = 0; index < usage.capacity; index += 1) {
+      const item = contextSlots.items[index];
+      const slotKey = item?.type === 'clue'
+        ? 'context_slot_clue_v2'
+        : item
+          ? 'context_slot_context_v2'
+          : 'context_slot_empty_v2';
 
       if (this.textures.exists(slotKey)) {
         this.add
           .image(x + index * 48 + 17, y + 53, slotKey)
           .setDisplaySize(42, 42)
-          .setAlpha(index < contextSlots.used ? 1 : 0.74);
+          .setAlpha(item ? 1 : 0.74);
       } else {
         this.add
           .rectangle(x + index * 48, y + 32, 34, 42, COLORS.panelSoft, 1)
           .setOrigin(0)
-          .setStrokeStyle(2, COLORS.contextGreen, index < contextSlots.used ? 1 : 0.45);
+          .setStrokeStyle(2, COLORS.contextGreen, item ? 1 : 0.45);
       }
     }
   }
@@ -450,14 +469,15 @@ export default class PocketBotWorkshop extends Phaser.Scene {
 
     this.drawProposalPreview();
 
-    this.statusText = this.add.text(LAYOUT.proposal.x + 18, LAYOUT.proposal.y + 132, '', {
-      ...createTextStyle({ fontSize: '13px', color: '#48a8ff', fontStyle: '700' }),
+    this.statusText = this.add.text(LAYOUT.proposal.x + 18, LAYOUT.proposal.y + 146, '', {
+      ...createTextStyle({ fontSize: '12px', color: '#48a8ff', fontStyle: '700' }),
       wordWrap: { width: 430 },
     });
   }
 
   drawProposalPreview() {
     const proposal = this.mapScenario.proposalPreview;
+    const evaluation = this.currentResourceEvaluation;
     const x = LAYOUT.proposal.x + 18;
     const y = LAYOUT.proposal.y + 16;
 
@@ -471,8 +491,14 @@ export default class PocketBotWorkshop extends Phaser.Scene {
       ...createTextStyle({ fontSize: '13px', color: '#f3e4c2' }),
       wordWrap: { width: 430 },
     });
-    this.add.text(x, y + 104, `Cost: ${proposal.cost.botAttention} Bot Attention`, {
+    this.add.text(x, y + 104, `Cost: ${evaluation.cost.botAttention} Bot Attention | Guidance: ${evaluation.cost.userGuidance}`, {
       ...createTextStyle({ fontSize: '13px', color: '#48a8ff' }),
+    });
+    this.add.text(x, y + 120, evaluation.allowed ? 'Resource check: allowed' : 'Resource check: blocked', {
+      ...createTextStyle({
+        fontSize: '13px',
+        color: evaluation.allowed ? '#80c84d' : '#ff5a3d',
+      }),
     });
   }
 
@@ -642,7 +668,7 @@ export default class PocketBotWorkshop extends Phaser.Scene {
   getDefaultStatus() {
     const mode = this.miniAppEnvironment.isNimiqPay ? 'Nimiq Pay Mini App shell' : 'local simulated Mini App fallback';
 
-    return `${mode}. PB-005 map scaffold active; wallet operations are disabled.`;
+    return `${mode}. Wallet operations disabled.`;
   }
 
   setStatus(message) {

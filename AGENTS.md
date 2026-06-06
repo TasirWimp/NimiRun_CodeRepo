@@ -73,8 +73,8 @@ Current order:
 2. PB-002 Receipt Creation - implemented groundwork.
 3. PB-003 Allowance Spend Execution - implemented groundwork.
 4. PB-004 Pocket Bot Workshop Scene Shell - implemented groundwork.
-5. PB-005 RPG Map Tooling And Scene Direction.
-6. PB-006 Core Resource Model.
+5. PB-005 RPG Map Tooling And Scene Direction - implemented.
+6. PB-006 Core Resource Model - implemented.
 7. PB-006A Run Session And Transition Runtime.
 8. PB-007 LLM Route Proposal Bridge.
 9. PB-008 Lossy Map Scenario.

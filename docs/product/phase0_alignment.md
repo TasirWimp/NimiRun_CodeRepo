@@ -120,12 +120,13 @@ Implemented Phase 1 groundwork from the earlier allowance-control cut:
 - PB-003 Allowance Spend Execution.
 - PB-004 Pocket Bot Workshop Scene Shell with Mini App framework-compatible app wiring.
 - PB-005 RPG Map Tooling And Scene Direction with a Phaser-native custom node-map scaffold.
+- PB-006 Core Resource Model with deterministic Bot Attention, Nimiq Pocket, User Guidance, and Context Slots.
 
 These modules should not be reverted. They are now supporting pieces for future Nimiq Pocket / paid-resource gates.
 
 Still needed for the revised Phase 1:
 
-- PB-006 Core Resource Model.
+- PB-006A Run Session And Transition Runtime.
 - PB-007 LLM Route Proposal Bridge.
 - PB-008 Lossy Map Scenario.
 - PB-009 User-Bot Guidance Loop.

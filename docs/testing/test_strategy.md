@@ -268,6 +268,8 @@ Expected checks:
 
 ### PB-006 Core Resource Model
 
+Status: implemented.
+
 Expected automated tests:
 
 - Bot Attention starts at the scenario budget,

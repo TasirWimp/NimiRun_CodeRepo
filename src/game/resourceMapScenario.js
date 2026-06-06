@@ -55,11 +55,12 @@ const RESOURCE_MAP_SCENARIO = Object.freeze({
     },
     userGuidance: {
       level: 'ready',
+      prompts: 0,
       label: 'User Guidance',
     },
     contextSlots: {
-      used: 0,
-      max: 4,
+      capacity: 4,
+      items: [],
       label: 'Context Slots',
     },
   },
@@ -68,8 +69,10 @@ const RESOURCE_MAP_SCENARIO = Object.freeze({
     move: 'Inspect the shortcut',
     reason: 'The fast path may hide a cost. Inspecting first can reveal whether it is worth the attention.',
     cost: {
+      moveType: 'inspect',
       botAttention: 2,
       userGuidance: 1,
+      contextSlots: 0,
     },
     reveals: ['shortcut risk'],
     leavesUnknown: ['long route safety', 'exact total cost'],
@@ -311,4 +314,3 @@ export function summarizeMapCapabilities(scenario) {
     supportsSafeFinish: nodes.some((node) => node.kind === NODE_KINDS.SAFE_FINISH),
   };
 }
-
