@@ -51,6 +51,9 @@ from the relevant planning or product document.
 
 Add entries before or in the same commit that adopts any of these:
 
+- Historic chart data source used to derive `Market Signal Scout` event windows,
+  including provider name, URL, license/terms note, date range, transformation
+  method, and whether raw data or only derived static fixtures are shipped.
 - RPG map authoring tool or framework, such as Tiled or LDtk.
 - Asset packs, fonts, icon libraries, generated sprites, generated tiles, music,
   sound effects, or AI-generated images.
