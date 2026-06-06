@@ -105,6 +105,7 @@ Preserve the existing Phaser/Vite foundation.
 - Keep LLM provider access behind a server-side relay or equivalent backend boundary.
 - Keep OpenAI/provider API keys out of browser code and out of committed files.
 - Prefer shell/session environment variables or deployment secrets for real provider keys; repo-local env files should not be used as durable secret storage or competition submission artifacts.
+- Use Vercel as the first hosted deployment target for Phase 1 so `/api/route-proposal` can run as a same-origin serverless function with provider keys supplied through Vercel environment variables.
 - Keep resource math, proposal schemas, map reveal rules, session lessons, and trace creation in `src/domain/` or narrow non-Phaser modules.
 - Keep MVP scenario constants and scene-independent setup in `src/game/`.
 - Keep Phaser scene code focused on rendering, input, movement, animation, and orchestration.

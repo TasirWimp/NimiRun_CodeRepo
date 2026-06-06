@@ -604,7 +604,7 @@ The first milestone is complete when:
 - Should the Phaser-native custom node-map workflow remain through the first submission, or should it later be migrated to Tiled/LDtk after the first judge path is stable?
 - Should the first loop use keyboard/controller movement, node-click movement, UI button input, or a hybrid?
 - The PB-007 local default is `gpt-5.4-mini`, selected from current official OpenAI model guidance on June 6, 2026. It remains configurable through `OPENAI_ROUTE_PROPOSAL_MODEL`.
-- The LLM relay now lives in this repo as `server/routeProposalRelay.js` for local Vite development; a later deployment target still needs to be selected for hosted builds.
+- The LLM relay now lives in this repo as `server/routeProposalRelay.js`, with Vite middleware for local development and a Vercel function at `api/route-proposal.js` for hosted builds.
 - What first task goal best communicates "messy, lossy environment" in a short competition demo?
 - How much Bot Attention should the first run provide?
 - What is the first Nimiq testnet pocket interaction: status only, collectible value, or explicit testnet top-up/recharge?

@@ -309,6 +309,7 @@ Expected automated tests:
 - proposal prompt uses the run carrier rather than hidden scene state,
 - client calls backend relay only,
 - relay uses environment configuration,
+- Vercel function uses the same route proposal relay and falls back to mock without a key,
 - mock/offline fallback works.
 
 Expected manual or smoke checks:

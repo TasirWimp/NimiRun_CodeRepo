@@ -152,6 +152,24 @@ function sendJson(res, statusCode, payload) {
   res.end(JSON.stringify(payload));
 }
 
+function createJsonResponse(statusCode, payload) {
+  return new Response(JSON.stringify(payload), {
+    status: statusCode,
+    headers: {
+      'Content-Type': 'application/json',
+      'Cache-Control': 'no-store',
+    },
+  });
+}
+
+async function readFetchJsonBody(request) {
+  try {
+    return await request.json();
+  } catch (error) {
+    throw new Error(`Invalid JSON body: ${error.message}`);
+  }
+}
+
 export function createRouteProposalMiddleware(options = {}) {
   const relay = createRouteProposalRelay(options);
 
@@ -179,6 +197,32 @@ export function createRouteProposalMiddleware(options = {}) {
       sendJson(res, 200, result);
     } catch (error) {
       sendJson(res, 502, {
+        error: 'Route proposal relay failed.',
+        detail: error.message,
+      });
+    }
+  };
+}
+
+export function createRouteProposalFetchHandler(options = {}) {
+  const relay = createRouteProposalRelay(options);
+
+  return async function routeProposalFetchHandler(request) {
+    if (request.method === 'OPTIONS') {
+      return createJsonResponse(204, {});
+    }
+
+    if (request.method !== 'POST') {
+      return createJsonResponse(405, { error: 'Method not allowed.' });
+    }
+
+    try {
+      const payload = await readFetchJsonBody(request);
+      const result = await relay(payload);
+
+      return createJsonResponse(200, result);
+    } catch (error) {
+      return createJsonResponse(502, {
         error: 'Route proposal relay failed.',
         detail: error.message,
       });

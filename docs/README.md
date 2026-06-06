@@ -9,6 +9,7 @@ This folder keeps project documentation grouped by purpose. Avoid placing new Ma
 - `planning/` - milestone plans, feature breakdowns, implementation plans.
 - `testing/` - test strategy, test plans, acceptance checklists.
 - `architecture/` - technical design notes, module boundaries, integration design.
+  - `deployment.md` - Vercel deployment target, serverless relay shape, and deployment secret boundary.
 
 ## Planned Structure
 

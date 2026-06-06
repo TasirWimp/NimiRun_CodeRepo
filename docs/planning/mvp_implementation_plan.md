@@ -146,7 +146,7 @@ Implemented groundwork from the earlier allowance-control cut:
 - PB-005 RPG Map Tooling And Scene Direction is implemented with a Phaser-native custom node-map workflow and NimiRun V2 runtime assets, documented in `docs/architecture/rpg_map_tooling.md`.
 - PB-006 Core Resource Model is implemented with deterministic Bot Attention, Nimiq Pocket, User Guidance, Context Slot, and move-cost checks in `src/domain/`.
 - PB-006A Run Session And Transition Runtime is implemented with scenario contract validation, move transition gates, run carriers, and finish judgment packets.
-- PB-007 LLM Route Proposal Bridge is implemented with a strict route proposal schema, run-carrier prompt builder, browser relay client, Vite dev relay middleware, OpenAI Responses API relay, and offline/mock fallback.
+- PB-007 LLM Route Proposal Bridge is implemented with a strict route proposal schema, run-carrier prompt builder, browser relay client, Vite dev relay middleware, Vercel production function, OpenAI Responses API relay, and offline/mock fallback.
 
 This work should be retained as supporting infrastructure. It becomes one possible resource-governance mechanic inside the broader resource-judgment game, not the active center of Phase 1.
 
@@ -172,6 +172,7 @@ These assumptions are binding for the revised Phase 1 unless the product require
 - Keep Mini App SDK/provider access behind `src/platform/` adapters.
 - Keep LLM API access behind a server-side relay or equivalent backend boundary; no OpenAI or provider API key may be exposed to browser code.
 - Supply real provider keys through shell/session environment variables or deployment secrets. Treat `.env.example` as a variable-name template, not a secret store; do not rely on repo-local env files for competition or submission work.
+- Use Vercel as the first hosted deployment target unless a later plan change replaces it. Production route proposals should use the same-origin `api/route-proposal.js` function and Vercel environment variables.
 - LLM calls in Phase 1 are stateless except for the current session trace supplied in the prompt/context.
 - The LLM may propose moves, but deterministic game/resource rules decide whether a move is legal and what it costs.
 - Phase 1 memory is context-window/session memory only. No database-backed user memory or durable preference store is allowed.
@@ -717,6 +718,8 @@ Expected files:
 - `src/llm/routeProposalClient.js`
 - `src/llm/routeProposalMock.js`
 - `server/routeProposalRelay.js`
+- `api/route-proposal.js`
+- `vercel.json`
 - `tests/llm/routeProposalSchema.test.js`
 - `tests/llm/routeProposalPrompt.test.js`
 - `tests/llm/routeProposalClient.test.js`

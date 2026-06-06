@@ -26,6 +26,7 @@ The revised resource-judgment gameplay has a map scaffold, deterministic resourc
 - Product requirements: `docs/product/requirements.md`
 - Art bible: `docs/product/art_bible.md`
 - RPG map tooling: `docs/architecture/rpg_map_tooling.md`
+- Deployment architecture: `docs/architecture/deployment.md`
 - Phase 1 implementation plan: `docs/planning/mvp_implementation_plan.md`
 - Test strategy: `docs/testing/test_strategy.md`
 - Source attribution register: `docs/product/source_attribution.md`
@@ -79,10 +80,18 @@ For hosted builds, set the same values through deployment secrets or server-side
 environment configuration. Provider keys must never be committed or bundled into
 browser code.
 
+The first hosted deployment target is Vercel. The repo includes
+`api/route-proposal.js` for the production serverless relay and `vercel.json`
+for the Vite build output. Configure `NIMIRUN_LLM_MODE`,
+`OPENAI_ROUTE_PROPOSAL_MODEL`, and `OPENAI_API_KEY` in Vercel Project Settings
+-> Environment Variables.
+
 ## Project Structure
 
 ```text
 docs/
+  architecture/
+    deployment.md
   product/
     requirements.md
     source_attribution.md
@@ -106,6 +115,9 @@ src/
 
 server/
   routeProposalRelay.js
+
+api/
+  route-proposal.js
 ```
 
 ## Implementation Direction

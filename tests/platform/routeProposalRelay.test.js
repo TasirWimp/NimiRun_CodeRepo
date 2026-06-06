@@ -4,6 +4,7 @@ import { createResourceMapScenario } from '../../src/game/resourceMapScenario.js
 import {
   OPENAI_RESPONSES_URL,
   createOpenAIRouteProposalRequest,
+  createRouteProposalFetchHandler,
   createRouteProposalRelay,
 } from '../../server/routeProposalRelay.js';
 
@@ -109,5 +110,39 @@ describe('route proposal relay', () => {
     expect(bodyText).not.toContain('OPENAI_API_KEY');
     expect(bodyText).not.toContain('test-secret');
     expect(request.url).toBe(OPENAI_RESPONSES_URL);
+  });
+
+  it('serves the Web Request handler used by production functions', async () => {
+    const handler = createRouteProposalFetchHandler({ env: {} });
+    const response = await handler(
+      new Request('https://nimirun.example/api/route-proposal', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(createPayload()),
+      })
+    );
+    const data = await response.json();
+
+    expect(response.status).toBe(200);
+    expect(response.headers.get('Cache-Control')).toBe('no-store');
+    expect(data).toMatchObject({
+      mode: 'mock',
+      proposal: {
+        moveType: 'inspect',
+      },
+    });
+  });
+
+  it('rejects unsupported methods in the Web Request handler', async () => {
+    const handler = createRouteProposalFetchHandler({ env: {} });
+    const response = await handler(
+      new Request('https://nimirun.example/api/route-proposal', {
+        method: 'GET',
+      })
+    );
+    const data = await response.json();
+
+    expect(response.status).toBe(405);
+    expect(data.error).toBe('Method not allowed.');
   });
 });
