@@ -19,6 +19,7 @@ The revised resource-judgment gameplay is planned but not complete yet.
 ## Documentation
 
 - Product requirements: `docs/product/requirements.md`
+- Art bible: `docs/product/art_bible.md`
 - Phase 1 implementation plan: `docs/planning/mvp_implementation_plan.md`
 - Test strategy: `docs/testing/test_strategy.md`
 - Source attribution register: `docs/product/source_attribution.md`

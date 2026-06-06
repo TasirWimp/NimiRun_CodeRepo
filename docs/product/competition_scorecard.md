@@ -36,6 +36,7 @@ documented exception accepted by the project owner.
 - Touch-friendly controls:
 - 60-second onboarding:
 - Visual trust:
+- Asset consistency follows art bible:
 - Trace readability:
 - CRPM mechanics visible without jargon:
 
@@ -59,6 +60,7 @@ documented exception accepted by the project owner.
 - User can guide the bot's judgment:
 - Trace cards bind action, cost, reveal, residue, and lesson:
 - Safe / partial / false / open finish states are visible:
+- First scenario communicates resource judgment without financial-advice confusion:
 
 ## Marketing & Distribution / 25
 

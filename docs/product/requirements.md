@@ -574,6 +574,7 @@ The first milestone is complete when:
 - The scene includes the robot, lossy map, Bot Attention meter, Nimiq Pocket area, Context Capacity, guidance controls, trace archive, and UI overlay.
 - The current goal and resource state are visible.
 - The UI clearly communicates that the helper spends limited Bot Attention and does not receive broad wallet access.
+- Runtime assets follow `docs/product/art_bible.md` so characters, nodes, UI icons, effects, and trace/finish states stay visually consistent.
 - The bot can request or display a structured LLM route proposal through a backend relay or safe mock fallback.
 - Browser client code does not contain provider API keys.
 - Deterministic resource rules validate the proposal before game state changes.
@@ -601,7 +602,7 @@ The first milestone is complete when:
 - How much Bot Attention should the first run provide?
 - What is the first Nimiq testnet pocket interaction: status only, collectible value, or explicit testnet top-up/recharge?
 - Should `src/scenes/Street.js` be renamed later, or should a new Pocket Bot Workshop scene be added and wired as the active scene?
-- What visual style should be used for the robot, fog, map nodes, pocket, context slots, and trace archive before final art exists?
+- Which exact generated-asset workflow and export sizes should be used to implement `docs/product/art_bible.md` after PB-005 selects the map workflow?
 - How explicit should local fallback vs Nimiq testnet pocket value be in the first UI?
 
 ## 18. Suggested Next Implementation Steps

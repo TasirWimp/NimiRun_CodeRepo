@@ -126,6 +126,7 @@ Open app
 - Product roadmap: `docs/product/roadmap.md`
 - Phase 0 alignment: `docs/product/phase0_alignment.md`
 - Product pitch: `docs/product/pitch.md`
+- Art bible: `docs/product/art_bible.md`
 - Infrastructure context: `docs/product/infrastructure_context.md`
 - Source attribution: `docs/product/source_attribution.md`
 - Competition scorecard: `docs/product/competition_scorecard.md`
@@ -163,6 +164,7 @@ These assumptions are binding for the revised Phase 1 unless the product require
 
 - The first screen should be a playable mini game, not a landing page and not a policy dashboard.
 - The scene should feel like a compact 2D RPG map built in Phaser/Vite, using a Phaser-compatible RPG/tilemap workflow where practical.
+- Runtime art should follow `docs/product/art_bible.md`: dark storybook RPG mood, readable 2D assets, Nimiq-gold value accents, Bot Attention blue, context green, clue purple, residue shadow, and no text baked into art.
 - Before rebuilding the scene, evaluate a Phaser-compatible map workflow such as Tiled, LDtk, or an equivalent Vite-friendly RPG/tilemap approach.
 - Keep the existing Phaser 3 + Vite foundation.
 - Keep `src/scenes/Street.js` as the old prototype/reference scene.
@@ -228,6 +230,46 @@ Make every accepted move answer four questions:
 ```
 
 The UI should keep the simple product language: goal, attention, pocket, context, guidance, trace, clue, shortcut, ask, inspect, remember, skip, act, partial finish, and safe finish.
+
+## Scenario Variant Strategy
+
+Pocket Bot should keep one invariant stage and allow scenario scripts to vary.
+The invariant stage is:
+
+```text
+foggy map
+  -> bot proposal
+    -> player approve / redirect / ask / remember / skip / act
+      -> attention spend
+        -> reveal plus residue
+          -> trace card
+            -> session lesson
+              -> safe / partial / false / open finish
+```
+
+Scenario scripts provide the domain wrapper for that stage. The current leading
+candidate is:
+
+```text
+docs/product/scenarios/market_signal_scout.md
+```
+
+Treat `Market Signal Scout` as a candidate, not as the automatically final first
+scenario. It should be selected only if it helps the first player understand
+resource judgment quickly and does not create financial-advice confusion.
+
+Selection gate for `Market Signal Scout`:
+
+- market-like vocabulary remains fictional and non-advisory,
+- no live market data is used,
+- no brokerage, exchange, portfolio, trading bot, or strategy-export behavior is introduced,
+- any historic chart-derived fixture has source attribution before implementation,
+- the judge path remains understandable in about 60 seconds,
+- Nimiq Pocket remains a controlled capacity/value surface, not a trading balance.
+
+Other scenario variants can reuse the same stage later, such as bug failure
+surface, shopping boundary, travel-planning residue, or coding-agent test
+scouts.
 
 ### Game Glossary For CRPM Terms
 
@@ -531,6 +573,7 @@ No major player-facing feature yet. This slice establishes how the map will be a
 Expected files:
 
 - `docs/planning/mvp_implementation_plan.md`
+- `docs/product/art_bible.md`
 - optional `docs/architecture/rpg_map_tooling.md`
 - `src/scenes/PocketBotWorkshop.js`
 - optional map asset/config files under the most specific existing asset directory, or a new focused map directory if needed.
@@ -539,6 +582,7 @@ Test plan:
 
 - compare Phaser-native tilemap support, Tiled, LDtk, or equivalent Vite-friendly RPG/tilemap approach,
 - pick the smallest workflow that supports tiles, object layers/nodes, fog/revealed state, and click/keyboard interaction,
+- confirm the selected workflow can implement the art bible with small readable sprites, modular tiles, UI icons, and state effects,
 - verify the chosen workflow can represent pressure/residue metadata on nodes without overcomplicating art production,
 - `npm run build` passes after any dependency/config change,
 - browser/manual check confirms the scene still renders.
@@ -548,6 +592,7 @@ Acceptance:
 - selected workflow is documented,
 - the choice does not require replacing Phaser/Vite,
 - the scene can represent nodes, paths, obstacles/fog, interaction zones, hidden pressure, and reveal/residue state,
+- asset generation can proceed from `docs/product/art_bible.md` without committing to final art in PB-005,
 - implementation can proceed without committing to final art.
 
 ### PB-006 Core Resource Model
@@ -705,13 +750,21 @@ User-visible behavior:
 
 The player sees a small RPG-like map with fog, ambiguous route nodes, clue nodes, a tempting shortcut, a context-memory station, a Nimiq pocket/recharge node, and a goal node.
 
+Current candidate script:
+
+- `docs/product/scenarios/market_signal_scout.md`
+
+Use the candidate only if it passes the scenario variant selection gate above.
+
 Expected files:
 
 - `src/domain/lossyMap.js`
 - `src/game/resourceMapScenario.js`
+- optional `src/game/scenarios/marketSignalScoutScenario.js` if `Market Signal Scout` is selected
 - `src/scenes/PocketBotWorkshop.js`
 - map data/assets as selected in PB-005
 - `tests/domain/lossyMap.test.js`
+- optional `tests/game/marketSignalScoutScenario.test.js` if `Market Signal Scout` is selected
 
 Map-node shape should support:
 
@@ -746,14 +799,27 @@ Test plan:
 - skip preserves attention and carries uncertainty as residue,
 - act commits to route state and can trigger false-landfall traps when hidden pressure was ignored,
 - map state serializes into the LLM prompt context, including residue and carried trace,
+- if `Market Signal Scout` is selected, market-like vocabulary is allowed only as fictional game language,
+- if `Market Signal Scout` is selected, proposals are blocked from making live-trading, wallet-authority, brokerage/exchange execution, portfolio advice, or persistent strategy export claims,
 - `npm run test` and `npm run build` pass.
+
+Data-source gate:
+
+- If historic chart-derived fixtures are used, document provider name, URL,
+  terms/license note, date range, and transformation method in
+  `docs/product/source_attribution.md` before implementation.
+- Do not ship raw historic data unless its license/terms explicitly allow that.
+- Do not ship a general chart-data downloader in Phase 1.
+- The scenario must remain a fictional educational game scenario, not financial
+  advice or live trading support.
 
 Acceptance:
 
 - the map makes ambiguity visible,
 - each node asks "is this worth spending attention on?",
 - at least one node teaches that reaching a goal-looking state is not automatically safe landfall,
-- the first map is small enough to finish in a short competition demo.
+- the first map is small enough to finish in a short competition demo,
+- selected scenario script is linked from the plan and has explicit non-goals.
 
 ### PB-009 User-Bot Guidance Loop
 

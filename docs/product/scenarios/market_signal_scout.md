@@ -1,6 +1,6 @@
 # Market Signal Scout Scenario
 
-Status: Phase 1 candidate scenario variant.  
+Status: Phase 1 candidate scenario variant.
 Role: first playable scenario script for the invariant Pocket Bot stage.
 
 ## Core Cut

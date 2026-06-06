@@ -14,11 +14,12 @@ Before feature work, read the relevant docs in this order:
 2. `docs/product/roadmap.md` - phased product boundary; only Phase 1 is current implementation scope.
 3. `docs/product/phase0_alignment.md` - current Phase 0 handoff and code containment strategy.
 4. `docs/product/pitch.md` - concise product framing and wording.
-5. `docs/product/infrastructure_context.md` - Nimiq and payment-rail context.
-6. `docs/product/source_attribution.md` - competition-facing attribution register.
-7. `docs/process/development_workflow.md` - required development loop.
-8. `docs/testing/test_strategy.md` - testing approach.
-9. `docs/planning/mvp_implementation_plan.md` - PB feature slices, subagent roles, and implementation order.
+5. `docs/product/art_bible.md` - visual direction, asset families, generation prompts, naming, and attribution rules.
+6. `docs/product/infrastructure_context.md` - Nimiq and payment-rail context.
+7. `docs/product/source_attribution.md` - competition-facing attribution register.
+8. `docs/process/development_workflow.md` - required development loop.
+9. `docs/testing/test_strategy.md` - testing approach.
+10. `docs/planning/mvp_implementation_plan.md` - PB feature slices, subagent roles, and implementation order.
 
 Use `README.md` for project setup and commands.
 
