@@ -161,6 +161,20 @@ describe('route proposal schema validation', () => {
     expect(validation.valid).toBe(true);
   });
 
+  it('allows terrain-certainty language inside suppresses because it names a non-claim', () => {
+    const validation = validateRouteProposal(
+      createValidRawProposal({
+        cut_price: {
+          reveals: ['Whether the warning node carries a shortcut risk.'],
+          suppresses: ['Any claim that the whole terrain is known.'],
+          leaves_residue: ['Long route safety remains unresolved.'],
+        },
+      })
+    );
+
+    expect(validation.valid).toBe(true);
+  });
+
   it('blocks safe-finish claims until deterministic finish judgment allows them', () => {
     expect(() =>
       assertRouteProposal(

@@ -196,6 +196,16 @@ function collectText(value, output = []) {
   return output;
 }
 
+function collectTerrainCertaintyAssertionText(payload) {
+  return [
+    payload.reason,
+    payload.stop_condition,
+    ...normalizeStringList(payload.cut_price?.reveals),
+  ]
+    .filter(Boolean)
+    .join('\n');
+}
+
 function collectUnsafeFindings(value, path = [], output = []) {
   if (Array.isArray(value)) {
     value.forEach((item, index) => collectUnsafeFindings(item, [...path, String(index)], output));
@@ -363,8 +373,9 @@ export function validateRouteProposal(raw, options = {}) {
   errors.push(...unsafeFindings);
 
   const allText = collectText(payload).join('\n');
+  const terrainCertaintyAssertionText = collectTerrainCertaintyAssertionText(payload);
 
-  const hasTerrainCertaintyClaim = allText
+  const hasTerrainCertaintyClaim = terrainCertaintyAssertionText
     .split(/[.!?\n]/)
     .some(
       (sentence) =>
