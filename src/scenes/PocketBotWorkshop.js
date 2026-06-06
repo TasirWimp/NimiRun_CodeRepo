@@ -1,5 +1,7 @@
 import Phaser from 'phaser';
 
+import nimiRunV2AssetManifest from '../game/assets/nimirunV2AssetManifest.json';
+import { preloadNimiRunV2Assets } from '../game/assets/preloadNimiRunV2Assets.js';
 import {
   NODE_KINDS,
   NODE_VISIBILITY,
@@ -50,6 +52,49 @@ const NODE_STYLES = Object.freeze({
   [NODE_KINDS.SAFE_FINISH]: { fill: COLORS.safeGreen, stroke: COLORS.nimiqGold, icon: 'G' },
 });
 
+const NODE_ASSETS = Object.freeze({
+  [NODE_KINDS.START]: {
+    pad: 'node_pad_gold_signal_96',
+    icon: 'node_start_64',
+    ring: 'node_ring_current_96',
+  },
+  [NODE_KINDS.SHORTCUT]: {
+    pad: 'node_pad_gold_signal_96',
+    icon: 'node_golden_signal_64',
+    ring: 'node_ring_reachable_96',
+  },
+  [NODE_KINDS.CLUE]: {
+    pad: 'node_pad_support_well_96',
+    icon: 'node_support_well_64',
+    ring: 'node_ring_reachable_96',
+  },
+  [NODE_KINDS.CONTEXT]: {
+    pad: 'node_pad_context_shrine_96',
+    icon: 'node_context_shrine_64',
+    ring: 'node_ring_reachable_96',
+  },
+  [NODE_KINDS.POCKET]: {
+    pad: 'node_pad_pocket_spark_96',
+    icon: 'node_pocket_spark_64',
+    ring: 'node_ring_reachable_96',
+  },
+  [NODE_KINDS.WARNING]: {
+    pad: 'node_pad_noise_echo_96',
+    icon: 'node_warning_64',
+    ring: 'node_ring_blocked_96',
+  },
+  [NODE_KINDS.FALSE_FINISH]: {
+    pad: 'node_pad_false_gate_96',
+    icon: 'node_false_gate_64',
+    ring: 'node_ring_blocked_96',
+  },
+  [NODE_KINDS.SAFE_FINISH]: {
+    pad: 'node_pad_safe_gate_96',
+    icon: 'node_safe_gate_64',
+    ring: 'node_ring_reachable_96',
+  },
+});
+
 function formatNim(value) {
   return `${Number(value).toFixed(0)} NIM`;
 }
@@ -70,9 +115,21 @@ function createTextStyle(overrides = {}) {
   };
 }
 
-function createPanel(scene, layout, stroke = COLORS.panelStroke) {
+function createPanel(scene, layout, stroke = COLORS.panelStroke, frameKey = null) {
   scene.add
     .rectangle(layout.x, layout.y, layout.width, layout.height, COLORS.panel, 0.94)
+    .setOrigin(0);
+
+  if (frameKey && scene.textures.exists(frameKey)) {
+    scene.add
+      .image(layout.x, layout.y, frameKey)
+      .setOrigin(0)
+      .setDisplaySize(layout.width, layout.height);
+    return;
+  }
+
+  scene.add
+    .rectangle(layout.x, layout.y, layout.width, layout.height, COLORS.panel, 0)
     .setOrigin(0)
     .setStrokeStyle(2, stroke, 0.86);
 }
@@ -88,6 +145,10 @@ function formatList(items, fallback = 'none') {
 export default class PocketBotWorkshop extends Phaser.Scene {
   constructor() {
     super({ key: 'PocketBotWorkshop' });
+  }
+
+  preload() {
+    preloadNimiRunV2Assets(this, nimiRunV2AssetManifest);
   }
 
   create() {
@@ -155,27 +216,19 @@ export default class PocketBotWorkshop extends Phaser.Scene {
   drawMapGround() {
     const map = LAYOUT.map;
 
-    this.add.rectangle(map.x + 5, map.y + 5, 640, 420, COLORS.sourceNight, 0.9).setOrigin(0);
-
-    const graphics = this.add.graphics();
-    graphics.lineStyle(1, 0x1d3242, 0.48);
-
-    for (let x = map.x + 5; x <= map.x + 645; x += this.mapScenario.viewport.tileSize) {
-      graphics.lineBetween(x, map.y + 5, x, map.y + 425);
+    if (this.textures.exists('source_ocean_moonlit_640x420')) {
+      this.add
+        .image(map.x + 5, map.y + 5, 'source_ocean_moonlit_640x420')
+        .setOrigin(0)
+        .setDisplaySize(640, 420);
+    } else {
+      this.add.rectangle(map.x + 5, map.y + 5, 640, 420, COLORS.sourceNight, 0.9).setOrigin(0);
     }
 
-    for (let y = map.y + 5; y <= map.y + 425; y += this.mapScenario.viewport.tileSize) {
-      graphics.lineBetween(map.x + 5, y, map.x + 645, y);
-    }
-
-    this.add.circle(map.x + 575, map.y + 84, 54, COLORS.nimiqGold, 0.08);
-    this.add.circle(map.x + 575, map.y + 84, 32, COLORS.nimiqGold, 0.08);
-    this.add.rectangle(map.x + 5, map.y + 5, 640, 420, COLORS.residueShadow, 0.12).setOrigin(0);
+    this.add.rectangle(map.x + 5, map.y + 5, 640, 420, COLORS.sourceNight, 0.12).setOrigin(0);
   }
 
   drawPaths() {
-    const graphics = this.add.graphics();
-
     for (const path of this.mapScenario.paths) {
       const { from, to } = getPathEndpoints(this.mapScenario, path);
 
@@ -185,13 +238,25 @@ export default class PocketBotWorkshop extends Phaser.Scene {
 
       const start = toWorldPosition(from);
       const end = toWorldPosition(to);
-      const style = this.getPathStyle(path.visibility);
+      const style = this.getPathStyle(path);
+      const midX = (start.x + end.x) / 2;
+      const midY = (start.y + end.y) / 2;
+      const length = Phaser.Math.Distance.Between(start.x, start.y, end.x, end.y);
+      const angle = Phaser.Math.Angle.Between(start.x, start.y, end.x, end.y);
 
-      graphics.lineStyle(style.width, style.color, style.alpha);
-      graphics.beginPath();
-      graphics.moveTo(start.x, start.y);
-      graphics.lineTo(end.x, end.y);
-      graphics.strokePath();
+      if (this.textures.exists(style.asset)) {
+        this.add
+          .image(midX, midY, style.asset)
+          .setOrigin(0.5)
+          .setRotation(angle)
+          .setDisplaySize(length, style.height)
+          .setAlpha(style.alpha);
+      } else {
+        this.add
+          .graphics()
+          .lineStyle(style.width, style.color, style.alpha)
+          .lineBetween(start.x, start.y, end.x, end.y);
+      }
     }
   }
 
@@ -199,24 +264,25 @@ export default class PocketBotWorkshop extends Phaser.Scene {
     for (const node of this.mapScenario.nodes) {
       const position = toWorldPosition(node);
       const style = this.getNodeStyle(node);
+      const asset = this.getNodeAsset(node);
       const isFogged = node.visibility === NODE_VISIBILITY.FOGGED;
+      const isHiddenPressure = node.pressure?.hidden === true;
 
       if (isFogged) {
-        this.add.circle(position.x, position.y, 52, COLORS.residueShadow, 0.45);
+        this.add
+          .image(position.x, position.y, 'fog_residue_cloud_192')
+          .setDisplaySize(106, 106)
+          .setAlpha(0.72);
       }
 
-      const marker = this.add
-        .circle(position.x, position.y, 24, style.fill, isFogged ? 0.48 : 0.94)
-        .setStrokeStyle(isFogged ? 2 : 3, style.stroke, isFogged ? 0.55 : 0.95);
+      const marker = this.drawNodeAsset({ node, position, style, asset, isFogged });
 
-      this.add.text(position.x, position.y - 8, isFogged ? '?' : style.icon, {
-        ...createTextStyle({
-          fontSize: '18px',
-          color: isFogged ? '#aab4bd' : '#050b10',
-          fontStyle: '700',
-          align: 'center',
-        }),
-      }).setOrigin(0.5);
+      if (isHiddenPressure && !isFogged && this.textures.exists('fog_residue_overlay_96')) {
+        this.add
+          .image(position.x, position.y, 'fog_residue_overlay_96')
+          .setDisplaySize(72, 72)
+          .setAlpha(0.28);
+      }
 
       this.add.text(position.x, position.y + 32, node.label, {
         ...createTextStyle({
@@ -242,14 +308,28 @@ export default class PocketBotWorkshop extends Phaser.Scene {
   drawPocketBotMarker() {
     const startNode = getNodeById(this.mapScenario, 'source-edge');
     const position = toWorldPosition(startNode);
-    const bodyPoints = [0, -25, 23, -12, 23, 12, 0, 25, -23, 12, -23, -12];
 
-    this.add
-      .polygon(position.x, position.y - 58, bodyPoints, COLORS.nimiqGold, 0.94)
-      .setStrokeStyle(3, COLORS.emberGold, 0.95);
-    this.add.rectangle(position.x, position.y - 58, 28, 16, COLORS.sourceNight, 0.96);
-    this.add.circle(position.x - 8, position.y - 58, 3, COLORS.nimiqGold, 1);
-    this.add.circle(position.x + 8, position.y - 58, 3, COLORS.nimiqGold, 1);
+    if (this.textures.exists('node_ring_current_96')) {
+      this.add
+        .image(position.x, position.y - 58, 'node_ring_current_96')
+        .setDisplaySize(82, 82)
+        .setAlpha(0.82);
+    }
+
+    if (this.textures.exists('bot_v2_idle')) {
+      this.add
+        .image(position.x, position.y - 58, 'bot_v2_idle')
+        .setDisplaySize(78, 78);
+    } else {
+      const bodyPoints = [0, -25, 23, -12, 23, 12, 0, 25, -23, 12, -23, -12];
+      this.add
+        .polygon(position.x, position.y - 58, bodyPoints, COLORS.nimiqGold, 0.94)
+        .setStrokeStyle(3, COLORS.emberGold, 0.95);
+      this.add.rectangle(position.x, position.y - 58, 28, 16, COLORS.sourceNight, 0.96);
+      this.add.circle(position.x - 8, position.y - 58, 3, COLORS.nimiqGold, 1);
+      this.add.circle(position.x + 8, position.y - 58, 3, COLORS.nimiqGold, 1);
+    }
+
     this.add.text(position.x, position.y - 28, 'Pocket Bot', {
       ...createTextStyle({ fontSize: '12px', color: '#f2b33d', align: 'center' }),
     }).setOrigin(0.5);
@@ -259,7 +339,7 @@ export default class PocketBotWorkshop extends Phaser.Scene {
     const { resources } = this.mapScenario;
     const hud = LAYOUT.hud;
 
-    createPanel(this, hud);
+    createPanel(this, hud, COLORS.panelStroke, 'hud_panel_frame_v2');
 
     this.add.text(hud.x + 20, hud.y + 18, 'Current Run', {
       ...createTextStyle({ fontSize: '18px', color: '#f2b33d', fontStyle: '700' }),
@@ -339,16 +419,25 @@ export default class PocketBotWorkshop extends Phaser.Scene {
     });
 
     for (let index = 0; index < contextSlots.max; index += 1) {
-      this.add
-        .rectangle(x + index * 48, y + 32, 34, 42, COLORS.panelSoft, 1)
-        .setOrigin(0)
-        .setStrokeStyle(2, COLORS.contextGreen, index < contextSlots.used ? 1 : 0.45);
+      const slotKey = index < contextSlots.used ? 'context_slot_context_v2' : 'context_slot_empty_v2';
+
+      if (this.textures.exists(slotKey)) {
+        this.add
+          .image(x + index * 48 + 17, y + 53, slotKey)
+          .setDisplaySize(42, 42)
+          .setAlpha(index < contextSlots.used ? 1 : 0.74);
+      } else {
+        this.add
+          .rectangle(x + index * 48, y + 32, 34, 42, COLORS.panelSoft, 1)
+          .setOrigin(0)
+          .setStrokeStyle(2, COLORS.contextGreen, index < contextSlots.used ? 1 : 0.45);
+      }
     }
   }
 
   drawBottomPanels() {
-    createPanel(this, LAYOUT.details, COLORS.panelDimStroke);
-    createPanel(this, LAYOUT.proposal);
+    createPanel(this, LAYOUT.details, COLORS.panelDimStroke, 'trace_card_frame_v2');
+    createPanel(this, LAYOUT.proposal, COLORS.panelStroke, 'proposal_card_frame_v2');
 
     this.detailTitle = this.add.text(LAYOUT.details.x + 18, LAYOUT.details.y + 16, '', {
       ...createTextStyle({ fontSize: '17px', color: '#f2b33d', fontStyle: '700' }),
@@ -387,16 +476,54 @@ export default class PocketBotWorkshop extends Phaser.Scene {
     });
   }
 
-  getPathStyle(visibility) {
-    if (visibility === PATH_VISIBILITY.REVEALED) {
-      return { color: COLORS.nimiqGold, alpha: 0.84, width: 4 };
+  getPathStyle(path) {
+    if (path.visibility === PATH_VISIBILITY.FOGGED) {
+      return {
+        asset: 'path_thread_fogged_128x32',
+        color: COLORS.residueShadow,
+        alpha: 0.76,
+        width: 3,
+        height: 18,
+      };
     }
 
-    if (visibility === PATH_VISIBILITY.FOGGED) {
-      return { color: COLORS.residueShadow, alpha: 0.75, width: 3 };
+    if (path.to === 'false-gate' || path.from === 'false-gate') {
+      return {
+        asset: 'path_thread_warning_128x32',
+        color: COLORS.warningRed,
+        alpha: 0.72,
+        width: 3,
+        height: 18,
+      };
     }
 
-    return { color: COLORS.emberGold, alpha: 0.64, width: 3 };
+    if (path.to === 'safe-gate' || path.from === 'safe-gate') {
+      return {
+        asset: 'path_thread_safe_128x32',
+        color: COLORS.safeGreen,
+        alpha: 0.64,
+        width: 3,
+        height: 18,
+      };
+    }
+
+    if (path.visibility === PATH_VISIBILITY.REVEALED) {
+      return {
+        asset: 'path_thread_gold_128x32',
+        color: COLORS.nimiqGold,
+        alpha: 0.86,
+        width: 4,
+        height: 20,
+      };
+    }
+
+    return {
+      asset: 'path_thread_moonblue_128x32',
+      color: COLORS.moonBlue,
+      alpha: 0.78,
+      width: 3,
+      height: 18,
+    };
   }
 
   getNodeStyle(node) {
@@ -405,6 +532,64 @@ export default class PocketBotWorkshop extends Phaser.Scene {
       stroke: COLORS.nimiqGold,
       icon: '?',
     };
+  }
+
+  getNodeAsset(node) {
+    return NODE_ASSETS[node.kind] || {
+      pad: 'node_pad_dark_hex_96',
+      icon: 'node_noise_echo_64',
+      ring: 'node_ring_reachable_96',
+    };
+  }
+
+  drawNodeAsset({ node, position, style, asset, isFogged }) {
+    const alpha = isFogged ? 0.52 : 0.96;
+    const ringAlpha = isFogged ? 0.46 : 0.72;
+
+    if (this.textures.exists(asset.ring)) {
+      this.add
+        .image(position.x, position.y, asset.ring)
+        .setDisplaySize(76, 76)
+        .setAlpha(ringAlpha);
+    }
+
+    let marker;
+
+    if (this.textures.exists(asset.pad)) {
+      marker = this.add
+        .image(position.x, position.y, asset.pad)
+        .setDisplaySize(node.kind === NODE_KINDS.FALSE_FINISH || node.kind === NODE_KINDS.SAFE_FINISH ? 78 : 72, node.kind === NODE_KINDS.FALSE_FINISH || node.kind === NODE_KINDS.SAFE_FINISH ? 78 : 72)
+        .setAlpha(alpha);
+    } else {
+      marker = this.add
+        .circle(position.x, position.y, 24, style.fill, alpha)
+        .setStrokeStyle(isFogged ? 2 : 3, style.stroke, isFogged ? 0.55 : 0.95);
+    }
+
+    if (this.textures.exists(asset.icon)) {
+      this.add
+        .image(position.x, position.y, asset.icon)
+        .setDisplaySize(44, 44)
+        .setAlpha(isFogged ? 0.62 : 1);
+    } else {
+      this.add.text(position.x, position.y - 8, isFogged ? '?' : style.icon, {
+        ...createTextStyle({
+          fontSize: '18px',
+          color: isFogged ? '#aab4bd' : '#050b10',
+          fontStyle: '700',
+          align: 'center',
+        }),
+      }).setOrigin(0.5);
+    }
+
+    if (isFogged && this.textures.exists('fog_residue_overlay_96')) {
+      this.add
+        .image(position.x, position.y, 'fog_residue_overlay_96')
+        .setDisplaySize(82, 82)
+        .setAlpha(0.8);
+    }
+
+    return marker;
   }
 
   previewNode(nodeId) {
@@ -429,8 +614,14 @@ export default class PocketBotWorkshop extends Phaser.Scene {
     const position = toWorldPosition(node);
 
     if (!this.selectedRing) {
-      this.selectedRing = this.add.circle(position.x, position.y, 32, COLORS.nimiqGold, 0)
-        .setStrokeStyle(3, COLORS.nimiqGold, 0.98);
+      if (this.textures.exists('node_ring_selected_96')) {
+        this.selectedRing = this.add
+          .image(position.x, position.y, 'node_ring_selected_96')
+          .setDisplaySize(88, 88);
+      } else {
+        this.selectedRing = this.add.circle(position.x, position.y, 32, COLORS.nimiqGold, 0)
+          .setStrokeStyle(3, COLORS.nimiqGold, 0.98);
+      }
     } else {
       this.selectedRing.setPosition(position.x, position.y);
     }

@@ -44,6 +44,7 @@ from the relevant planning or product document.
 | CRPM repo: `C:\Users\jensb\Desktop\Projects\CRPM` | Design discipline / conceptual source | Provides the internal discipline behind pressure, cuts, carriers, residue, protected outcomes, landfall, and re-entry. Pocket Bot translates these into player-facing game terms. | Not a software dependency; not bundled; normal UI should not expose raw CRPM jargon. |
 | Agent Desktop Automation MCP Server repo: `C:\Users\jensb\Desktop\Projects\Agent_Desktop _Automation_MCP_Server` | Runtime design source | Provides the bounded session, transition-gate, carrier, residue, and closure-gate pattern adapted into the Pocket Bot run loop. | Not a software dependency; not bundled; no desktop automation tools are used by the game runtime. |
 | Pocket Bot storyboard reference image: `C:\Users\jensb\Downloads\ChatGPT Image Jun 5, 2026, 10_23_27 PM.png` | Generated design reference / storyboard | Informs `docs/product/art_bible.md`: dark storybook RPG mood, gold/blue/purple/green signal palette, Pocket Bot silhouette, Nimiq pocket object, trace cards, context slots, false finish, and safe finish visual language. | Local design reference only; not bundled into the app unless later copied into the repo and attributed as a shipped asset. |
+| NimiRun V2 game asset pack: `C:\Users\jensb\Downloads\nimirun_v2_game_assets` | Project-owner-provided generated runtime asset pack | Provides the current PB-005 runtime art: source-ocean map background, node pads/icons/rings, path threads, fog overlays, Pocket Bot V2 sprites, context slot images, and HUD/proposal/trace panel frames. | Bundled into the app under `public/assets/nimirun-v2/`; manifest and preload helper live under `src/game/assets/`. Generation tool/model and final competition license note should be confirmed before submission. |
 | OpenAI API / GPT model documentation | Planned service documentation | Phase 1 may use a low-cost GPT model behind a server-side relay for route proposals. The exact model must be selected from current official docs during implementation. | Future runtime service only if configured; provider keys must never be bundled into browser code. |
 | OpenAI Operator announcement and system card | Research context | Background reference for user-visible agent control, action boundaries, and receipts. | Not a dependency; research context only. |
 | x402, Coinbase x402, Base AI agents, and related papers | Research context / future planning | Background for future paid-resource governance and agent-payment risks. | Not Phase 1 implementation; not bundled; no x402 flow in MVP. |
@@ -56,8 +57,9 @@ Add entries before or in the same commit that adopts any of these:
   including provider name, URL, license/terms note, date range, transformation
   method, and whether raw data or only derived static fixtures are shipped.
 - RPG map authoring tool or framework, such as Tiled or LDtk.
-- Asset packs, fonts, icon libraries, generated sprites, generated tiles, music,
-  sound effects, or AI-generated images.
+- Additional asset packs, fonts, icon libraries, generated sprites, generated
+  tiles, music, sound effects, or AI-generated images beyond the NimiRun V2
+  pack above.
 - Any live LLM provider, model id, pricing source, prompt library, schema helper,
   backend relay framework, or hosting platform.
 - Any Nimiq testnet faucet, explorer, wallet, provider, or transaction reference.

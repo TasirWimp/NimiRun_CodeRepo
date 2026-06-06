@@ -1,0 +1,267 @@
+{
+  "name": "NimiRun V2 Game Assets",
+  "version": "2.0.0",
+  "target": "Phaser 3 + Vite",
+  "mapMode": "node_path_node_no_free_movement",
+  "sourceOceanViewport": {
+    "width": 640,
+    "height": 420
+  },
+  "tileSize": 48,
+  "nodePadSize": 96,
+  "style": "Moonlit Source Ocean / Soft Weird Cognitive Fairytale",
+  "usageNotes": [
+    "Runtime text should stay dynamic in Phaser/HTML.",
+    "Backgrounds and tiles provide atmosphere only; nodes and paths remain interactive runtime objects.",
+    "Use node pads plus node icons/rings for selectable graph nodes.",
+    "Path threads are horizontal segments; rotate/stretch/tile in Phaser as needed.",
+    "Fog overlays are transparent PNGs and can be alpha-blended over fogged nodes or paths."
+  ],
+  "assets": [
+    {
+      "key": "source_ocean_moonlit_1280x840",
+      "path": "/assets/nimirun-v2/backgrounds/source_ocean_moonlit_1280x840.png",
+      "type": "image"
+    },
+    {
+      "key": "source_ocean_moonlit_640x420",
+      "path": "/assets/nimirun-v2/backgrounds/source_ocean_moonlit_640x420.png",
+      "type": "image"
+    },
+    {
+      "key": "fog_residue_cloud_192",
+      "path": "/assets/nimirun-v2/fog/fog_residue_cloud_192.png",
+      "type": "image"
+    },
+    {
+      "key": "fog_residue_overlay_48",
+      "path": "/assets/nimirun-v2/fog/fog_residue_overlay_48.png",
+      "type": "image"
+    },
+    {
+      "key": "fog_residue_overlay_96",
+      "path": "/assets/nimirun-v2/fog/fog_residue_overlay_96.png",
+      "type": "image"
+    },
+    {
+      "key": "node_pad_context_shrine_96",
+      "path": "/assets/nimirun-v2/node-pads/node_pad_context_shrine_96.png",
+      "type": "image"
+    },
+    {
+      "key": "node_pad_dark_hex_96",
+      "path": "/assets/nimirun-v2/node-pads/node_pad_dark_hex_96.png",
+      "type": "image"
+    },
+    {
+      "key": "node_pad_false_gate_128",
+      "path": "/assets/nimirun-v2/node-pads/node_pad_false_gate_128.png",
+      "type": "image"
+    },
+    {
+      "key": "node_pad_false_gate_96",
+      "path": "/assets/nimirun-v2/node-pads/node_pad_false_gate_96.png",
+      "type": "image"
+    },
+    {
+      "key": "node_pad_gold_signal_96",
+      "path": "/assets/nimirun-v2/node-pads/node_pad_gold_signal_96.png",
+      "type": "image"
+    },
+    {
+      "key": "node_pad_noise_echo_96",
+      "path": "/assets/nimirun-v2/node-pads/node_pad_noise_echo_96.png",
+      "type": "image"
+    },
+    {
+      "key": "node_pad_pocket_spark_96",
+      "path": "/assets/nimirun-v2/node-pads/node_pad_pocket_spark_96.png",
+      "type": "image"
+    },
+    {
+      "key": "node_pad_safe_gate_128",
+      "path": "/assets/nimirun-v2/node-pads/node_pad_safe_gate_128.png",
+      "type": "image"
+    },
+    {
+      "key": "node_pad_safe_gate_96",
+      "path": "/assets/nimirun-v2/node-pads/node_pad_safe_gate_96.png",
+      "type": "image"
+    },
+    {
+      "key": "node_pad_support_well_96",
+      "path": "/assets/nimirun-v2/node-pads/node_pad_support_well_96.png",
+      "type": "image"
+    },
+    {
+      "key": "node_context_shrine_64",
+      "path": "/assets/nimirun-v2/nodes/node_context_shrine_64.png",
+      "type": "image"
+    },
+    {
+      "key": "node_false_gate_64",
+      "path": "/assets/nimirun-v2/nodes/node_false_gate_64.png",
+      "type": "image"
+    },
+    {
+      "key": "node_golden_signal_64",
+      "path": "/assets/nimirun-v2/nodes/node_golden_signal_64.png",
+      "type": "image"
+    },
+    {
+      "key": "node_noise_echo_64",
+      "path": "/assets/nimirun-v2/nodes/node_noise_echo_64.png",
+      "type": "image"
+    },
+    {
+      "key": "node_pocket_spark_64",
+      "path": "/assets/nimirun-v2/nodes/node_pocket_spark_64.png",
+      "type": "image"
+    },
+    {
+      "key": "node_ring_blocked_96",
+      "path": "/assets/nimirun-v2/nodes/node_ring_blocked_96.png",
+      "type": "image"
+    },
+    {
+      "key": "node_ring_current_96",
+      "path": "/assets/nimirun-v2/nodes/node_ring_current_96.png",
+      "type": "image"
+    },
+    {
+      "key": "node_ring_reachable_96",
+      "path": "/assets/nimirun-v2/nodes/node_ring_reachable_96.png",
+      "type": "image"
+    },
+    {
+      "key": "node_ring_selected_96",
+      "path": "/assets/nimirun-v2/nodes/node_ring_selected_96.png",
+      "type": "image"
+    },
+    {
+      "key": "node_safe_gate_64",
+      "path": "/assets/nimirun-v2/nodes/node_safe_gate_64.png",
+      "type": "image"
+    },
+    {
+      "key": "node_start_64",
+      "path": "/assets/nimirun-v2/nodes/node_start_64.png",
+      "type": "image"
+    },
+    {
+      "key": "node_support_well_64",
+      "path": "/assets/nimirun-v2/nodes/node_support_well_64.png",
+      "type": "image"
+    },
+    {
+      "key": "node_warning_64",
+      "path": "/assets/nimirun-v2/nodes/node_warning_64.png",
+      "type": "image"
+    },
+    {
+      "key": "path_thread_fogged_128x32",
+      "path": "/assets/nimirun-v2/paths/path_thread_fogged_128x32.png",
+      "type": "image"
+    },
+    {
+      "key": "path_thread_gold_128x32",
+      "path": "/assets/nimirun-v2/paths/path_thread_gold_128x32.png",
+      "type": "image"
+    },
+    {
+      "key": "path_thread_moonblue_128x32",
+      "path": "/assets/nimirun-v2/paths/path_thread_moonblue_128x32.png",
+      "type": "image"
+    },
+    {
+      "key": "path_thread_safe_128x32",
+      "path": "/assets/nimirun-v2/paths/path_thread_safe_128x32.png",
+      "type": "image"
+    },
+    {
+      "key": "path_thread_selected_128x32",
+      "path": "/assets/nimirun-v2/paths/path_thread_selected_128x32.png",
+      "type": "image"
+    },
+    {
+      "key": "path_thread_warning_128x32",
+      "path": "/assets/nimirun-v2/paths/path_thread_warning_128x32.png",
+      "type": "image"
+    },
+    {
+      "key": "bot_v2_idle",
+      "path": "/assets/nimirun-v2/pocket-bot/bot_v2_idle.png",
+      "type": "image"
+    },
+    {
+      "key": "bot_v2_think",
+      "path": "/assets/nimirun-v2/pocket-bot/bot_v2_think.png",
+      "type": "image"
+    },
+    {
+      "key": "bot_v2_warning",
+      "path": "/assets/nimirun-v2/pocket-bot/bot_v2_warning.png",
+      "type": "image"
+    },
+    {
+      "key": "tile_base_48",
+      "path": "/assets/nimirun-v2/tiles/tile_base_48.png",
+      "type": "image"
+    },
+    {
+      "key": "tile_clue_crystal_48",
+      "path": "/assets/nimirun-v2/tiles/tile_clue_crystal_48.png",
+      "type": "image"
+    },
+    {
+      "key": "tile_moonlit_edge_48",
+      "path": "/assets/nimirun-v2/tiles/tile_moonlit_edge_48.png",
+      "type": "image"
+    },
+    {
+      "key": "tile_ridge_gold_48",
+      "path": "/assets/nimirun-v2/tiles/tile_ridge_gold_48.png",
+      "type": "image"
+    },
+    {
+      "key": "tile_safe_trace_48",
+      "path": "/assets/nimirun-v2/tiles/tile_safe_trace_48.png",
+      "type": "image"
+    },
+    {
+      "key": "tile_warning_fracture_48",
+      "path": "/assets/nimirun-v2/tiles/tile_warning_fracture_48.png",
+      "type": "image"
+    },
+    {
+      "key": "context_slot_clue_v2",
+      "path": "/assets/nimirun-v2/ui/context_slot_clue_v2.png",
+      "type": "image"
+    },
+    {
+      "key": "context_slot_context_v2",
+      "path": "/assets/nimirun-v2/ui/context_slot_context_v2.png",
+      "type": "image"
+    },
+    {
+      "key": "context_slot_empty_v2",
+      "path": "/assets/nimirun-v2/ui/context_slot_empty_v2.png",
+      "type": "image"
+    },
+    {
+      "key": "hud_panel_frame_v2",
+      "path": "/assets/nimirun-v2/ui/hud_panel_frame_v2.png",
+      "type": "image"
+    },
+    {
+      "key": "proposal_card_frame_v2",
+      "path": "/assets/nimirun-v2/ui/proposal_card_frame_v2.png",
+      "type": "image"
+    },
+    {
+      "key": "trace_card_frame_v2",
+      "path": "/assets/nimirun-v2/ui/trace_card_frame_v2.png",
+      "type": "image"
+    }
+  ]
+}

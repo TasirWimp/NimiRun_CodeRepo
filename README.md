@@ -12,6 +12,7 @@ The repository currently contains:
 - a simple side-scroller prototype scene,
 - Pocket Bot Workshop scene and domain groundwork from the earlier allowance-control cut,
 - PB-005 RPG map tooling and a Phaser-native node-map scaffold,
+- NimiRun V2 runtime assets under `public/assets/nimirun-v2/`,
 - organized product documentation under `docs/`,
 - project structure prepared for testable domain logic, LLM proposal boundaries, runtime-cycle rules, and future Nimiq testnet work.
 

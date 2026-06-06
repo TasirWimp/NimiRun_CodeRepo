@@ -257,6 +257,7 @@ Status: implemented with a Phaser-native custom node-map scaffold.
 Expected checks:
 
 - selected map workflow is documented,
+- NimiRun V2 asset manifest points at committed public asset files,
 - map workflow can represent fog/revealed state,
 - map workflow can attach hidden pressure / residue metadata to nodes without overcomplicating art production,
 - `npm run test` covers the scene-independent map scaffold,

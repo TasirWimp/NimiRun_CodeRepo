@@ -102,15 +102,18 @@ trace, clue, warning, shortcut, unknown, partial finish, safe finish.
 
 ## Asset Direction
 
-PB-005 does not require final art. It must keep the scene ready for art from:
+PB-005 now uses the project-owner-provided NimiRun V2 asset pack as working
+runtime art. The pack follows the same node-map cut:
 
 ```text
-docs/product/art_bible.md
-public/assets/pocket-bot/
+public/assets/nimirun-v2/
+src/game/assets/nimirunV2AssetManifest.json
+src/game/assets/preloadNimiRunV2Assets.js
 ```
 
-Use placeholder shapes until the first generated asset batch exists. Runtime
-text should stay in Phaser/HTML, not inside PNGs.
+Runtime text should stay in Phaser/HTML, not inside PNGs. Future generated
+asset batches should continue to follow `docs/product/art_bible.md`, and any
+additional asset source must be recorded in `docs/product/source_attribution.md`.
 
 ## Acceptance Notes
 
@@ -122,6 +125,5 @@ This workflow satisfies PB-005 when:
 - nodes can carry hidden pressure and residue metadata,
 - pointer/touch interaction zones select nodes,
 - no external map editor dependency is required,
-- final asset generation can wait until tile size and icon size are proven in
-  the scene.
-
+- the NimiRun V2 assets render through the manifest/preload helper without
+  changing the node-map data model.

@@ -303,6 +303,36 @@ Generate assets in coherent batches so style drift is visible early:
 Each batch should be checked in the actual Phaser scene before generating the
 next batch.
 
+## Current Runtime Asset Pack
+
+The current PB-005 runtime pack is:
+
+```text
+C:\Users\jensb\Downloads\nimirun_v2_game_assets
+```
+
+It is copied into the repo as:
+
+```text
+public/assets/nimirun-v2/
+src/game/assets/nimirunV2AssetManifest.json
+src/game/assets/preloadNimiRunV2Assets.js
+```
+
+Use it as the working art layer for the Phaser-native node-map scaffold:
+
+- `source_ocean_moonlit_640x420` for the map background,
+- path-thread images for route edges,
+- node pads/icons/rings for graph nodes,
+- fog overlays for residue and unknown pressure,
+- `bot_v2_idle` for the current Pocket Bot marker,
+- UI frames and context-slot icons for the HUD and panels.
+
+The pack supports the current Phase 1 cut: node -> path -> node gameplay, not
+free tile movement. It is acceptable as the working runtime art, but final
+competition attribution should still confirm the generation tool/model and
+license note.
+
 ## Attribution And Licensing
 
 Before committing generated or sourced assets:
@@ -330,4 +360,3 @@ An asset batch is acceptable when:
 - no mainnet, wallet, trading, brokerage, or exchange behavior is implied,
 - the asset source is attributed,
 - the Phaser scene still renders and controls remain touch-readable.
-
