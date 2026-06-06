@@ -297,6 +297,8 @@ Expected automated tests:
 
 ### PB-007 LLM Route Proposal Bridge
 
+Status: implemented.
+
 Expected automated tests:
 
 - valid structured move proposal is accepted,

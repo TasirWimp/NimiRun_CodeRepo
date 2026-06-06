@@ -76,7 +76,7 @@ Current order:
 5. PB-005 RPG Map Tooling And Scene Direction - implemented.
 6. PB-006 Core Resource Model - implemented.
 7. PB-006A Run Session And Transition Runtime - implemented.
-8. PB-007 LLM Route Proposal Bridge.
+8. PB-007 LLM Route Proposal Bridge - implemented.
 9. PB-008 Lossy Map Scenario.
 10. PB-009 User-Bot Guidance Loop.
 11. PB-010 Session Lesson Application.

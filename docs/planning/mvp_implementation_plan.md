@@ -146,12 +146,12 @@ Implemented groundwork from the earlier allowance-control cut:
 - PB-005 RPG Map Tooling And Scene Direction is implemented with a Phaser-native custom node-map workflow and NimiRun V2 runtime assets, documented in `docs/architecture/rpg_map_tooling.md`.
 - PB-006 Core Resource Model is implemented with deterministic Bot Attention, Nimiq Pocket, User Guidance, Context Slot, and move-cost checks in `src/domain/`.
 - PB-006A Run Session And Transition Runtime is implemented with scenario contract validation, move transition gates, run carriers, and finish judgment packets.
+- PB-007 LLM Route Proposal Bridge is implemented with a strict route proposal schema, run-carrier prompt builder, browser relay client, Vite dev relay middleware, OpenAI Responses API relay, and offline/mock fallback.
 
 This work should be retained as supporting infrastructure. It becomes one possible resource-governance mechanic inside the broader resource-judgment game, not the active center of Phase 1.
 
 Next work should pivot to connecting the playable user-bot interaction loop:
 
-- LLM route-proposal bridge,
 - lossy map scenario,
 - user guidance controls,
 - session-only lesson application,
@@ -697,6 +697,10 @@ Acceptance:
 
 ### PB-007 LLM Route Proposal Bridge
 
+Status:
+
+Implemented.
+
 Goal:
 
 Add Phase 1 LLM support for route/move proposals.
@@ -710,16 +714,18 @@ Expected files:
 - `src/llm/routeProposalSchema.js`
 - `src/llm/routeProposalPrompt.js`
 - `src/llm/routeProposalClient.js`
-- server-side relay file or function under the repo's chosen backend/platform location
+- `src/llm/routeProposalMock.js`
+- `server/routeProposalRelay.js`
 - `tests/llm/routeProposalSchema.test.js`
+- `tests/llm/routeProposalPrompt.test.js`
 - `tests/llm/routeProposalClient.test.js`
-- optional `tests/platform/openaiRelay.test.js`
+- `tests/platform/routeProposalRelay.test.js`
 
 Route proposal shape should include:
 
 ```yaml
 route_proposal:
-  move_type: inspect | ask | remember | forget | skip | act
+  move_type: inspect | ask | remember | skip | act
   target_node:
   reason:
   resource_cost:
@@ -737,7 +743,6 @@ route_proposal:
     leaves_residue:
       - "what remains unknown after the move"
   stop_condition:
-  trace_summary:
 ```
 
 Test plan:
@@ -1138,10 +1143,10 @@ Implemented groundwork:
 6. PB-005 RPG Map Tooling And Scene Direction.
 7. PB-006 Core Resource Model.
 8. PB-006A Run Session And Transition Runtime.
+9. PB-007 LLM Route Proposal Bridge.
 
 Revised next sequence:
 
-9. PB-007 LLM Route Proposal Bridge.
 10. PB-008 Lossy Map Scenario.
 11. PB-009 User-Bot Guidance Loop.
 12. PB-011 Trace Cards.
@@ -1159,7 +1164,7 @@ vertical-slice pass rather than a product pivot.
 The next implementation commit should be:
 
 ```text
-feat: add llm route proposal bridge
+feat: add lossy map scenario
 ```
 
 ## Risks And Controls

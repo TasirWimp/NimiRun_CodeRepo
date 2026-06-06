@@ -14,11 +14,12 @@ The repository currently contains:
 - PB-005 RPG map tooling and a Phaser-native node-map scaffold,
 - PB-006 deterministic resource model for Bot Attention, Nimiq Pocket, User Guidance, and Context Slots,
 - PB-006A run-session runtime for transition gates, run carriers, residue, and finish judgment,
+- PB-007 LLM route-proposal bridge with schema validation, run-carrier prompt shaping, browser relay client, Vite dev relay middleware, and mock fallback,
 - NimiRun V2 runtime assets under `public/assets/nimirun-v2/`,
 - organized product documentation under `docs/`,
 - project structure prepared for testable domain logic, LLM proposal boundaries, runtime-cycle rules, and future Nimiq testnet work.
 
-The revised resource-judgment gameplay has a map scaffold, deterministic resource state, and runtime-cycle groundwork, but the full playable loop is not complete yet.
+The revised resource-judgment gameplay has a map scaffold, deterministic resource state, runtime-cycle groundwork, and a bounded LLM proposal bridge, but the full playable loop is not complete yet.
 
 ## Documentation
 
@@ -57,6 +58,16 @@ npm run build
 
 The development server uses Vite on `http://localhost:8080` by default.
 
+PB-007 LLM relay configuration:
+
+```bash
+cp .env.example .env.local
+```
+
+Leave `NIMIRUN_LLM_MODE=mock` or omit `OPENAI_API_KEY` for local mock proposals.
+For live route proposals, set `NIMIRUN_LLM_MODE=openai`, set `OPENAI_API_KEY`
+server-side, and optionally override `OPENAI_ROUTE_PROPOSAL_MODEL`.
+
 ## Project Structure
 
 ```text
@@ -77,9 +88,13 @@ public/
 
 src/
   domain/
+  llm/
   game/
   scenes/
   ui/
+
+server/
+  routeProposalRelay.js
 ```
 
 ## Implementation Direction
