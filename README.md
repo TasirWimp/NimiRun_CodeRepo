@@ -60,13 +60,24 @@ The development server uses Vite on `http://localhost:8080` by default.
 
 PB-007 LLM relay configuration:
 
-```bash
-cp .env.example .env.local
+Do not store a real OpenAI API key in the repo working tree for competition or
+submission work. `.env.example` documents variable names only.
+
+For local mock proposals, leave `NIMIRUN_LLM_MODE=mock` or omit
+`OPENAI_API_KEY`.
+
+For live local route proposals, prefer shell/session variables:
+
+```powershell
+$env:NIMIRUN_LLM_MODE = "openai"
+$env:OPENAI_ROUTE_PROPOSAL_MODEL = "gpt-5.4-mini"
+$env:OPENAI_API_KEY = Read-Host "OpenAI API key"
+npm run dev -- --host 127.0.0.1
 ```
 
-Leave `NIMIRUN_LLM_MODE=mock` or omit `OPENAI_API_KEY` for local mock proposals.
-For live route proposals, set `NIMIRUN_LLM_MODE=openai`, set `OPENAI_API_KEY`
-server-side, and optionally override `OPENAI_ROUTE_PROPOSAL_MODEL`.
+For hosted builds, set the same values through deployment secrets or server-side
+environment configuration. Provider keys must never be committed or bundled into
+browser code.
 
 ## Project Structure
 

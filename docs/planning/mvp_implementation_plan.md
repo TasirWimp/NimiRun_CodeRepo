@@ -171,6 +171,7 @@ These assumptions are binding for the revised Phase 1 unless the product require
 - Keep `src/scenes/PocketBotWorkshop.js`, but allow it to evolve from payment workshop into a resource-navigation map.
 - Keep Mini App SDK/provider access behind `src/platform/` adapters.
 - Keep LLM API access behind a server-side relay or equivalent backend boundary; no OpenAI or provider API key may be exposed to browser code.
+- Supply real provider keys through shell/session environment variables or deployment secrets. Treat `.env.example` as a variable-name template, not a secret store; do not rely on repo-local env files for competition or submission work.
 - LLM calls in Phase 1 are stateless except for the current session trace supplied in the prompt/context.
 - The LLM may propose moves, but deterministic game/resource rules decide whether a move is legal and what it costs.
 - Phase 1 memory is context-window/session memory only. No database-backed user memory or durable preference store is allowed.

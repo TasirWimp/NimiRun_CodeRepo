@@ -104,6 +104,7 @@ Preserve the existing Phaser/Vite foundation.
 - Keep Mini App SDK/provider access behind `src/platform/` modules.
 - Keep LLM provider access behind a server-side relay or equivalent backend boundary.
 - Keep OpenAI/provider API keys out of browser code and out of committed files.
+- Prefer shell/session environment variables or deployment secrets for real provider keys; repo-local env files should not be used as durable secret storage or competition submission artifacts.
 - Keep resource math, proposal schemas, map reveal rules, session lessons, and trace creation in `src/domain/` or narrow non-Phaser modules.
 - Keep MVP scenario constants and scene-independent setup in `src/game/`.
 - Keep Phaser scene code focused on rendering, input, movement, animation, and orchestration.

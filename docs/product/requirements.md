@@ -226,6 +226,13 @@ Important MVP note:
 
 The bot may use a real LLM API through a backend relay to propose moves. The LLM must not directly mutate game state, spend resources, access wallet functions, or bypass deterministic resource rules. Persistent memory and real-world task execution remain later-phase work.
 
+Credential handling requirement:
+
+Real provider keys must be supplied through shell/session environment variables
+or deployment secret stores. Repo-local env files are not the preferred place for
+real keys and must never be committed, bundled into browser code, or used as
+competition submission artifacts.
+
 ### Later Paid-Resource Example
 
 The earlier **Tool Scout** example is retained as a later paid-resource application. Its role is to show how the same resource-judgment loop can govern paid helper tools once the core game loop is proven.
