@@ -119,6 +119,9 @@ const FORBIDDEN_TEXT_PATTERN =
 const TERRAIN_CERTAINTY_PATTERN =
   /proves? (the )?(whole|entire) (map|terrain)|no unknowns remain|nothing remains unknown|fully known|complete certainty/i;
 
+const TERRAIN_CERTAINTY_CAUTION_PATTERN =
+  /do not|does not|doesn't|cannot|can't|must not|without claiming|not claim|not proving|not prove|avoid claiming|residue remains/i;
+
 const SAFE_FINISH_PATTERN = /\bsafe[\s_-]?finish\b/i;
 
 function getRouteProposalPayload(raw) {
@@ -217,6 +220,14 @@ function collectUnsafeFindings(value, path = [], output = []) {
   });
 
   return output;
+}
+
+function isTerrainCertaintyCaution(sentence) {
+  if (TERRAIN_CERTAINTY_CAUTION_PATTERN.test(sentence)) {
+    return true;
+  }
+
+  return /unknowns? remain/i.test(sentence) && !/no unknowns remain|nothing remains unknown/i.test(sentence);
 }
 
 function addRequiredStringError(errors, payload, key) {
@@ -353,7 +364,15 @@ export function validateRouteProposal(raw, options = {}) {
 
   const allText = collectText(payload).join('\n');
 
-  if (TERRAIN_CERTAINTY_PATTERN.test(allText)) {
+  const hasTerrainCertaintyClaim = allText
+    .split(/[.!?\n]/)
+    .some(
+      (sentence) =>
+        TERRAIN_CERTAINTY_PATTERN.test(sentence) &&
+        !isTerrainCertaintyCaution(sentence)
+    );
+
+  if (hasTerrainCertaintyClaim) {
     errors.push('proposal must not claim complete terrain certainty from one route choice.');
   }
 

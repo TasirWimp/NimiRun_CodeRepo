@@ -44,6 +44,7 @@ export function buildRouteProposalPrompt({
       'Propose one next move that spends attention carefully in a lossy map.',
       'Do not request wallet authority, checkout, payment execution, browser actions, external tools, or persistent memory.',
       'Do not claim certainty about uninspected terrain and do not claim safe finish.',
+      'Avoid the literal phrases "whole terrain", "no unknowns remain", "complete certainty", and "safe finish" in proposal text.',
       'Return only the requested structured route_proposal object.',
     ].join('\n'),
     user: `Create one route_proposal JSON object for this run state:\n${JSON.stringify(

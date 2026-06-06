@@ -151,6 +151,16 @@ describe('route proposal schema validation', () => {
     );
   });
 
+  it('allows explicit caution that a move does not prove the whole terrain', () => {
+    const validation = validateRouteProposal(
+      createValidRawProposal({
+        reason: 'This inspect move does not prove the whole terrain; unknowns remain.',
+      })
+    );
+
+    expect(validation.valid).toBe(true);
+  });
+
   it('blocks safe-finish claims until deterministic finish judgment allows them', () => {
     expect(() =>
       assertRouteProposal(
