@@ -363,6 +363,8 @@ Expected checks:
 
 ### PB-010 Session Lesson Application
 
+Status: implemented.
+
 Expected automated tests:
 
 - user correction creates a session lesson trace,

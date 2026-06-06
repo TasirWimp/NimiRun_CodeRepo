@@ -184,4 +184,27 @@ describe('route proposal schema validation', () => {
       )
     ).toThrow('proposal must not claim safe finish before deterministic finish judgment.');
   });
+
+  it('blocks full-success claims while a stop-condition lesson is active', () => {
+    const validation = validateRouteProposal(
+      createValidRawProposal({
+        reason: 'The partial route is complete now.',
+      }),
+      {
+        sessionLesson: {
+          lesson_type: 'stop_condition',
+          user_words: 'This is useful, but not full success.',
+          operational_reading: {
+            what_must_not_be_lost: 'partial result is not full success',
+          },
+          applies_to_next_proposal: true,
+        },
+      }
+    );
+
+    expect(validation.valid).toBe(false);
+    expect(validation.errors).toContain(
+      'proposal must not claim full success while a stop-condition lesson is active.'
+    );
+  });
 });

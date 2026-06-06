@@ -17,12 +17,13 @@ The repository currently contains:
 - PB-007 LLM route-proposal bridge with schema validation, run-carrier prompt shaping, browser relay client, Vite dev relay middleware, and mock fallback,
 - PB-008 lossy-map domain rules for hidden-pressure reveal, inspect/skip/act behavior, false-landfall traps, safe-finish judgment, and prompt serialization,
 - PB-009 user-bot guidance loop with deterministic proposal approval, node-click redirect, why/unknowns/inspect-first/partial controls, and HUD/map updates,
+- PB-010 session lesson application with trace-derived lessons, next-proposal rewrite, bounded prompt/relay pass-through, and no persistence beyond the active run,
 - PB-011 trace cards for accepted moves, receipt-backed money-like events, residue/re-entry context, latest-trace inspection, and landfall status labels,
 - NimiRun V2 runtime assets under `public/assets/nimirun-v2/`,
 - organized product documentation under `docs/`,
 - project structure prepared for testable domain logic, LLM proposal boundaries, runtime-cycle rules, and future Nimiq testnet work.
 
-The revised resource-judgment gameplay now has the first playable guidance loop with trace-card review. Session lesson application and Nimiq testnet pocket integration are still needed for the full Phase 1 loop.
+The revised resource-judgment gameplay now has the first playable guidance loop with trace-card review and session-only lesson application. Nimiq testnet pocket integration is still needed for the full Phase 1 loop.
 
 ## Documentation
 

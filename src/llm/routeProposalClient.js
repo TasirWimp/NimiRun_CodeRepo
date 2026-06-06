@@ -24,6 +24,7 @@ export async function requestRouteProposal({
   allowedMoves,
   targetNodeIds = [],
   visibleNodes = [],
+  traceCards = [],
   sessionLesson = null,
   endpoint = DEFAULT_ROUTE_PROPOSAL_ENDPOINT,
   fetchImpl = globalThis.fetch,
@@ -36,6 +37,7 @@ export async function requestRouteProposal({
     allowedMoves,
     targetNodeIds,
     visibleNodes,
+    traceCards,
     sessionLesson,
   };
 
@@ -56,10 +58,11 @@ export async function requestRouteProposal({
 
     const data = await response.json();
     const validation = validateRouteProposal(normalizeFetchResponsePayload(data), {
-      allowedMoves,
-      allowedTargetNodeIds: targetNodeIds,
-      finishStatus: carrier?.finishStatus,
-    });
+        allowedMoves,
+        allowedTargetNodeIds: targetNodeIds,
+        finishStatus: carrier?.finishStatus,
+        sessionLesson,
+      });
 
     if (!validation.valid) {
       throw new Error(validation.errors.join(' '));

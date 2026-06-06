@@ -167,6 +167,14 @@ function formatGuidanceValue(userGuidance) {
   return prompts > 0 ? `${userGuidance.level} (${prompts})` : userGuidance.level;
 }
 
+function truncateText(value, limit = 120) {
+  if (!value || value.length <= limit) {
+    return value || '';
+  }
+
+  return `${value.slice(0, limit - 3)}...`;
+}
+
 export default class PocketBotWorkshop extends Phaser.Scene {
   constructor() {
     super({ key: 'PocketBotWorkshop' });
@@ -555,7 +563,7 @@ export default class PocketBotWorkshop extends Phaser.Scene {
     const nodeLabel = node?.label || proposal.targetNodeId;
 
     this.proposalMoveText?.setText(`${proposal.moveType.toUpperCase()} -> ${nodeLabel}`);
-    this.proposalReasonText?.setText(proposal.reason);
+    this.proposalReasonText?.setText(truncateText(proposal.reason));
     this.proposalCostText?.setText(
       `Cost: ${evaluation.cost.botAttention} Bot Attention | Guidance: ${evaluation.cost.userGuidance}`
     );
@@ -793,7 +801,13 @@ export default class PocketBotWorkshop extends Phaser.Scene {
     if (result.applied) {
       this.selectNode(targetNodeId, { redirectProposal: false });
       this.renderLatestTraceCard();
-      this.setStatus(`Accepted ${this.guidanceState.guidanceTrace.at(-1).moveType}. Trace card recorded.`);
+      const lessonApplied =
+        this.guidanceState.sessionLesson?.appliedToProposalId === this.guidanceState.pendingProposal.id;
+      this.setStatus(
+        lessonApplied
+          ? 'Accepted move. Session lesson applied to the next proposal for this run.'
+          : `Accepted ${this.guidanceState.guidanceTrace.at(-1).moveType}. Trace card recorded.`
+      );
       return;
     }
 

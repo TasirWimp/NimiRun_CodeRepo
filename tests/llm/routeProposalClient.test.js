@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 import { createRunSession } from '../../src/domain/runSession.js';
+import { createTraceCard } from '../../src/domain/traces.js';
 import { createResourceMapScenario } from '../../src/game/resourceMapScenario.js';
 import { requestRouteProposal } from '../../src/llm/routeProposalClient.js';
 
@@ -42,11 +43,32 @@ describe('route proposal client', () => {
     const scenario = createResourceMapScenario();
     const session = createRunSession(scenario, { id: 'run-client-test' });
     const fetchImpl = vi.fn(async () => createRelayResponse());
+    const traceCard = createTraceCard({
+      sequence: 1,
+      acceptedMove: {
+        moveType: 'inspect',
+        targetNodeId: 'shortcut-bridge',
+      },
+      residueCarriedForward: ['long route safety unknown'],
+    });
+    const sessionLesson = {
+      id: 'lesson-trace-1',
+      sourceTraceId: 'trace-1',
+      lessonType: 'residue_rule',
+      userWords: 'Carry long route residue forward.',
+      operationalReading: {
+        whatMustNotBeLost: 'long route safety unknown',
+      },
+      appliesToNextProposal: true,
+      status: 'active',
+    };
 
     const result = await requestRouteProposal({
       carrier: session.carrier,
       allowedMoves: session.contract.allowedMoves,
       targetNodeIds: scenario.nodes.map((node) => node.id),
+      traceCards: [traceCard],
+      sessionLesson,
       fetchImpl,
     });
 
@@ -61,6 +83,14 @@ describe('route proposal client', () => {
     expect(body).toMatchObject({
       carrier: expect.objectContaining({ sessionId: 'run-client-test' }),
       allowedMoves: session.contract.allowedMoves,
+      traceCards: [
+        expect.objectContaining({
+          id: 'trace-1',
+        }),
+      ],
+      sessionLesson: expect.objectContaining({
+        id: 'lesson-trace-1',
+      }),
     });
     expect(result).toMatchObject({
       mode: 'relay',

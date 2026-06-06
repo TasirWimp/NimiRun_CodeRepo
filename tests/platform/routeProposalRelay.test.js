@@ -19,6 +19,29 @@ function createPayload() {
     visibleNodes: scenario.nodes
       .filter((node) => node.visibility !== 'fogged')
       .map((node) => ({ id: node.id, label: node.label })),
+    traceCards: [
+      {
+        id: 'trace-1',
+        type: 'move',
+        acceptedMove: {
+          moveType: 'inspect',
+          targetNodeId: 'shortcut-bridge',
+        },
+        residueCarriedForward: ['long route safety unknown'],
+        landfallStatus: 'open-run',
+      },
+    ],
+    sessionLesson: {
+      id: 'lesson-trace-1',
+      sourceTraceId: 'trace-1',
+      lessonType: 'residue_rule',
+      userWords: 'Carry long route residue forward.',
+      operationalReading: {
+        whatMustNotBeLost: 'long route safety unknown',
+      },
+      appliesToNextProposal: true,
+      status: 'active',
+    },
   };
 }
 
@@ -110,6 +133,16 @@ describe('route proposal relay', () => {
     expect(bodyText).not.toContain('OPENAI_API_KEY');
     expect(bodyText).not.toContain('test-secret');
     expect(request.url).toBe(OPENAI_RESPONSES_URL);
+  });
+
+  it('passes trace cards and session lessons into the OpenAI prompt payload', () => {
+    const request = createOpenAIRouteProposalRequest(createPayload());
+    const bodyText = JSON.stringify(request.body);
+
+    expect(bodyText).toContain('\\"trace_cards\\"');
+    expect(bodyText).toContain('\\"session_lesson\\"');
+    expect(bodyText).toContain('\\"lesson_type\\": \\"residue_rule\\"');
+    expect(bodyText).toContain('long route safety unknown');
   });
 
   it('serves the Web Request handler used by production functions', async () => {

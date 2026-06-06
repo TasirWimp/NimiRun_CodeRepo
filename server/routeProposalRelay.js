@@ -37,6 +37,7 @@ export function createOpenAIRouteProposalRequest(payload = {}, { env = {} } = {}
     carrier: payload.carrier,
     allowedMoves: getAllowedMoves(payload),
     visibleNodes: payload.visibleNodes || payload.visible_nodes || [],
+    traceCards: payload.traceCards || payload.trace_cards || [],
     sessionLesson: payload.sessionLesson || payload.session_lesson || null,
   });
 
@@ -95,6 +96,7 @@ async function requestOpenAIRouteProposal(payload, { env, fetchImpl }) {
     allowedMoves: getAllowedMoves(payload),
     allowedTargetNodeIds: getTargetNodeIds(payload),
     finishStatus: payload.carrier?.finishStatus,
+    sessionLesson: payload.sessionLesson || payload.session_lesson || null,
   });
 }
 

@@ -66,4 +66,40 @@ describe('route proposal prompt', () => {
     ]);
     expect(prompt.user).toContain('"trace_cards"');
   });
+
+  it('serializes session lessons into the prompt payload', () => {
+    const session = createRunSession(createResourceMapScenario(), { id: 'run-session-lesson-test' });
+    const prompt = buildRouteProposalPrompt({
+      carrier: session.carrier,
+      allowedMoves: session.contract.allowedMoves,
+      sessionLesson: {
+        id: 'lesson-trace-1',
+        sourceTraceId: 'trace-1',
+        lessonType: 'cut_preference',
+        userWords: 'Inspect before acting on residue.',
+        operationalReading: {
+          when: 'Before acting on a goal-looking gate.',
+          preferMove: 'inspect',
+          beforeMove: 'act',
+          whatMustNotBeLost: 'warning residue',
+        },
+        appliesToNextProposal: true,
+        status: 'applied',
+      },
+    });
+
+    expect(prompt.payload.session_lesson).toMatchObject({
+      id: 'lesson-trace-1',
+      source_trace_id: 'trace-1',
+      lesson_type: 'cut_preference',
+      user_words: 'Inspect before acting on residue.',
+      operational_reading: {
+        prefer_move: 'inspect',
+        before_move: 'act',
+        what_must_not_be_lost: 'warning residue',
+      },
+      applies_to_next_proposal: true,
+      status: 'applied',
+    });
+  });
 });

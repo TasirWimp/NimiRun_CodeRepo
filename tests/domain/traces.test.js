@@ -6,11 +6,15 @@ import { createReceipt } from '../../src/domain/receipts.js';
 import { evaluateRuleDecision } from '../../src/domain/rules.js';
 import {
   appendTraceCard,
+  applySessionLessonToTraceCard,
   createMoveTraceCard,
   createReceiptTraceCard,
+  createSessionLessonFromTraceCard,
   createTraceCard,
   createTraceCardSummary,
   getLatestTraceCard,
+  markLatestTraceCardPartial,
+  serializeSessionLessonForPrompt,
   serializeTraceCardsForProposalContext,
 } from '../../src/domain/traces.js';
 import { createLossyMapState } from '../../src/domain/lossyMap.js';
@@ -224,5 +228,103 @@ describe('trace cards', () => {
     expect(createTraceCardSummary(openTrace)).not.toContain('Safe finish');
     expect(createTraceCardSummary(partialTrace)).toMatch(/^Partial finish:/);
     expect(createTraceCardSummary(partialTrace)).not.toContain('Safe finish');
+  });
+
+  it('promotes a lesson candidate into a session-only lesson', () => {
+    const proposal = createInspectProposal();
+    const mapResult = inspectLossyMapNode(createLossyMapState(createResourceMapScenario()), 'shortcut-bridge');
+    const traceCard = createMoveTraceCard({
+      sequence: 1,
+      proposal,
+      mapResult,
+      guidanceEntries: [
+        {
+          action: 'inspect-first',
+          reason: 'Inspect before acting on a route that still carries residue.',
+        },
+      ],
+    });
+    const lesson = createSessionLessonFromTraceCard(traceCard);
+    const updatedTrace = applySessionLessonToTraceCard(traceCard, lesson);
+
+    expect(lesson).toMatchObject({
+      id: 'lesson-trace-1',
+      sourceTraceId: 'trace-1',
+      lessonType: 'cut_preference',
+      appliesToNextProposal: true,
+      status: 'active',
+    });
+    expect(updatedTrace.sessionLesson).toMatchObject({
+      id: 'lesson-trace-1',
+    });
+    expect(updatedTrace.lessonCandidate).toMatchObject({
+      status: 'promoted',
+      appliesToNextProposal: true,
+    });
+  });
+
+  it('serializes session lessons into prompt-safe snake_case fields', () => {
+    const lesson = createSessionLessonFromTraceCard(
+      createTraceCard({
+        sequence: 1,
+        acceptedMove: {
+          moveType: 'inspect',
+          targetNodeId: 'warning-signal',
+        },
+        lessonCandidate: {
+          lessonType: 'residue_rule',
+          userWords: 'Carry warning residue forward.',
+          operationalReading: {
+            when: 'Before claiming a route is complete.',
+            preferMove: 'inspect',
+            beforeMove: 'act',
+            whatMustNotBeLost: 'warning residue',
+          },
+          appliesToNextProposal: false,
+          status: 'candidate',
+        },
+      })
+    );
+
+    expect(serializeSessionLessonForPrompt(lesson)).toEqual({
+      id: 'lesson-trace-1',
+      source_trace_id: 'trace-1',
+      lesson_type: 'residue_rule',
+      user_words: 'Carry warning residue forward.',
+      operational_reading: {
+        when: 'Before claiming a route is complete.',
+        prefer_move: 'inspect',
+        before_move: 'act',
+        what_must_not_be_lost: 'warning residue',
+      },
+      applies_to_next_proposal: true,
+      status: 'active',
+    });
+  });
+
+  it('marking partial creates a stop-condition lesson candidate on the latest trace', () => {
+    const traceCard = createTraceCard({
+      sequence: 1,
+      acceptedMove: {
+        moveType: 'inspect',
+        targetNodeId: 'shortcut-bridge',
+      },
+      lessonCandidate: {
+        lessonType: 'residue_rule',
+        userWords: 'Carry residue.',
+        operationalReading: {
+          whatMustNotBeLost: 'residue',
+        },
+        appliesToNextProposal: false,
+        status: 'candidate',
+      },
+    });
+    const [updatedTrace] = markLatestTraceCardPartial([traceCard], 'This is useful, but not full success.');
+
+    expect(updatedTrace.lessonCandidate).toMatchObject({
+      lessonType: 'stop_condition',
+      userWords: 'This is useful, but not full success.',
+      status: 'candidate',
+    });
   });
 });

@@ -80,7 +80,7 @@ Current order:
 9. PB-008 Lossy Map Scenario - implemented.
 10. PB-009 User-Bot Guidance Loop - implemented.
 11. PB-011 Trace Cards - implemented.
-12. PB-010 Session Lesson Application.
+12. PB-010 Session Lesson Application - implemented.
 13. PB-012 Nimiq Testnet Pocket.
 
 Use the subagent role plan in `docs/planning/mvp_implementation_plan.md`. Add `pocket_bot_nimiq_platform_worker` only when PB-012 starts unless PB-012 is explicitly pulled forward.

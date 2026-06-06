@@ -13,7 +13,15 @@ export const TRACE_LANDFALL_STATUSES = Object.freeze({
   FALSE: FINISH_STATUSES.FALSE,
 });
 
+export const SESSION_LESSON_TYPES = Object.freeze({
+  CUT_PREFERENCE: 'cut_preference',
+  RESIDUE_RULE: 'residue_rule',
+  RESOURCE_PRIORITY: 'resource_priority',
+  STOP_CONDITION: 'stop_condition',
+});
+
 const TRACE_LANDFALL_STATUS_VALUES = Object.freeze(Object.values(TRACE_LANDFALL_STATUSES));
+const SESSION_LESSON_TYPE_VALUES = Object.freeze(Object.values(SESSION_LESSON_TYPES));
 
 function clone(value) {
   return value == null ? value : JSON.parse(JSON.stringify(value));
@@ -138,11 +146,14 @@ function createLessonCandidate({ guidanceEntries, proposal, residueCarriedForwar
 
   const lastGuidance = guidance.at(-1);
   const residue = normalizeList(residueCarriedForward);
-  const lessonType = lastGuidance.action === 'mark-partial'
-    ? 'stop_condition'
-    : residue.length > 0
-      ? 'residue_rule'
-      : 'cut_preference';
+  const lessonType =
+    lastGuidance.action === 'mark-partial'
+      ? SESSION_LESSON_TYPES.STOP_CONDITION
+      : lastGuidance.action === 'inspect-first'
+        ? SESSION_LESSON_TYPES.CUT_PREFERENCE
+        : residue.length > 0
+          ? SESSION_LESSON_TYPES.RESIDUE_RULE
+          : SESSION_LESSON_TYPES.CUT_PREFERENCE;
 
   return {
     lessonType,
@@ -150,7 +161,7 @@ function createLessonCandidate({ guidanceEntries, proposal, residueCarriedForwar
     operationalReading: {
       when: `Before ${proposal?.moveType || 'the next move'} on ${proposal?.targetNodeId || 'the selected node'}.`,
       preferMove: proposal?.moveType || null,
-      beforeMove: proposal?.moveType === 'act' ? 'act' : null,
+      beforeMove: lastGuidance.action === 'inspect-first' || proposal?.moveType === 'act' ? 'act' : null,
       whatMustNotBeLost: residue[0] || 'remaining unknowns',
     },
     appliesToNextProposal: false,
@@ -203,6 +214,7 @@ export function createTraceCard({
     }),
     landfallStatus: normalizedLandfallStatus,
     outcome: outcome || normalizedLandfallStatus,
+    sessionLesson: null,
     receipt: clone(receipt),
   };
 }
@@ -342,23 +354,115 @@ export function markLatestTraceCardPartial(traceCards = [], note = 'Marked parti
     landfallStatus: FINISH_STATUSES.PARTIAL,
     outcome: note,
     reentryNote: note,
-    lessonCandidate:
-      latest.lessonCandidate ||
-      {
-        lessonType: 'stop_condition',
-        userWords: note,
-        operationalReading: {
-          when: 'When a result looks useful but incomplete.',
-          preferMove: null,
-          beforeMove: null,
-          whatMustNotBeLost: 'partial result is not full success',
-        },
-        appliesToNextProposal: false,
-        status: 'candidate',
+    lessonCandidate: {
+      lessonType: SESSION_LESSON_TYPES.STOP_CONDITION,
+      userWords: note,
+      operationalReading: {
+        when: 'When a result looks useful but incomplete.',
+        preferMove: null,
+        beforeMove: null,
+        whatMustNotBeLost: 'partial result is not full success',
       },
+      appliesToNextProposal: false,
+      status: 'candidate',
+    },
   };
 
   return cards;
+}
+
+function normalizeLessonType(value) {
+  return SESSION_LESSON_TYPE_VALUES.includes(value) ? value : SESSION_LESSON_TYPES.RESIDUE_RULE;
+}
+
+function normalizeOperationalReading(operationalReading = {}) {
+  return {
+    when: operationalReading.when || 'Before the next proposal.',
+    preferMove: operationalReading.preferMove || operationalReading.prefer_move || null,
+    beforeMove: operationalReading.beforeMove || operationalReading.before_move || null,
+    whatMustNotBeLost:
+      operationalReading.whatMustNotBeLost ||
+      operationalReading.what_must_not_be_lost ||
+      'remaining unknowns',
+  };
+}
+
+export function createSessionLessonFromTraceCard(traceCard, {
+  id = null,
+  appliesToNextProposal = true,
+} = {}) {
+  const candidate = traceCard?.lessonCandidate;
+
+  if (!candidate) {
+    return null;
+  }
+
+  return {
+    id: id || `lesson-${traceCard.id}`,
+    sourceTraceId: traceCard.id,
+    lessonType: normalizeLessonType(candidate.lessonType || candidate.lesson_type),
+    userWords: candidate.userWords || candidate.user_words || 'User corrected the route.',
+    operationalReading: normalizeOperationalReading(candidate.operationalReading || candidate.operational_reading),
+    appliesToNextProposal,
+    appliedToProposalId: null,
+    status: appliesToNextProposal ? 'active' : 'inactive',
+  };
+}
+
+export function applySessionLessonToTraceCard(traceCard, sessionLesson) {
+  if (!traceCard || !sessionLesson) {
+    return traceCard;
+  }
+
+  return {
+    ...clone(traceCard),
+    lessonCandidate: traceCard.lessonCandidate
+      ? {
+          ...clone(traceCard.lessonCandidate),
+          appliesToNextProposal: true,
+          status: 'promoted',
+        }
+      : null,
+    sessionLesson: clone(sessionLesson),
+  };
+}
+
+export function markSessionLessonApplied(sessionLesson, proposalId) {
+  if (!sessionLesson) {
+    return null;
+  }
+
+  return {
+    ...clone(sessionLesson),
+    appliedToProposalId: proposalId,
+    status: 'applied',
+  };
+}
+
+export function serializeSessionLessonForPrompt(sessionLesson) {
+  if (!sessionLesson) {
+    return null;
+  }
+
+  const operationalReading = normalizeOperationalReading(
+    sessionLesson.operationalReading || sessionLesson.operational_reading
+  );
+
+  return {
+    id: sessionLesson.id || null,
+    source_trace_id: sessionLesson.sourceTraceId || sessionLesson.source_trace_id || null,
+    lesson_type: normalizeLessonType(sessionLesson.lessonType || sessionLesson.lesson_type),
+    user_words: sessionLesson.userWords || sessionLesson.user_words || 'User corrected the route.',
+    operational_reading: {
+      when: operationalReading.when,
+      prefer_move: operationalReading.preferMove,
+      before_move: operationalReading.beforeMove,
+      what_must_not_be_lost: operationalReading.whatMustNotBeLost,
+    },
+    applies_to_next_proposal:
+      sessionLesson.appliesToNextProposal ?? sessionLesson.applies_to_next_proposal ?? false,
+    status: sessionLesson.status || 'active',
+  };
 }
 
 export function serializeTraceCardsForProposalContext(traceCards = [], { limit = 4 } = {}) {

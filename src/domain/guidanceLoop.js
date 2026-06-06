@@ -11,8 +11,11 @@ import {
 } from './resourceRules.js';
 import {
   appendTraceCard,
+  applySessionLessonToTraceCard,
   createMoveTraceCard,
+  createSessionLessonFromTraceCard,
   createTraceCard,
+  markSessionLessonApplied,
   markLatestTraceCardPartial,
 } from './traces.js';
 
@@ -113,6 +116,7 @@ export function createGuidanceLoopState({
   guidancePanel = null,
   guidanceTrace = [],
   traceCards = [],
+  sessionLesson = null,
   partialResults = [],
 } = {}) {
   if (!mapState?.scenario) {
@@ -129,6 +133,7 @@ export function createGuidanceLoopState({
     guidancePanel: guidancePanel || createGuidancePanel('Bot Proposal', [pendingProposal.reason]),
     guidanceTrace: guidanceTrace.map(clone),
     traceCards: traceCards.map(clone),
+    sessionLesson: clone(sessionLesson),
     partialResults: normalizeList(partialResults),
   };
 }
@@ -171,6 +176,104 @@ function getPendingGuidanceEntries(state) {
   return state.guidanceTrace.slice(lastAcceptedIndex + 1);
 }
 
+function findPreferredLessonNode(mapState, sessionLesson, fallbackNodeId) {
+  const nodes = mapState.scenario.nodes || [];
+  const lessonText = [
+    sessionLesson?.userWords,
+    sessionLesson?.lessonType,
+    sessionLesson?.operationalReading?.whatMustNotBeLost,
+    sessionLesson?.operationalReading?.when,
+  ]
+    .filter(Boolean)
+    .join(' ')
+    .toLowerCase();
+  const inspectedIds = new Set(mapState.inspectedNodeIds || []);
+  const canInspect = (node) => node?.possibleMoves?.[MOVE_TYPES.INSPECT];
+  const findNode = (predicate) => nodes.find((node) => canInspect(node) && predicate(node));
+
+  if (/warning|false|safe|finish/.test(lessonText)) {
+    return findNode((node) => node.id === 'warning-signal') || findNode((node) => node.id === 'safe-gate');
+  }
+
+  if (/context|clue|residue/.test(lessonText)) {
+    return findNode((node) => node.id === 'context-shrine');
+  }
+
+  return (
+    findNode((node) => node.visibility === 'fogged' && !inspectedIds.has(node.id)) ||
+    findNode((node) => node.pressure?.hidden === true && !inspectedIds.has(node.id)) ||
+    findNode((node) => node.id !== fallbackNodeId) ||
+    findNode((node) => node.id === fallbackNodeId)
+  );
+}
+
+function createLessonAppliedProposal(state, sessionLesson) {
+  const previousProposal = state.pendingProposal;
+  const node = findPreferredLessonNode(state.mapState, sessionLesson, previousProposal.targetNodeId);
+
+  if (!node) {
+    return previousProposal;
+  }
+
+  const moveType = MOVE_TYPES.INSPECT;
+  const resourceCost = getMoveCostFromScenario(state.mapState, moveType, node.id);
+  const mustNotLose = sessionLesson.operationalReading?.whatMustNotBeLost || 'remaining unknowns';
+  const beforeMove = sessionLesson.operationalReading?.beforeMove || previousProposal.moveType;
+  const lessonSummary = sessionLesson.lessonType === 'cut_preference'
+    ? 'inspect before acting'
+    : sessionLesson.lessonType === 'stop_condition'
+      ? 'partial is not full success'
+      : 'carry residue forward';
+  const proposal = createPendingProposal({
+    id: `proposal-lesson-${sessionLesson.id}-${moveType}-${node.id}`,
+    moveType,
+    targetNodeId: node.id,
+    reason: `This run's lesson: ${lessonSummary}. I will inspect ${node.label} before ${beforeMove || 'acting'} so "${mustNotLose}" stays visible.`,
+    resourceCost,
+    consideredAlternatives: [
+      {
+        move: `${previousProposal.moveType}:${previousProposal.targetNodeId}`,
+        whyNotSelected: `The session lesson says "${mustNotLose}" must stay visible before the next commitment.`,
+      },
+    ],
+    cutPrice: {
+      reveals: normalizeList(node.possibleMoves?.[moveType]?.reveals || node.reveal?.inspect?.evidence || [node.label]),
+      suppresses: ['premature full-success claim'],
+      leavesResidue: normalizeList(node.possibleMoves?.[moveType]?.leavesUnknown || node.residue || [mustNotLose]),
+    },
+    stopCondition: `Stop after applying the session lesson from ${sessionLesson.sourceTraceId}; do not claim durable training.`,
+  });
+
+  return proposal;
+}
+
+function promoteSessionLessonFromTrace(state, traceCard) {
+  const sessionLesson = createSessionLessonFromTraceCard(traceCard);
+
+  if (!sessionLesson) {
+    return {
+      traceCard,
+      sessionLesson: state.sessionLesson,
+      pendingProposal: state.pendingProposal,
+    };
+  }
+
+  const traceWithLesson = applySessionLessonToTraceCard(traceCard, sessionLesson);
+  const pendingProposal = createLessonAppliedProposal(
+    {
+      ...state,
+      sessionLesson,
+    },
+    sessionLesson
+  );
+
+  return {
+    traceCard: traceWithLesson,
+    sessionLesson: markSessionLessonApplied(sessionLesson, pendingProposal.id),
+    pendingProposal,
+  };
+}
+
 function applyAskMove(state) {
   const result = applyResourceCost(state.mapState.resources, getMoveResourceCost(MOVE_TYPES.ASK));
 
@@ -211,12 +314,14 @@ function applyAskMove(state) {
     landfallStatus: nextMapState.finishJudgment.status,
     outcome: 'ask-user',
   });
+  const lessonResult = promoteSessionLessonFromTrace(state, traceCard);
 
   return {
     applied: true,
     state: {
       ...state,
       mapState: nextMapState,
+      pendingProposal: lessonResult.pendingProposal,
       guidancePanel: createGuidancePanel('User Guidance', [
         'A user guidance prompt was recorded before the bot spends more attention.',
       ]),
@@ -225,7 +330,8 @@ function applyAskMove(state) {
         moveType: MOVE_TYPES.ASK,
         targetNodeId: state.pendingProposal.targetNodeId,
       }),
-      traceCards: appendTraceCard(state.traceCards, traceCard),
+      traceCards: appendTraceCard(state.traceCards, lessonResult.traceCard),
+      sessionLesson: lessonResult.sessionLesson,
     },
   };
 }
@@ -274,6 +380,13 @@ export function approvePendingProposal(state) {
     mapResult: result,
     guidanceEntries: getPendingGuidanceEntries(state),
   });
+  const lessonResult = promoteSessionLessonFromTrace(
+    {
+      ...state,
+      mapState: result.state,
+    },
+    traceCard
+  );
 
   return {
     applied: true,
@@ -281,6 +394,7 @@ export function approvePendingProposal(state) {
     state: {
       ...state,
       mapState: result.state,
+      pendingProposal: lessonResult.pendingProposal,
       guidancePanel: createGuidancePanel('Move accepted', [
         `${state.pendingProposal.moveType} -> ${state.pendingProposal.targetNodeId}`,
         ...state.pendingProposal.cutPrice.leavesResidue.map((item) => `Residue: ${item}`),
@@ -292,12 +406,18 @@ export function approvePendingProposal(state) {
         resourceCost: state.pendingProposal.resourceCost,
         finishStatus: result.state.finishJudgment?.status,
       }),
-      traceCards: appendTraceCard(state.traceCards, traceCard),
+      traceCards: appendTraceCard(state.traceCards, lessonResult.traceCard),
+      sessionLesson: lessonResult.sessionLesson,
     },
   };
 }
 
-export function redirectPendingProposal(state, { moveType, targetNodeId, reason = null } = {}) {
+export function redirectPendingProposal(state, {
+  moveType,
+  targetNodeId,
+  reason = null,
+  action = 'redirect',
+} = {}) {
   const nextMoveType = moveType || state.pendingProposal.moveType;
   const nextTargetNodeId = targetNodeId || state.pendingProposal.targetNodeId;
   const resourceCost = getMoveCostFromScenario(state.mapState, nextMoveType, nextTargetNodeId);
@@ -318,9 +438,10 @@ export function redirectPendingProposal(state, { moveType, targetNodeId, reason 
       nextProposal.reason,
     ]),
     guidanceTrace: appendGuidanceTrace(state, {
-      action: 'redirect',
+      action,
       moveType: nextProposal.moveType,
       targetNodeId: nextProposal.targetNodeId,
+      reason: nextProposal.reason,
     }),
   };
 }
@@ -330,6 +451,7 @@ export function redirectToInspectFirst(state) {
     moveType: MOVE_TYPES.INSPECT,
     targetNodeId: state.pendingProposal.targetNodeId,
     reason: 'Inspect first before acting on a route that still carries residue.',
+    action: 'inspect-first',
   });
 }
 
@@ -373,11 +495,29 @@ export function showRemainingUnknowns(state) {
 }
 
 export function markPartialResult(state, note = 'Useful progress, not full success.') {
+  const traceCards = markLatestTraceCardPartial(state.traceCards, note);
+  const latestTraceCard = traceCards.at(-1);
+  const lessonResult = promoteSessionLessonFromTrace(
+    {
+      ...state,
+      traceCards,
+    },
+    latestTraceCard
+  );
+  const nextTraceCards = latestTraceCard
+    ? [
+        ...traceCards.slice(0, -1),
+        lessonResult.traceCard,
+      ]
+    : traceCards;
+
   return {
     ...state,
     partialResults: [...state.partialResults, note],
     guidancePanel: createGuidancePanel('Marked partial', [note]),
-    traceCards: markLatestTraceCardPartial(state.traceCards, note),
+    traceCards: nextTraceCards,
+    sessionLesson: lessonResult.sessionLesson,
+    pendingProposal: lessonResult.pendingProposal,
     guidanceTrace: appendGuidanceTrace(state, {
       action: 'mark-partial',
       note,

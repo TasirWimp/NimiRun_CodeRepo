@@ -123,6 +123,9 @@ const TERRAIN_CERTAINTY_CAUTION_PATTERN =
   /do not|does not|doesn't|cannot|can't|must not|without claiming|not claim|not proving|not prove|avoid claiming|residue remains/i;
 
 const SAFE_FINISH_PATTERN = /\bsafe[\s_-]?finish\b/i;
+const FULL_SUCCESS_PATTERN = /\b(done|solved|complete|completed|finished|full success|fully successful)\b/i;
+const FULL_SUCCESS_CAUTION_PATTERN =
+  /\b(not|not yet|cannot|can't|must not|do not|don't|avoid|without claiming)\b/i;
 
 function getRouteProposalPayload(raw) {
   if (raw?.[ROUTE_PROPOSAL_RESPONSE_KEY]) {
@@ -240,6 +243,20 @@ function isTerrainCertaintyCaution(sentence) {
   return /unknowns? remain/i.test(sentence) && !/no unknowns remain|nothing remains unknown/i.test(sentence);
 }
 
+function getSessionLessonType(sessionLesson = null) {
+  return sessionLesson?.lessonType || sessionLesson?.lesson_type || null;
+}
+
+function hasFullSuccessClaim(text) {
+  return text
+    .split(/[.!?\n]/)
+    .some(
+      (sentence) =>
+        FULL_SUCCESS_PATTERN.test(sentence) &&
+        !FULL_SUCCESS_CAUTION_PATTERN.test(sentence)
+    );
+}
+
 function addRequiredStringError(errors, payload, key) {
   if (!isNonEmptyString(payload?.[key])) {
     errors.push(`${key} is required.`);
@@ -340,6 +357,7 @@ export function validateRouteProposal(raw, options = {}) {
   const allowedMoves = options.allowedMoves || DEFAULT_ROUTE_PROPOSAL_MOVE_TYPES;
   const allowedTargetNodeIds = options.allowedTargetNodeIds || [];
   const finishStatus = options.finishStatus || FINISH_STATUSES.OPEN;
+  const sessionLesson = options.sessionLesson || options.session_lesson || null;
 
   if (!payload || typeof payload !== 'object' || Array.isArray(payload)) {
     return {
@@ -389,6 +407,14 @@ export function validateRouteProposal(raw, options = {}) {
 
   if (finishStatus !== FINISH_STATUSES.SAFE && SAFE_FINISH_PATTERN.test(allText)) {
     errors.push('proposal must not claim safe finish before deterministic finish judgment.');
+  }
+
+  if (
+    getSessionLessonType(sessionLesson) === 'stop_condition' &&
+    finishStatus !== FINISH_STATUSES.SAFE &&
+    hasFullSuccessClaim(allText)
+  ) {
+    errors.push('proposal must not claim full success while a stop-condition lesson is active.');
   }
 
   if (errors.length > 0) {

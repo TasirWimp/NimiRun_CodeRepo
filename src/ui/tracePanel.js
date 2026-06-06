@@ -26,6 +26,14 @@ function formatLandfallStatus(status) {
   return labels[status] || 'Open run';
 }
 
+function formatText(value, limit = 72) {
+  if (!value) {
+    return null;
+  }
+
+  return value.length > limit ? `${value.slice(0, limit - 3)}...` : value;
+}
+
 export function formatTraceArchiveLabel(traceCards = []) {
   const cards = normalizeList(traceCards);
   const latest = cards.at(-1);
@@ -67,13 +75,22 @@ export function createTracePanelContent(traceCard) {
     traceCard.reentryNote === 'Run remains open because the goal has not been reached.'
       ? 'Goal not reached; carry trace forward.'
       : traceCard.reentryNote;
+  const lessonText = formatText(
+    traceCard.sessionLesson?.userWords ||
+      (traceCard.lessonCandidate?.status === 'promoted'
+        ? traceCard.lessonCandidate.userWords
+        : null)
+  );
+  const middleLine = lessonText
+    ? `Lesson: ${lessonText}`
+    : `Not checked: ${formatList(traceCard.suppressedOrNotChecked)}`;
 
   return {
     title: `Trace ${traceCard.sequence}: ${formatLandfallStatus(traceCard.landfallStatus)}`,
     lines: [
       moveCostLine,
       `Reveal: ${formatList(traceCard.revealed)}`,
-      `Not checked: ${formatList(traceCard.suppressedOrNotChecked)}`,
+      middleLine,
       `Residue: ${formatList(traceCard.residueCarriedForward)}`,
       `Re-entry: ${reentryNote}`,
     ],

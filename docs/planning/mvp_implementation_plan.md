@@ -149,13 +149,13 @@ Implemented groundwork from the earlier allowance-control cut:
 - PB-007 LLM Route Proposal Bridge is implemented with a strict route proposal schema, run-carrier prompt builder, browser relay client, Vite dev relay middleware, Vercel production function, OpenAI Responses API relay, and offline/mock fallback.
 - PB-008 Lossy Map Scenario is implemented with deterministic hidden-pressure reveal, inspect/skip/act behavior, false-landfall traps, safe-finish judgment, and prompt serialization in `src/domain/lossyMap.js`.
 - PB-009 User-Bot Guidance Loop is implemented with a testable guidance-loop domain module, scene state setup, Phaser proposal controls, redirect-by-node selection, why/unknowns/inspect-first/partial controls, deterministic approval, and HUD/map updates.
+- PB-010 Session Lesson Application is implemented with trace-derived session lessons, inspect-before-act/residue/stop-condition lesson typing, next-proposal rewrite, prompt serialization, relay/client pass-through, and no persistence beyond the active run state.
 - PB-011 Trace Cards is implemented with player-facing trace-card records for accepted moves, receipt-backed money-like actions, residue/re-entry context serialization, latest-trace inspection, and safe/partial/false/open landfall labeling.
 
 This work should be retained as supporting infrastructure. It becomes one possible resource-governance mechanic inside the broader resource-judgment game, not the active center of Phase 1.
 
 Next work should pivot from guidance controls to the remaining playable-loop carriers:
 
-- session-only lesson application,
 - Nimiq testnet pocket integration.
 
 ## Implementation Assumptions
@@ -907,6 +907,8 @@ Acceptance:
 
 ### PB-010 Session Lesson Application
 
+Status: implemented.
+
 Goal:
 
 Make the bot apply one player lesson later in the same run using context-window memory only.
@@ -922,14 +924,18 @@ Player correction: Try cheap scouting before the expensive path.
 Later bot proposal: You corrected me toward cheap scouting first, so I will inspect the clue node before using pocket money.
 ```
 
-Expected files:
+Implemented files:
 
 - `src/domain/traces.js`
-- `src/game/pocketBotState.js`
+- `src/domain/guidanceLoop.js`
 - `src/llm/routeProposalPrompt.js`
 - `src/ui/tracePanel.js`
 - `tests/domain/traces.test.js`
+- `tests/domain/guidanceLoop.test.js`
 - `tests/llm/routeProposalSchema.test.js`
+- `tests/llm/routeProposalPrompt.test.js`
+- `tests/llm/routeProposalClient.test.js`
+- `tests/platform/routeProposalRelay.test.js`
 
 Session lessons should be typed:
 
@@ -955,6 +961,14 @@ Test plan:
 - stop-condition lessons can block premature full-success claims,
 - lesson is not persisted beyond reload/session reset,
 - `npm run test` and `npm run build` pass.
+
+Implementation note:
+
+- `src/domain/traces.js` promotes trace lesson candidates into active session lessons and serializes them in the player-facing `session_lesson` shape.
+- `src/domain/guidanceLoop.js` applies the active session lesson by rewriting the next pending proposal inside the current run only.
+- Cut-preference lessons can force inspect-before-act ordering, residue-rule lessons carry unresolved residue into the next proposal, and stop-condition lessons block premature full-success claims through route proposal validation.
+- `src/llm/routeProposalPrompt.js`, `src/llm/routeProposalClient.js`, and `server/routeProposalRelay.js` pass the active session lesson to the bounded LLM proposal path.
+- `src/ui/tracePanel.js` shows promoted lesson wording without claiming durable training.
 
 Acceptance:
 
@@ -1176,10 +1190,10 @@ Implemented groundwork:
 10. PB-008 Lossy Map Scenario.
 11. PB-009 User-Bot Guidance Loop.
 12. PB-011 Trace Cards.
+13. PB-010 Session Lesson Application.
 
 Revised next sequence:
 
-13. PB-010 Session Lesson Application.
 14. PB-012 Nimiq Testnet Pocket.
 15. PB-POLISH Submission Vertical Slice.
 16. PB-MARKET Early Access And Community Feedback.
@@ -1193,7 +1207,7 @@ vertical-slice pass rather than a product pivot.
 The next implementation commit should be:
 
 ```text
-feat: apply session lesson in run
+feat: add nimiq testnet pocket
 ```
 
 ## Risks And Controls

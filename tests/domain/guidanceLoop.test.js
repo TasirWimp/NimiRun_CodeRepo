@@ -158,6 +158,69 @@ describe('guidance loop domain rules', () => {
     });
   });
 
+  it('creates a cut-preference session lesson and applies it to the next proposal', () => {
+    const corrected = redirectToInspectFirst(createState({
+      pendingProposal: createPendingProposal({
+        moveType: 'act',
+        targetNodeId: 'false-gate',
+        reason: 'Try the goal-looking gate.',
+        cutPrice: {
+          reveals: ['whether the gate accepts arrival'],
+          suppresses: ['warning check'],
+          leavesResidue: ['warning not inspected'],
+        },
+      }),
+    }));
+    const accepted = approvePendingProposal(corrected).state;
+
+    expect(accepted.sessionLesson).toMatchObject({
+      lessonType: 'cut_preference',
+      appliesToNextProposal: true,
+      status: 'applied',
+    });
+    expect(accepted.pendingProposal).toMatchObject({
+      moveType: 'inspect',
+      targetNodeId: 'warning-signal',
+    });
+    expect(accepted.pendingProposal.reason).toContain("This run's lesson");
+    expect(accepted.pendingProposal.reason).not.toContain('persistent');
+  });
+
+  it('creates a residue-rule lesson that carries unresolved residue into the next proposal', () => {
+    const redirected = redirectPendingProposal(createState(), {
+      moveType: 'inspect',
+      targetNodeId: 'shortcut-bridge',
+      reason: 'Carry the long route residue forward before acting.',
+    });
+    const accepted = approvePendingProposal(redirected).state;
+
+    expect(accepted.sessionLesson).toMatchObject({
+      lessonType: 'residue_rule',
+    });
+    expect(accepted.sessionLesson.operationalReading.whatMustNotBeLost).toContain('long route safety');
+    expect(accepted.pendingProposal.cutPrice.leavesResidue.join(' ')).toContain('safe finish');
+  });
+
+  it('mark-partial creates a stop-condition session lesson for the next proposal', () => {
+    const accepted = approvePendingProposal(createState()).state;
+    const nextState = markPartialResult(accepted, 'Shortcut inspected, but this is not full success.');
+
+    expect(nextState.sessionLesson).toMatchObject({
+      lessonType: 'stop_condition',
+      userWords: 'Shortcut inspected, but this is not full success.',
+      appliesToNextProposal: true,
+    });
+    expect(nextState.pendingProposal.reason).toContain('not full success');
+  });
+
+  it('does not persist session lessons when a fresh guidance state is created', () => {
+    const accepted = approvePendingProposal(redirectToInspectFirst(createState())).state;
+    const fresh = createState();
+
+    expect(accepted.sessionLesson).not.toBeNull();
+    expect(fresh.sessionLesson).toBeNull();
+  });
+
   it('illegal moves are blocked before resource state changes', () => {
     const state = createState({
       pendingProposal: createPendingProposal({

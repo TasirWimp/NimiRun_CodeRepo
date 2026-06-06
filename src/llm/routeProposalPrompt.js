@@ -1,5 +1,8 @@
 import { serializeRunCarrierForPrompt } from '../domain/runCarrier.js';
-import { serializeTraceCardsForProposalContext } from '../domain/traces.js';
+import {
+  serializeSessionLessonForPrompt,
+  serializeTraceCardsForProposalContext,
+} from '../domain/traces.js';
 import {
   DEFAULT_ROUTE_PROPOSAL_MOVE_TYPES,
   createRouteProposalTextFormat,
@@ -30,7 +33,7 @@ export function buildRouteProposalPrompt({
     allowed_moves: allowedMoves,
     visible_nodes: normalizeVisibleNodes(visibleNodes),
     trace_cards: serializeTraceCardsForProposalContext(traceCards),
-    session_lesson: sessionLesson,
+    session_lesson: serializeSessionLessonForPrompt(sessionLesson),
     proposal_rules: {
       propose_one_move_only: true,
       include_considered_alternative: true,
