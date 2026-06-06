@@ -754,6 +754,7 @@ Test plan:
 - schema accepts a valid route proposal,
 - schema rejects unknown actions, missing costs, missing residue/cut-price fields, or unbounded tool/payment requests,
 - schema rejects proposals that treat a path choice as proof of the whole map,
+- full resource-map prompt fixture, including pocket and false-finish nodes, stays inside the unsafe-authority wording guard,
 - client calls only the backend relay, not OpenAI directly from browser code,
 - relay reads API key from environment,
 - relay model id is configurable,
@@ -764,6 +765,7 @@ Acceptance:
 
 - LLM proposals are structured, bounded, and validated before entering game state,
 - every proposal says what it reveals, what it leaves unresolved, and what cheaper/safer alternative was considered,
+- broad scenario prompts either return a valid bounded proposal or fail with a readable deterministic validation error before entering gameplay,
 - no provider API key is bundled into client code,
 - failure/offline states produce a readable fallback move,
 - the bot's proposal can reference only current session context and provided game state.

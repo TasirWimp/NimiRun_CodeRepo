@@ -154,6 +154,7 @@ Minimum checks:
 - proposal with missing resource cost is rejected,
 - proposal with missing considered alternative, cut price, residue, or stop condition is rejected,
 - proposal cannot request unchecked payment, checkout, or wallet authority,
+- full resource-map route-proposal fixture, including pocket and false-finish nodes, does not produce unsafe authority language in reason, alternatives, cut price, or stop condition,
 - proposal cannot claim that its chosen route proves the whole terrain,
 - proposal cannot render `safe_finish` wording unless the deterministic finish check has assigned that status,
 - browser client calls only the backend relay,
@@ -161,6 +162,8 @@ Minimum checks:
 - offline/mock mode works without a provider key.
 
 Live LLM checks may be manual or smoke checks when explicitly planned. Report model id, prompt shape, pass/fail result, and approximate token/cost risk if run.
+
+Regression note from the June 6, 2026 Vercel smoke: a broad production payload reached the server-side OpenAI relay correctly, but validation rejected model wording in `considered_alternatives.3.why_not_selected` as unsafe authority language. Before wiring live route proposals into the playable scene, add an automated full-scenario prompt/relay regression that covers the pocket node, false-finish node, session lesson, and residue carry-forward. The expected result is either a valid bounded proposal or a deterministic validation error that is surfaced readably; the model must not mention wallet authority, checkout, payment execution, mainnet spend, private keys, persistent memory, external tools, or unbounded actions anywhere in proposal text.
 
 ### Nimiq Mini App Checks
 
@@ -305,6 +308,7 @@ Expected automated tests:
 - malformed/unsafe proposals are rejected,
 - missing cost, considered alternatives, cut price, residue, or stop condition is rejected,
 - unbounded payment/tool/wallet requests are rejected,
+- full resource-map prompt fixture with pocket and false-finish nodes stays inside the unsafe-authority wording guard,
 - proposal cannot claim full terrain certainty from one route choice,
 - proposal prompt uses the run carrier rather than hidden scene state,
 - client calls backend relay only,
@@ -317,6 +321,7 @@ Expected manual or smoke checks:
 - user can request a bot proposal,
 - proposal displays reason, resource cost, considered alternative, and remaining unknown,
 - no API key appears in browser-visible configuration,
+- production relay smoke with the full scenario reports whether validation accepted the proposal or blocked unsafe wording, and the browser shows only same-origin `/api/route-proposal` traffic,
 - failure state is readable when no relay/API key is configured.
 
 ### PB-008 Lossy Map Scenario
