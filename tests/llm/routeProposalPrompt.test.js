@@ -17,7 +17,10 @@ describe('route proposal prompt', () => {
     });
 
     expect(prompt.system).toContain('Pocket Bot');
-    expect(prompt.system).toContain('Do not request wallet authority');
+    expect(prompt.system).toContain('custody permissions');
+    expect(prompt.system).not.toMatch(
+      /wallet authority|checkout|payment execution|mainnet spend|private key|persistent memory|external tools?|unbounded tool/i
+    );
     expect(prompt.user).toContain('"run_carrier"');
     expect(prompt.user).toContain('"current_node": "source-edge"');
     expect(prompt.user).toContain('"visible_nodes"');
@@ -37,6 +40,9 @@ describe('route proposal prompt', () => {
       type: 'json_schema',
       name: 'nimi_run_route_proposal',
       strict: true,
+    });
+    expect(request.prompt.payload.proposal_rules).toMatchObject({
+      final_status_requires_runtime_judgment: true,
     });
     expect(request.text.format.schema.required).toEqual(['route_proposal']);
   });

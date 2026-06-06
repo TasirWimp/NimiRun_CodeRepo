@@ -138,6 +138,24 @@ describe('route proposal schema validation', () => {
     expect(validation.errors.join(' ')).toContain('unsafe authority');
   });
 
+  it('rejects unsafe authority language inside considered alternatives', () => {
+    const validation = validateRouteProposal(
+      createValidRawProposal({
+        considered_alternatives: [
+          {
+            move: 'ask:user',
+            why_not_selected: 'This would request external tools instead of a bounded map move.',
+          },
+        ],
+      })
+    );
+
+    expect(validation.valid).toBe(false);
+    expect(validation.errors).toContain(
+      'considered_alternatives.0.why_not_selected includes unsafe authority language.'
+    );
+  });
+
   it('rejects route choices that claim complete terrain certainty', () => {
     const validation = validateRouteProposal(
       createValidRawProposal({

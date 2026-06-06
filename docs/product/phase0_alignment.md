@@ -124,7 +124,7 @@ Implemented Phase 1 groundwork from the earlier allowance-control cut:
 - PB-005 RPG Map Tooling And Scene Direction with a Phaser-native custom node-map scaffold.
 - PB-006 Core Resource Model with deterministic Bot Attention, Nimiq Pocket, User Guidance, and Context Slots.
 - PB-006A Run Session And Transition Runtime with scenario contracts, transition gates, run carriers, and finish judgments.
-- PB-007 LLM Route Proposal Bridge with schema validation, run-carrier prompt shaping, browser relay client, local Vite relay middleware, and mock fallback.
+- PB-007 LLM Route Proposal Bridge with schema validation, run-carrier prompt shaping, browser relay client, local Vite relay middleware, mock fallback, and full-scenario unsafe-authority relay regression coverage.
 - PB-008 Lossy Map Scenario with deterministic hidden-pressure reveal, inspect/skip/act behavior, false-landfall traps, safe-finish judgment, and prompt serialization.
 - PB-009 User-Bot Guidance Loop with deterministic proposal approval, node-click redirect, why/unknowns/inspect-first/partial controls, guidance traces, and HUD/map updates.
 - PB-010 Session Lesson Application with trace-derived session lessons, next-proposal rewrite, prompt/relay pass-through, and no persistence beyond the active run.

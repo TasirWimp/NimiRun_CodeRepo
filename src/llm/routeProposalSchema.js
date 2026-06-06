@@ -114,7 +114,7 @@ const FORBIDDEN_KEY_PATTERN =
   /api[_-]?key|secret|wallet[_-]?authority|checkout|payment|tool[_-]?calls?|tool[_-]?requests?|browser[_-]?action|spend[_-]?nimiq|mainnet|persistent[_-]?memory|private[_-]?key|execute[_-]?trade/i;
 
 const FORBIDDEN_TEXT_PATTERN =
-  /wallet authority|checkout|payment execution|mainnet spend|private key|persistent memory|execute trade|brokerage execution|unbounded tool/i;
+  /wallet authority|checkout|payment execution|mainnet spend|private key|persistent memory|external tools?|execute trade|brokerage execution|unbounded tool/i;
 
 const TERRAIN_CERTAINTY_PATTERN =
   /proves? (the )?(whole|entire) (map|terrain)|no unknowns remain|nothing remains unknown|fully known|complete certainty/i;

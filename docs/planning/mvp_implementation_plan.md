@@ -146,7 +146,7 @@ Implemented groundwork from the earlier allowance-control cut:
 - PB-005 RPG Map Tooling And Scene Direction is implemented with a Phaser-native custom node-map workflow and NimiRun V2 runtime assets, documented in `docs/architecture/rpg_map_tooling.md`.
 - PB-006 Core Resource Model is implemented with deterministic Bot Attention, Nimiq Pocket, User Guidance, Context Slot, and move-cost checks in `src/domain/`.
 - PB-006A Run Session And Transition Runtime is implemented with scenario contract validation, move transition gates, run carriers, and finish judgment packets.
-- PB-007 LLM Route Proposal Bridge is implemented with a strict route proposal schema, run-carrier prompt builder, browser relay client, Vite dev relay middleware, Vercel production function, OpenAI Responses API relay, and offline/mock fallback.
+- PB-007 LLM Route Proposal Bridge is implemented with a strict route proposal schema, run-carrier prompt builder, browser relay client, Vite dev relay middleware, Vercel production function, OpenAI Responses API relay, offline/mock fallback, and full-scenario unsafe-authority relay regression coverage.
 - PB-008 Lossy Map Scenario is implemented with deterministic hidden-pressure reveal, inspect/skip/act behavior, false-landfall traps, safe-finish judgment, and prompt serialization in `src/domain/lossyMap.js`.
 - PB-009 User-Bot Guidance Loop is implemented with a testable guidance-loop domain module, scene state setup, Phaser proposal controls, redirect-by-node selection, why/unknowns/inspect-first/partial controls, deterministic approval, and HUD/map updates.
 - PB-010 Session Lesson Application is implemented with trace-derived session lessons, inspect-before-act/residue/stop-condition lesson typing, next-proposal rewrite, prompt serialization, relay/client pass-through, and no persistence beyond the active run state.
@@ -760,6 +760,11 @@ Test plan:
 - relay model id is configurable,
 - relay has a safe offline/mock mode for local demo and tests,
 - `npm run test` and `npm run build` pass.
+
+Implementation note:
+
+- PB-007R full-scenario relay regression is implemented with mocked OpenAI responses that include pocket, false-finish, trace-card, session-lesson, and residue context. The positive case validates a bounded proposal; the negative case confirms unsafe authority wording is surfaced as a readable relay validation error before gameplay.
+- The prompt boundary avoids seeding exact forbidden proposal phrases such as wallet authority, checkout, payment execution, mainnet spend, private key, persistent memory, external tools, or unbounded tool language into the model instruction.
 
 Acceptance:
 

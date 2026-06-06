@@ -300,7 +300,7 @@ Expected automated tests:
 
 ### PB-007 LLM Route Proposal Bridge
 
-Status: implemented.
+Status: implemented, including PB-007R full-scenario unsafe-authority relay regression coverage.
 
 Expected automated tests:
 
@@ -323,6 +323,13 @@ Expected manual or smoke checks:
 - no API key appears in browser-visible configuration,
 - production relay smoke with the full scenario reports whether validation accepted the proposal or blocked unsafe wording, and the browser shows only same-origin `/api/route-proposal` traffic,
 - failure state is readable when no relay/API key is configured.
+
+Implemented regression coverage:
+
+- mocked full-scenario relay test includes pocket, false-finish, trace-card, session-lesson, and residue context,
+- accepted mocked output validates as a bounded proposal,
+- unsafe authority wording in a considered alternative returns a readable relay validation error,
+- prompt boundary tests prevent reintroducing exact unsafe output phrases into the system instruction.
 
 ### PB-008 Lossy Map Scenario
 
