@@ -1148,12 +1148,23 @@ Lesson:
 
 ## Route Proposal Schema Extension
 
-For this scenario, the route proposal schema should keep the current invariant
-fields:
+For this scenario, route proposals should expose normalized scenario moves while
+keeping the invariant proposal fields. The current MVP runtime still uses the
+generic move set `inspect | ask | remember | skip | act`; a scenario adapter
+should map the richer player-facing moves back to those generic runtime moves
+until the shared runtime schema is upgraded.
 
 ```yaml
 route_proposal:
-  move_type: inspect | ask | remember | forget | skip | act
+  move_type:
+    - inspect
+    - ask
+    - remember
+    - enter
+    - exit
+    - wait
+    - skip
+    - mark_partial
   move_subtype:
     - chart
     - event
@@ -1163,11 +1174,8 @@ route_proposal:
     - fomo
     - remaining_unknown
     - lesson
-    - enter
-    - exit
-    - wait
-    - partial
   player_facing_action:
+  runtime_move_type: inspect | ask | remember | skip | act
   target_node:
   reason:
   resource_cost:
@@ -1188,12 +1196,58 @@ route_proposal:
   trace_summary:
 ```
 
+Scenario-to-runtime adapter:
+
+```yaml
+scenario_move_to_runtime:
+  inspect:
+    runtime_move_type: inspect
+    allowed_subtypes:
+      - chart
+      - event
+      - exit_path
+      - psychology
+      - support
+      - fomo
+
+  ask:
+    runtime_move_type: ask
+    allowed_subtypes:
+      - remaining_unknown
+
+  remember:
+    runtime_move_type: remember
+    allowed_subtypes:
+      - lesson
+
+  enter:
+    runtime_move_type: act
+    rule: "bounded game action; never exchange, brokerage, wallet, or live-trading execution"
+
+  exit:
+    runtime_move_type: act
+    rule: "bounded game action; means inspect/resolve route exit, not exchange execution"
+
+  wait:
+    runtime_move_type: skip
+    rule: "advance without spending Bot Attention, carrying residue forward"
+
+  skip:
+    runtime_move_type: skip
+    rule: "decline this signal and carry unresolved opportunity/residue"
+
+  mark_partial:
+    runtime_move_type: act
+    rule: "finish judgment action that declares limited scope rather than full success"
+```
+
 Scenario-specific adjustment:
 
-- Keep `move_type` aligned with the current generic route-proposal schema.
-- Use `move_subtype` and `player_facing_action` to distinguish `Check Signal`,
-  `Check Event`, `Check Exit`, `Check FOMO`, `Remember Lesson`, `Enter`, `Wait`,
-  `Exit`, `Skip`, and `Mark Partial`.
+- Keep scenario `move_type` normalized around player-meaningful actions.
+- Use `move_subtype`, `player_facing_action`, and `runtime_move_type` to
+  distinguish `Check Signal`, `Check Event`, `Check Exit`, `Check FOMO`,
+  `Remember Lesson`, `Enter`, `Wait`, `Exit`, `Skip`, and `Mark Partial` while
+  preserving the current generic runtime move boundary.
 - Player-facing `Enter` and `Exit` are scenario actions. They must not imply
   exchange, brokerage, wallet, or live-trading execution.
 - If a move uses pocket capacity, show it as `Pocket Spark` in scenario text and
