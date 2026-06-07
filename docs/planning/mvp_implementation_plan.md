@@ -120,6 +120,45 @@ Open app
                 -> Nimiq pocket is visibly connected to controlled capacity
 ```
 
+## Cross-Platform Runtime Model
+
+Pocket Bot should ship as **one Phaser/Vite web app**, not as separate Windows,
+Android, and iOS products. The game loop, domain rules, LLM proposal relay,
+scene, assets, and trace UI should be shared across every runtime. Platform
+differences belong behind `src/platform/` adapters.
+
+Target runtime behavior:
+
+| Runtime | Game surface | Nimiq pocket path |
+|---|---|---|
+| Windows desktop browser | Normal hosted web app | Desktop TestAlbatross status through Nimiq Web Client; local fallback if unavailable |
+| Android/iOS mobile browser | Normal hosted web app | Browser TestAlbatross status through Nimiq Web Client where supported; local fallback if unavailable |
+| Nimiq Pay on Android/iOS | Mini App WebView | Nimiq Pay Mini App SDK/provider status path |
+| Any unsupported browser | Normal hosted web app | Local fallback pocket, with no wallet access |
+
+This means the finished game should be playable when a user opens the hosted URL
+from Windows, Android, or iPhone. Nimiq access is a progressive enhancement:
+use the strongest safe adapter available, but never make the core game depend on
+wallet availability.
+
+Adapter priority:
+
+```text
+Nimiq pocket status request
+  -> if Nimiq Pay provider is available, use the Mini App SDK/provider adapter
+  -> else if browser TestAlbatross support is enabled, use the Web Client adapter
+  -> else use the local fallback pocket
+```
+
+Scope boundary:
+
+- Mini App provider verification remains required for competition readiness.
+- Desktop/mobile browser TestAlbatross support is required for broad product
+  usability, especially Windows.
+- Browser TestAlbatross status should start read-only: consensus/head status,
+  network label, and trace card only. Do not add private-key management,
+  signing, sending, Hub checkout, or real-value behavior as part of this slice.
+
 ## Source Documents
 
 - Product requirements: `docs/product/requirements.md`
@@ -155,8 +194,9 @@ Implemented groundwork from the earlier allowance-control cut:
 
 This work should be retained as supporting infrastructure. It becomes one possible resource-governance mechanic inside the broader resource-judgment game, not the active center of Phase 1.
 
-Next work should pivot from feature construction to the submission vertical slice:
+Next work should close the cross-platform runtime gap before final polish:
 
+- PB-012A Desktop/Mobile Browser TestAlbatross Status.
 - PB-POLISH Submission Vertical Slice.
 
 ## Implementation Assumptions
@@ -426,6 +466,8 @@ src/
     routeProposalPrompt.js
   platform/
     nimiqMiniApp.js
+    nimiqDesktopTestnet.js
+    nimiqPocketRuntime.js
     openaiRelay.js             # server-side boundary if hosted in-repo
   scenes/
     PocketBotWorkshop.js
@@ -461,6 +503,8 @@ tests/
     routeProposalClient.test.js
   platform/
     nimiqMiniApp.test.js
+    nimiqDesktopTestnet.test.js
+    nimiqPocketRuntime.test.js
     openaiRelay.test.js
   smoke/
     app-loads.spec.js
@@ -1107,6 +1151,89 @@ Acceptance:
 - the bot still spends Bot Attention on moves,
 - wallet access never grants broad bot authority.
 
+### PB-012A Desktop/Mobile Browser TestAlbatross Status
+
+Status: planned. This slice exists to make the finished web game usable from
+Windows and ordinary mobile browsers without requiring Nimiq Pay.
+
+Goal:
+
+Add a desktop/mobile browser Nimiq TestAlbatross status adapter while preserving
+the existing Nimiq Pay Mini App provider path and local fallback. This is a
+product usability slice, not a replacement for Mini App competition
+verification.
+
+User-visible behavior:
+
+When opened in a normal desktop or mobile browser, the player can explicitly
+check a read-only Nimiq TestAlbatross status. The HUD labels this as desktop or
+browser testnet status, shows network/head/consensus information when available,
+and records a pocket-status trace. The game remains playable if TestAlbatross
+connection fails or the browser cannot support the Web Client path.
+
+Expected files:
+
+- `src/platform/nimiqDesktopTestnet.js`
+- `src/platform/nimiqPocketRuntime.js`
+- `src/platform/nimiqMiniApp.js`
+- `src/ui/resourceMeters.js`
+- `src/scenes/PocketBotWorkshop.js`
+- `tests/platform/nimiqDesktopTestnet.test.js`
+- `tests/platform/nimiqPocketRuntime.test.js`
+- `tests/ui/resourceMeters.test.js`
+- `vite/config.dev.mjs`
+- `vite/config.prod.mjs`
+- `package.json`
+- `docs/product/source_attribution.md`
+
+Implementation plan:
+
+- Add `@nimiq/core` only when this slice starts.
+- Add the Vite WebAssembly/top-level-await plugins required by the Nimiq Web
+  Client Vite integration.
+- Keep Web Client setup behind `src/platform/nimiqDesktopTestnet.js`.
+- Add a small runtime chooser in `src/platform/nimiqPocketRuntime.js`:
+
+```text
+if Nimiq Pay is present
+  use Mini App provider status
+else if desktop/browser TestAlbatross is enabled
+  use Web Client TestAlbatross status
+else
+  use local fallback
+```
+
+- Keep the first Web Client behavior read-only: initialize client, connect to
+  `TestAlbatross`, wait for consensus or a bounded timeout, read head height,
+  and return a pocket-status object.
+- Do not generate keys, import mnemonics, persist wallet data, sign, send,
+  request Hub checkout, or broadcast transactions in this slice.
+
+Test plan:
+
+- unit-test runtime selection priority: Nimiq Pay provider wins over desktop
+  Web Client, desktop Web Client wins over local fallback, local fallback works
+  when neither runtime is available,
+- mock the Web Client factory so automated tests do not require live consensus,
+- verify Web Client timeout/error paths return readable fallback status,
+- verify no sign/send/payment/key-management method is called or exposed,
+- verify pocket-status trace cards still distinguish pocket value/status from
+  Bot Attention spend,
+- run `npm run test` and `npm run build`,
+- manually test the hosted/local app in Windows Chrome or Edge for visible
+  TestAlbatross status.
+
+Acceptance:
+
+- the same hosted app remains playable on Windows, Android, iPhone, and Nimiq
+  Pay,
+- Windows desktop browser can show real Nimiq TestAlbatross read-only status
+  when the Web Client path is available,
+- unsupported browsers fall back cleanly without blocking gameplay,
+- Nimiq Pay Mini App provider behavior remains unchanged,
+- competition readiness still tracks the separate Nimiq Pay device/emulator
+  verification.
+
 ### PB-POLISH Submission Vertical Slice
 
 Goal:
@@ -1209,8 +1336,9 @@ Implemented groundwork:
 
 Revised next sequence:
 
-15. PB-POLISH Submission Vertical Slice.
-16. PB-MARKET Early Access And Community Feedback.
+15. PB-012A Desktop/Mobile Browser TestAlbatross Status.
+16. PB-POLISH Submission Vertical Slice.
+17. PB-MARKET Early Access And Community Feedback.
 
 This order keeps CRPM/resource-judgment mechanics as the spine, pulls
 competition blockers forward, and leaves polish/submission work as a focused
@@ -1221,7 +1349,7 @@ vertical-slice pass rather than a product pivot.
 The next implementation commit should be:
 
 ```text
-feat: polish submission vertical slice
+feat: add desktop testnet pocket status
 ```
 
 ## Risks And Controls

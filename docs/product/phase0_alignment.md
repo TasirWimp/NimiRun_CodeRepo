@@ -135,6 +135,8 @@ These modules should not be reverted. They are now supporting pieces for future 
 
 Still needed for the revised Phase 1 submission path:
 
+- PB-012A Desktop/Mobile Browser TestAlbatross Status, so the same hosted web
+  app has a direct Windows/browser Nimiq testnet path in addition to Nimiq Pay.
 - Nimiq Pay testnet device/emulator verification for the PB-012 NIM status path.
 - PB-POLISH Submission Vertical Slice.
 

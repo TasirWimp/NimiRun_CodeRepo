@@ -607,18 +607,19 @@ The first milestone is complete when:
 - The LLM relay now lives in this repo as `server/routeProposalRelay.js`, with Vite middleware for local development and a Vercel function at `api/route-proposal.js` for hosted builds.
 - What first task goal best communicates "messy, lossy environment" in a short competition demo?
 - How much Bot Attention should the first run provide?
-- What is the first Nimiq testnet pocket interaction: status only, collectible value, or explicit testnet top-up/recharge?
+- What is the first Nimiq testnet pocket interaction after status: collectible value, explicit testnet top-up/recharge, or another traceable pocket event?
 - Should `src/scenes/Street.js` be renamed later, or should a new Pocket Bot Workshop scene be added and wired as the active scene?
 - Which exact generated-asset workflow and export sizes should be used to implement `docs/product/art_bible.md` after PB-005 selects the map workflow?
-- How explicit should local fallback vs Nimiq testnet pocket value be in the first UI?
+- How should the UI distinguish Nimiq Pay testnet status, desktop/mobile browser TestAlbatross status, and local fallback without overwhelming first-contact players?
 
 ## 18. Suggested Next Implementation Steps
 
 Recommended next task:
 
-1. PB-POLISH: finish the 60-second judge path.
-2. PB-MARKET: prepare submission materials and record external feedback.
-3. Nimiq Pay testnet device/emulator check: verify the PB-012 NIM status path before marking competition readiness as pass.
+1. PB-012A: add desktop/mobile browser TestAlbatross status so the hosted web app has a direct Windows/browser Nimiq testnet path.
+2. PB-POLISH: finish the 60-second judge path.
+3. PB-MARKET: prepare submission materials and record external feedback.
+4. Nimiq Pay testnet device/emulator check: verify the PB-012 NIM status path before marking competition readiness as pass.
 
 Run `npm run test`, `npm run build`, and browser/manual scene checks for source
 changes, including a Mini App/testnet compatibility check when available.

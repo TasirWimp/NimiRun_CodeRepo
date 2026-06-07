@@ -82,9 +82,10 @@ Current order:
 11. PB-011 Trace Cards - implemented.
 12. PB-010 Session Lesson Application - implemented.
 13. PB-012 Nimiq Testnet Pocket - implemented for local fallback and explicit Nimiq Pay NIM status checks; device/emulator verification still pending.
-14. PB-POLISH Submission Vertical Slice - next.
+14. PB-012A Desktop/Mobile Browser TestAlbatross Status - next.
+15. PB-POLISH Submission Vertical Slice.
 
-Use the subagent role plan in `docs/planning/mvp_implementation_plan.md`. `pocket_bot_nimiq_platform_worker` is active for Nimiq Mini App SDK/provider boundaries, local fallback, testnet status, and platform tests.
+Use the subagent role plan in `docs/planning/mvp_implementation_plan.md`. `pocket_bot_nimiq_platform_worker` is active for Nimiq Mini App SDK/provider boundaries, desktop/mobile browser TestAlbatross status, local fallback, testnet status, and platform tests.
 
 ## Test Expectations
 

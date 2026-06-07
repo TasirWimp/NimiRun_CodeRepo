@@ -305,4 +305,4 @@ The immediate next step is **Phase 1**:
 
 > Implement a Nimiq Mini App-compatible Phaser/Vite resource-judgment mini game with RPG-style map navigation, LLM-backed route proposals, Bot Attention, Nimiq testnet pocket value, user guidance, session-only lessons, and trace cards.
 
-PB-001 through PB-012 are implemented as a playable local/browser slice. The next code slice should be **PB-POLISH Submission Vertical Slice**, with a separate Nimiq Pay testnet device/emulator check for the PB-012 NIM status path before competition readiness is marked pass.
+PB-001 through PB-012 are implemented as a playable local/browser slice. The next code slice should be **PB-012A Desktop/Mobile Browser TestAlbatross Status** so the same hosted web app has a direct Windows/browser Nimiq testnet path before final polish. After PB-012A, continue with **PB-POLISH Submission Vertical Slice**. A separate Nimiq Pay testnet device/emulator check is still required for the PB-012 NIM provider path before competition readiness is marked pass.

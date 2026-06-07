@@ -443,6 +443,37 @@ Skipped manual check:
 
 - Nimiq Pay testnet device/emulator check was not performed in this slice because no device/emulator path was available in the current local environment.
 
+### PB-012A Desktop/Mobile Browser TestAlbatross Status
+
+Status: planned. This covers the normal hosted-web-app path for Windows,
+Android browser, and iPhone browser. It does not replace the Nimiq Pay Mini App
+provider verification.
+
+Expected automated tests:
+
+- runtime selection prefers Nimiq Pay provider when present,
+- desktop/mobile browser TestAlbatross status is used when Nimiq Pay is absent
+  and the Web Client adapter is enabled,
+- local fallback is used when neither Nimiq Pay nor Web Client status is
+  available,
+- Web Client factory/client behavior is mocked so unit tests do not require
+  live consensus,
+- Web Client timeout/error paths return readable fallback status,
+- no private-key, mnemonic, sign, send, checkout, or broadcast method is called
+  or exposed,
+- pocket-status trace cards remain separate from Bot Attention spend.
+
+Expected manual checks:
+
+- Windows Chrome or Edge can open the local/hosted app and show read-only
+  TestAlbatross status,
+- unsupported desktop/mobile browsers remain playable with local fallback,
+- Nimiq Pay provider behavior still works or remains explicitly marked pending
+  for device/emulator verification,
+- UI distinguishes Nimiq Pay testnet status, desktop/mobile browser
+  TestAlbatross status, and local fallback clearly enough for first-contact
+  players.
+
 ## Recommended Test Tooling Roadmap
 
 Add more tooling only when an implementation slice needs it.
