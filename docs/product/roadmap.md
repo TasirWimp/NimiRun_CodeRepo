@@ -305,4 +305,4 @@ The immediate next step is **Phase 1**:
 
 > Implement a Nimiq Mini App-compatible Phaser/Vite resource-judgment mini game with RPG-style map navigation, LLM-backed route proposals, Bot Attention, Nimiq testnet pocket value, user guidance, session-only lessons, and trace cards.
 
-PB-001 through PB-012 are implemented as a playable local/browser slice, and the PB-012 Nimiq Pay Testnet Mini App path was verified on Android emulator on June 7, 2026. The next code slice should be **PB-012A Desktop/Mobile Browser TestAlbatross Status** so the same hosted web app has a direct Windows/browser Nimiq testnet path before final polish. After PB-012A, continue with **PB-POLISH Submission Vertical Slice**.
+PB-001 through PB-012 are implemented as a playable local/browser slice, and the PB-012 Nimiq Pay Testnet Mini App path was verified on Android emulator on June 7, 2026. The next code slice should be **PB-POLISH Submission Vertical Slice** for the Android/Nimiq Pay competition path. **PB-012A Desktop/Mobile Browser TestAlbatross Status** is postponed until after the Android/Nimiq Pay submission path is stable.

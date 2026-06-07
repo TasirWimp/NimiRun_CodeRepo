@@ -444,9 +444,10 @@ Implemented checks:
 
 ### PB-012A Desktop/Mobile Browser TestAlbatross Status
 
-Status: planned. This covers the normal hosted-web-app path for Windows,
-Android browser, and iPhone browser. It does not replace the Nimiq Pay Mini App
-provider verification.
+Status: postponed until after the Android/Nimiq Pay submission path is stable.
+This covers the normal hosted-web-app path for Windows, Android browser, and
+iPhone browser. It does not replace the Nimiq Pay Mini App provider
+verification.
 
 Expected automated tests:
 

@@ -134,11 +134,15 @@ Implemented Phase 1 groundwork from the earlier allowance-control cut:
 
 These modules should not be reverted. They are now supporting pieces for future Nimiq Pocket / paid-resource gates.
 
-Still needed for the revised Phase 1 submission path:
+Still needed for the revised Phase 1 Android/Nimiq Pay submission path:
+
+- PB-POLISH Submission Vertical Slice.
+
+Postponed beyond the current submission path:
 
 - PB-012A Desktop/Mobile Browser TestAlbatross Status, so the same hosted web
-  app has a direct Windows/browser Nimiq testnet path in addition to Nimiq Pay.
-- PB-POLISH Submission Vertical Slice.
+  app can later have a direct Windows/browser Nimiq testnet path in addition to
+  Nimiq Pay.
 
 PB-005 replaced the old Tool Scout visual placeholder with the first lossy-map scaffold. The earlier allowance-control modules remain useful as future Nimiq Pocket / paid-resource gate groundwork.
 

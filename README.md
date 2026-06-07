@@ -24,7 +24,7 @@ The repository currently contains:
 - organized product documentation under `docs/`,
 - project structure prepared for testable domain logic, LLM proposal boundaries, runtime-cycle rules, Nimiq pocket-status checks, and future desktop/mobile browser TestAlbatross work.
 
-The revised resource-judgment gameplay now has the first playable guidance loop with trace-card review, session-only lesson application, and an explicit low-stakes Nimiq pocket status surface. The Nimiq Pay Testnet Mini App path was verified on an Android emulator on June 7, 2026; broader submission readiness still depends on the PB-012A browser TestAlbatross path and final polish.
+The revised resource-judgment gameplay now has the first playable guidance loop with trace-card review, session-only lesson application, and an explicit low-stakes Nimiq pocket status surface. The Nimiq Pay Testnet Mini App path was verified on an Android emulator on June 7, 2026. Direct desktop/mobile browser TestAlbatross support is postponed; the current submission path now moves to final Android/Nimiq Pay polish.
 
 ## Documentation
 

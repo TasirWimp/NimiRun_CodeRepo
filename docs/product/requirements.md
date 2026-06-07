@@ -610,16 +610,16 @@ The first milestone is complete when:
 - What is the first Nimiq testnet pocket interaction after status: collectible value, explicit testnet top-up/recharge, or another traceable pocket event?
 - Should `src/scenes/Street.js` be renamed later, or should a new Pocket Bot Workshop scene be added and wired as the active scene?
 - Which exact generated-asset workflow and export sizes should be used to implement `docs/product/art_bible.md` after PB-005 selects the map workflow?
-- How should the UI distinguish Nimiq Pay testnet status, desktop/mobile browser TestAlbatross status, and local fallback without overwhelming first-contact players?
+- After the Android/Nimiq Pay submission path is stable, how should the UI distinguish Nimiq Pay testnet status, desktop/mobile browser TestAlbatross status, and local fallback without overwhelming first-contact players?
 
 ## 18. Suggested Next Implementation Steps
 
 Recommended next task:
 
-1. PB-012A: add desktop/mobile browser TestAlbatross status so the hosted web app has a direct Windows/browser Nimiq testnet path.
-2. PB-POLISH: finish the 60-second judge path.
-3. PB-MARKET: prepare submission materials and record external feedback.
-4. Repeat the Nimiq Pay Testnet emulator check before final submission if PB-012 or PB-012A changes the platform adapter.
+1. PB-POLISH: finish the 60-second Android/Nimiq Pay judge path.
+2. PB-MARKET: prepare submission materials and record external feedback.
+3. Repeat the Nimiq Pay Testnet emulator check before final submission if PB-012 or polish work changes the platform adapter.
+4. PB-012A: add desktop/mobile browser TestAlbatross status later, after the Android/Nimiq Pay submission path is stable.
 
 Run `npm run test`, `npm run build`, and browser/manual scene checks for source
 changes, including a Mini App/testnet compatibility check when available.

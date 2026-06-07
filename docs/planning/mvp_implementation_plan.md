@@ -196,10 +196,15 @@ Implemented groundwork from the earlier allowance-control cut:
 
 This work should be retained as supporting infrastructure. It becomes one possible resource-governance mechanic inside the broader resource-judgment game, not the active center of Phase 1.
 
-Next work should close the cross-platform runtime gap before final polish:
+Next work should focus on the Android/Nimiq Pay competition path and move into
+submission polish:
 
-- PB-012A Desktop/Mobile Browser TestAlbatross Status.
 - PB-POLISH Submission Vertical Slice.
+
+PB-012A Desktop/Mobile Browser TestAlbatross Status is postponed. The hosted
+web app should still remain playable in ordinary desktop/mobile browsers with
+local fallback, but direct desktop/browser Nimiq TestAlbatross support is no
+longer required before the first competition submission pass.
 
 ## Implementation Assumptions
 
@@ -1156,8 +1161,9 @@ Acceptance:
 
 ### PB-012A Desktop/Mobile Browser TestAlbatross Status
 
-Status: planned. This slice exists to make the finished web game usable from
-Windows and ordinary mobile browsers without requiring Nimiq Pay.
+Status: postponed. This slice remains the intended future path for direct
+desktop/mobile browser Nimiq testnet support, but it is no longer part of the
+current Android/Nimiq Pay competition submission path.
 
 Goal:
 
@@ -1339,9 +1345,10 @@ Implemented groundwork:
 
 Revised next sequence:
 
-15. PB-012A Desktop/Mobile Browser TestAlbatross Status.
-16. PB-POLISH Submission Vertical Slice.
-17. PB-MARKET Early Access And Community Feedback.
+15. PB-POLISH Submission Vertical Slice.
+16. PB-MARKET Early Access And Community Feedback.
+17. PB-012A Desktop/Mobile Browser TestAlbatross Status, postponed until after
+    the Android/Nimiq Pay submission path is stable.
 
 This order keeps CRPM/resource-judgment mechanics as the spine, pulls
 competition blockers forward, and leaves polish/submission work as a focused
@@ -1352,7 +1359,7 @@ vertical-slice pass rather than a product pivot.
 The next implementation commit should be:
 
 ```text
-feat: add desktop testnet pocket status
+feat: polish submission vertical slice
 ```
 
 ## Risks And Controls
