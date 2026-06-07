@@ -428,6 +428,53 @@ These may be considered future features after the first milestone demonstrates t
 
 The game metaphor is a compact 2D task landscape where the Nimiq binding idea becomes spatial: attention, value, user guidance, hidden uncertainty, context, trace, and re-entry are visibly connected instead of collapsing into blind bot action.
 
+### Decision Model
+
+Pocket Bot uses game-theory vocabulary as a design foundation, not as
+player-facing tutorial language and not as a promise to implement a complete
+formal solver.
+
+A run is a sequential imperfect-information decision game: the user and Pocket
+Bot observe partial state, choose bounded actions, pay local costs, reveal
+partial observations, carry history forward, and eventually reach an outcome
+judged by the user's preferences.
+
+Core terms:
+
+- Player / Agent = user, Pocket Bot, and environment.
+- Preference / Payoff = why one outcome is better than another. In Phase 1,
+  better means useful progress, attention preserved, false certainty avoided,
+  and a lesson the bot can use within the active run.
+- State = current map, resources, context slots, traces, residue, and bot
+  proposal.
+- Observation / Information Set = what the user and bot can currently see or
+  infer. Hidden pressure remains outside the bot's knowledge until revealed.
+- Action = approve, redirect, ask, inspect, remember, forget, skip, or act.
+- Policy / Strategy = the bot's current rule for choosing proposals. Session
+  lessons may adjust this policy inside the active run only.
+- Transition = the deterministic resource and runtime result of an approved
+  action.
+- History / Trajectory = the traceable sequence of proposals, guidance, spends,
+  reveals, residue, and lessons.
+- Terminal Outcome = safe finish, partial finish, false finish, or open run.
+
+The intended play loop is:
+
+```text
+preference
+  -> choice
+    -> cost
+      -> state transition
+        -> new observation
+          -> updated bot policy
+            -> next choice
+              -> final outcome
+```
+
+This model is broader than "choices under constraints have consequences":
+choices are motivated by preferences, and consequences matter because they
+create the next decision position.
+
 Suggested mapping:
 
 - Robot = personal software helper.

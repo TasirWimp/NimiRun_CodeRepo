@@ -52,6 +52,19 @@ Market Signal Scout
   = a fictionalized signal-navigation puzzle based on selected historic chart events.
 ```
 
+Decision-model binding:
+
+- Golden Signal = tempting observation.
+- Support, noise, reversal risk, and liquidity uncertainty = hidden state.
+- Inspect, skip, remember, and act = bounded actions.
+- Bot Attention and context slots = scarce costs / carriers.
+- Revealed support or residue = new observation after transition.
+- Trace card plus session lesson = history that adjusts the bot's next proposal
+  policy within the current run.
+- Safe, partial, false, or open finish = terminal outcome.
+
+The player is teaching a proposal policy, not a trading strategy.
+
 This lets later variants reuse the same stage:
 
 - Bug Failure Surface Scout.
