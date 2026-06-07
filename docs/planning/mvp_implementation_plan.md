@@ -152,7 +152,9 @@ Nimiq pocket status request
 
 Scope boundary:
 
-- Mini App provider verification remains required for competition readiness.
+- Mini App provider verification is required for competition readiness and was
+  first confirmed on Android emulator with Nimiq Pay forced to Testnet on June
+  7, 2026. Repeat it before final submission if the platform adapter changes.
 - Desktop/mobile browser TestAlbatross support is required for broad product
   usability, especially Windows.
 - Browser TestAlbatross status should start read-only: consensus/head status,
@@ -190,7 +192,7 @@ Implemented groundwork from the earlier allowance-control cut:
 - PB-009 User-Bot Guidance Loop is implemented with a testable guidance-loop domain module, scene state setup, Phaser proposal controls, redirect-by-node selection, why/unknowns/inspect-first/partial controls, deterministic approval, and HUD/map updates.
 - PB-010 Session Lesson Application is implemented with trace-derived session lessons, inspect-before-act/residue/stop-condition lesson typing, next-proposal rewrite, prompt serialization, relay/client pass-through, and no persistence beyond the active run state.
 - PB-011 Trace Cards is implemented with player-facing trace-card records for accepted moves, receipt-backed money-like actions, residue/re-entry context serialization, latest-trace inspection, and safe/partial/false/open landfall labeling.
-- PB-012 Nimiq Testnet Pocket is implemented with a safe local fallback pocket, explicit Nimiq Pay NIM status check, testnet/local pocket HUD wording, pocket-status trace cards, and no sign/send/payment authority.
+- PB-012 Nimiq Testnet Pocket is implemented with a safe local fallback pocket, explicit Nimiq Pay NIM status check, testnet/local pocket HUD wording, pocket-status trace cards, no sign/send/payment authority, and Android emulator Nimiq Pay Testnet verification.
 
 This work should be retained as supporting infrastructure. It becomes one possible resource-governance mechanic inside the broader resource-judgment game, not the active center of Phase 1.
 
@@ -1087,7 +1089,7 @@ Acceptance:
 
 ### PB-012 Nimiq Testnet Pocket
 
-Status: implemented for local browser fallback and explicit Nimiq Pay NIM status checks. Nimiq Pay device/emulator testnet verification is still pending.
+Status: implemented for local browser fallback and explicit Nimiq Pay NIM status checks. Android emulator Nimiq Pay Testnet verification was performed on June 7, 2026.
 
 Goal:
 
@@ -1141,11 +1143,12 @@ Implementation note:
 - `src/scenes/PocketBotWorkshop.js` shows the local/testnet pocket status in the HUD and records a pocket trace when the user clicks `Check`.
 - `src/domain/traces.js` supports `pocket` trace cards that distinguish pocket status/value from Bot Attention spend.
 - Verification on June 6, 2026: `npm run test` passed with 123 tests, `npm run build` passed, and a local headless Chrome smoke loaded the scene with one canvas, visible `Check` pocket control, no runtime/log errors, no failed network requests, and no DOM API-key leak.
+- Verification on June 7, 2026: Android emulator Nimiq Pay was forced to Testnet through the hidden dev menu, loaded `http://10.0.2.2:8080/?pb012-pay=1` through Mini Apps, connected the local Mini App, and confirmed the Pocket Bot scene rendered inside Nimiq Pay with a provider-backed Nimiq Pocket status trace. The trace showed one connected Nimiq account and a provider block height; log review found no crash, sign, send, checkout, transaction prompt, or mainnet error.
 
 Acceptance:
 
 - Nimiq testnet is integrated as low-stakes value surface,
-- the chosen Phase 1 support path is NIM testnet/local pocket status; competition readiness remains blocked until a Nimiq Pay testnet device/emulator check confirms it,
+- the chosen Phase 1 support path is NIM testnet/local pocket status with emulator-confirmed Nimiq Pay provider status,
 - pocket money can be shown as collectible or recharge potential,
 - pocket value never masks Bot Attention scarcity,
 - the bot still spends Bot Attention on moves,
@@ -1231,8 +1234,8 @@ Acceptance:
   when the Web Client path is available,
 - unsupported browsers fall back cleanly without blocking gameplay,
 - Nimiq Pay Mini App provider behavior remains unchanged,
-- competition readiness still tracks the separate Nimiq Pay device/emulator
-  verification.
+- repeat the separate Nimiq Pay device/emulator verification before final
+  submission if this adapter changes.
 
 ### PB-POLISH Submission Vertical Slice
 

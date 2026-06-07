@@ -130,6 +130,7 @@ Implemented Phase 1 groundwork from the earlier allowance-control cut:
 - PB-010 Session Lesson Application with trace-derived session lessons, next-proposal rewrite, prompt/relay pass-through, and no persistence beyond the active run.
 - PB-011 Trace Cards with accepted-move trace cards, receipt-backed money-like trace support, residue/re-entry context, latest-trace inspection, and landfall status labels.
 - PB-012 Nimiq Testnet Pocket with safe local fallback, explicit Nimiq Pay NIM status check, testnet/local pocket HUD wording, pocket-status trace cards, and no sign/send/payment authority.
+- Android emulator Nimiq Pay Testnet verification for PB-012, performed on June 7, 2026 with the local Mini App URL loaded through Nimiq Pay Mini Apps.
 
 These modules should not be reverted. They are now supporting pieces for future Nimiq Pocket / paid-resource gates.
 
@@ -137,7 +138,6 @@ Still needed for the revised Phase 1 submission path:
 
 - PB-012A Desktop/Mobile Browser TestAlbatross Status, so the same hosted web
   app has a direct Windows/browser Nimiq testnet path in addition to Nimiq Pay.
-- Nimiq Pay testnet device/emulator verification for the PB-012 NIM status path.
 - PB-POLISH Submission Vertical Slice.
 
 PB-005 replaced the old Tool Scout visual placeholder with the first lossy-map scaffold. The earlier allowance-control modules remain useful as future Nimiq Pocket / paid-resource gate groundwork.

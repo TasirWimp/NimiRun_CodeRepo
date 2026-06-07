@@ -253,6 +253,30 @@ describe('trace cards', () => {
     });
   });
 
+  it('does not report pending device verification after a provider-ready Nimiq Pay status check', () => {
+    const traceCard = createPocketTraceCard({
+      sequence: 1,
+      pocketStatus: {
+        mode: 'nimiq-pay',
+        network: 'unknown',
+        status: 'provider-ready',
+        amount: 23,
+        currency: 'NIM',
+        accountsCount: 1,
+        consensusEstablished: true,
+        blockNumber: 5274517,
+        statusLabel: 'Nimiq Pay status',
+      },
+    });
+
+    expect(traceCard.residueCarriedForward).toContain(
+      'Nimiq Pay device/emulator status check completed; preserve the provider network label separately.',
+    );
+    expect(traceCard.residueCarriedForward).not.toContain(
+      'Local fallback is not a live Nimiq Pay provider check.',
+    );
+  });
+
   it('summary wording does not overclaim safe completion for unresolved traces', () => {
     const openTrace = createTraceCard({
       sequence: 1,

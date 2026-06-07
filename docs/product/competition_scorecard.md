@@ -15,8 +15,8 @@ Use status values: `pass`, `blocked`, `unknown`, or `not_started`.
 
 ```yaml
 competition_submission_status:
-  mini_app_framework_path: unknown
-  nim_or_usdt_support: unknown
+  mini_app_framework_path: pass
+  nim_or_usdt_support: pass
   no_secrets_scan: unknown
   mit_license_public_repo: unknown
   mobile_ux_60s_path: unknown
@@ -43,8 +43,8 @@ documented exception accepted by the project owner.
 ## Functionality / 25
 
 - App runs locally through Vite:
-- App runs inside Nimiq Pay Mini Apps path:
-- NIM/USDT support path: NIM testnet/local status path implemented in PB-012; still needs Nimiq Pay testnet device/emulator verification before pass. USDT support remains future scope.
+- App runs inside Nimiq Pay Mini Apps path: pass on Android emulator with Nimiq Pay forced to Testnet on June 7, 2026.
+- NIM/USDT support path: NIM testnet/local status path implemented in PB-012 and emulator-verified in Nimiq Pay Testnet on June 7, 2026. USDT support remains future scope.
 - Pocket Bot loop works:
 - Bot Attention spend rules work:
 - Runtime transition / finish judgment works:

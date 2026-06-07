@@ -19,12 +19,12 @@ The repository currently contains:
 - PB-009 user-bot guidance loop with deterministic proposal approval, node-click redirect, why/unknowns/inspect-first/partial controls, and HUD/map updates,
 - PB-010 session lesson application with trace-derived lessons, next-proposal rewrite, bounded prompt/relay pass-through, and no persistence beyond the active run,
 - PB-011 trace cards for accepted moves, receipt-backed money-like events, residue/re-entry context, latest-trace inspection, and landfall status labels,
-- PB-012 Nimiq testnet pocket surface with local fallback, explicit Nimiq Pay NIM status check, pocket-status trace cards, and no sign/send/payment authority,
+- PB-012 Nimiq testnet pocket surface with local fallback, emulator-verified Nimiq Pay NIM status check, pocket-status trace cards, and no sign/send/payment authority,
 - NimiRun V2 runtime assets under `public/assets/nimirun-v2/`,
 - organized product documentation under `docs/`,
-- project structure prepared for testable domain logic, LLM proposal boundaries, runtime-cycle rules, Nimiq pocket-status checks, and future Nimiq testnet device verification.
+- project structure prepared for testable domain logic, LLM proposal boundaries, runtime-cycle rules, Nimiq pocket-status checks, and future desktop/mobile browser TestAlbatross work.
 
-The revised resource-judgment gameplay now has the first playable guidance loop with trace-card review, session-only lesson application, and an explicit low-stakes Nimiq pocket status surface. A Nimiq Pay testnet device/emulator check is still needed before treating the integration as competition-ready.
+The revised resource-judgment gameplay now has the first playable guidance loop with trace-card review, session-only lesson application, and an explicit low-stakes Nimiq pocket status surface. The Nimiq Pay Testnet Mini App path was verified on an Android emulator on June 7, 2026; broader submission readiness still depends on the PB-012A browser TestAlbatross path and final polish.
 
 ## Documentation
 

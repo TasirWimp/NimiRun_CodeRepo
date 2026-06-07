@@ -619,7 +619,7 @@ Recommended next task:
 1. PB-012A: add desktop/mobile browser TestAlbatross status so the hosted web app has a direct Windows/browser Nimiq testnet path.
 2. PB-POLISH: finish the 60-second judge path.
 3. PB-MARKET: prepare submission materials and record external feedback.
-4. Nimiq Pay testnet device/emulator check: verify the PB-012 NIM status path before marking competition readiness as pass.
+4. Repeat the Nimiq Pay Testnet emulator check before final submission if PB-012 or PB-012A changes the platform adapter.
 
 Run `npm run test`, `npm run build`, and browser/manual scene checks for source
 changes, including a Mini App/testnet compatibility check when available.

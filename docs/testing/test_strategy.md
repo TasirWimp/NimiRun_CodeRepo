@@ -414,7 +414,7 @@ Expected checks:
 
 ### PB-012 Nimiq Testnet Pocket
 
-Status: implemented for local fallback and explicit Nimiq Pay NIM status checks. Device/emulator testnet verification is still pending.
+Status: implemented for local fallback and explicit Nimiq Pay NIM status checks. Android emulator Nimiq Pay Testnet verification was performed on June 7, 2026.
 
 Expected automated tests:
 
@@ -438,10 +438,9 @@ Implemented checks:
 - `tests/ui/resourceMeters.test.js` covers local/testnet pocket meter wording.
 - `tests/ui/tracePanel.test.js` covers pocket trace display wording.
 - Browser smoke on June 6, 2026 loaded `http://127.0.0.1:8080/?pb012-smoke=1`, rendered one canvas, showed the `Check` pocket control, and reported no runtime/log/network errors or DOM key leak.
-
-Skipped manual check:
-
-- Nimiq Pay testnet device/emulator check was not performed in this slice because no device/emulator path was available in the current local environment.
+- Android emulator Nimiq Pay check on June 7, 2026 used the Play Store Nimiq Pay app forced to Testnet through the hidden dev menu, loaded `http://10.0.2.2:8080/?pb012-pay=1` through Mini Apps, connected the local app, and confirmed the Pocket Bot scene rendered inside Nimiq Pay.
+- The June 7 emulator check confirmed the `Check` action created a pocket-status trace with one connected Nimiq account and a provider block height, while the trace still stated no NIM send, sign, checkout, or mainnet authority was requested.
+- Log review after the June 7 provider check found no `AndroidRuntime` crash, `am_crash`, sign/send/checkout call, transaction prompt, or mainnet error.
 
 ### PB-012A Desktop/Mobile Browser TestAlbatross Status
 

@@ -81,7 +81,7 @@ Current order:
 10. PB-009 User-Bot Guidance Loop - implemented.
 11. PB-011 Trace Cards - implemented.
 12. PB-010 Session Lesson Application - implemented.
-13. PB-012 Nimiq Testnet Pocket - implemented for local fallback and explicit Nimiq Pay NIM status checks; device/emulator verification still pending.
+13. PB-012 Nimiq Testnet Pocket - implemented for local fallback and explicit Nimiq Pay NIM status checks, with Android emulator Nimiq Pay Testnet verification completed on June 7, 2026.
 14. PB-012A Desktop/Mobile Browser TestAlbatross Status - next.
 15. PB-POLISH Submission Vertical Slice.
 

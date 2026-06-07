@@ -348,6 +348,13 @@ export function createPocketTraceCard({
     revealed.push('Consensus not established yet');
   }
 
+  const verificationResidue =
+    pocketStatus.network === 'testnet'
+      ? 'Testnet pocket status remains low-stakes.'
+      : pocketStatus.mode === 'nimiq-pay' && pocketStatus.status === 'provider-ready'
+        ? 'Nimiq Pay device/emulator status check completed; preserve the provider network label separately.'
+        : 'Local fallback is not a live Nimiq Pay provider check.';
+
   return createTraceCard({
     id,
     type: TRACE_CARD_TYPES.POCKET,
@@ -374,9 +381,7 @@ export function createPocketTraceCard({
     ],
     residueCarriedForward: [
       'Pocket value is status/recharge context, not Bot Attention spend.',
-      pocketStatus.network === 'testnet'
-        ? 'Testnet pocket status remains low-stakes.'
-        : 'Competition testnet check still needs device or emulator verification.',
+      verificationResidue,
     ],
     contextChanges: [],
     landfallStatus,
