@@ -109,9 +109,11 @@ action:
   - inspect event context
   - inspect exit path
   - inspect psychology
+  - ask remaining unknown
   - remember lesson
   - enter
   - exit
+  - wait
   - skip
   - mark partial
 
@@ -182,6 +184,24 @@ Each accepted move should behave like a cut transition: it states what was held
 fixed, what was preserved, what was compressed or forgotten, what became
 visible, what residue remains, and whether later re-entry is possible from the
 trace.
+
+### Hidden Versus Residualized
+
+Implementation must distinguish hidden uncertainty from residualized
+uncertainty.
+
+```yaml
+hidden:
+  meaning: "the player/bot ignored it, did not name it, or never made it visible in the trace"
+  finish_effect: "can create false finish when the hidden issue was protected"
+
+residualized:
+  meaning: "the player/bot named it as still unknown and accepted limited scope"
+  finish_effect: "can allow partial finish, or safe finish only when the scenario declares that carrying this residue is enough"
+```
+
+This distinction prevents "unknown but explicitly carried" from being treated
+the same as "unknown and hidden."
 
 ## Invariant Stage / Variant Script
 
@@ -356,9 +376,55 @@ campaign:
 These should be presented as game archetypes, not documentary lessons, unless
 data attribution has been added.
 
+## Campaign State
+
+The campaign needs explicit state so the linear flow can carry lessons and
+residue between level-sized voyages.
+
+```yaml
+campaign_state:
+  current_level_id: "level_02_golden_signal"
+  completed_levels:
+    - "level_01_custody_fog"
+  carried_policy_lessons:
+    - "venue/context matters"
+  carried_residue:
+    - "event context was not inspected in previous level"
+  bot_policy_flags:
+    asks_remaining_unknown: true
+    checks_support_before_action: false
+    checks_exit_path_when_volatility_high: false
+    treats_profit_as_unlanded_until_exit_checked: false
+    carries_residue_between_levels: false
+    accepts_partial_finish: false
+  next_level_unlocked: "level_03_crowded_chain"
+```
+
 ## Level Anatomy
 
 Every historic-event level should use the same shape:
+
+```yaml
+level_start:
+  visible_state:
+    chart_surface: []
+    event_surface: []
+    psychology_surface: []
+  starting_resources:
+    bot_attention:
+    context_slots:
+    pocket_spark:
+  inherited_lessons: []
+  inherited_residue: []
+  starting_bot_policy:
+
+level_end:
+  terminal_reveal:
+  finish_status:
+  policy_update:
+  residue_carried_forward: []
+  unlocks_next_level:
+```
 
 ```yaml
 historic_event_level:
@@ -656,6 +722,9 @@ false_finish_cases:
       - "custody/counterparty risk unchecked"
 ```
 
+A level may show a simulated gain and still be a false finish if the exit path
+was never inspected or named. Simulated profit is not landfall.
+
 ### Open Run
 
 Player-facing:
@@ -824,11 +893,16 @@ Starting resources:
 starting_resources:
   bot_attention: 7
   context_slots: 3
-  nimiq_pocket: 2
+  pocket_spark: 2
 ```
 
 Nimiq Pocket is not a trading balance. It is a controlled value/capacity surface
 in the game.
+
+Player-facing scenario text should call spendable pocket capacity `Pocket
+Spark`, not `NIM`. Implementation may map Pocket Spark to Nimiq Pocket status
+or capacity, but the player must not read it as spending money to enter a
+trade.
 
 ### Map Nodes
 
@@ -948,11 +1022,11 @@ moves:
     target_node: golden_signal
     cost:
       bot_attention: 3
-      nimiq_pocket: 1
+      pocket_spark: 1
     can_finish: true
     false_if:
-      - "support not inspected"
-      - "exit friction hidden"
+      - "support not inspected_or_residualized"
+      - "exit friction hidden_not_named"
 
   skip_signal:
     cost:
@@ -1080,13 +1154,26 @@ fields:
 ```yaml
 route_proposal:
   move_type: inspect | ask | remember | forget | skip | act
+  move_subtype:
+    - chart
+    - event
+    - exit_path
+    - psychology
+    - support
+    - fomo
+    - remaining_unknown
+    - lesson
+    - enter
+    - exit
+    - wait
+    - partial
+  player_facing_action:
   target_node:
   reason:
   resource_cost:
     bot_attention:
     user_attention:
     context_slots:
-    nimiq_pocket:
   considered_alternatives:
     - move:
       why_not_selected:
@@ -1103,6 +1190,14 @@ route_proposal:
 
 Scenario-specific adjustment:
 
+- Keep `move_type` aligned with the current generic route-proposal schema.
+- Use `move_subtype` and `player_facing_action` to distinguish `Check Signal`,
+  `Check Event`, `Check Exit`, `Check FOMO`, `Remember Lesson`, `Enter`, `Wait`,
+  `Exit`, `Skip`, and `Mark Partial`.
+- Player-facing `Enter` and `Exit` are scenario actions. They must not imply
+  exchange, brokerage, wallet, or live-trading execution.
+- If a move uses pocket capacity, show it as `Pocket Spark` in scenario text and
+  trace cards. Do not expose `1 NIM` or NIM-denominated trade entry costs.
 - Allow market-like vocabulary inside the fictional game script.
 - Do not ban terms such as signal, support, buy, sell, enter, exit, or skip
   when used as in-game language.
@@ -1157,7 +1252,7 @@ export const marketSignalScoutCampaign = {
   startingResources: {
     botAttention: 7,
     contextSlots: 3,
-    nimiqPocket: 2
+    pocketSpark: 2
   },
   protectedOutcomes: [
     "support/context/exit uncertainty remains visible",
@@ -1184,6 +1279,8 @@ Market Signal Scout tests:
 - enter signal without support triggers false finish;
 - simulated profit-looking outcome can still be false finish when exit friction
   is hidden;
+- proposal generation must not use `terminal_reveal`, hindsight-only fields, or
+  later level outcomes before the current level finish;
 - inspecting support plus carrying lesson can enable safe or partial finish;
 - partial inspection leads to partial finish, not safe finish;
 - trace card records level, action, cost, reveal, residue, and lesson;
