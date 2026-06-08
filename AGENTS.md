@@ -82,9 +82,10 @@ Current order:
 11. PB-011 Trace Cards - implemented.
 12. PB-010 Session Lesson Application - implemented.
 13. PB-012 Nimiq Testnet Pocket - implemented for local fallback and explicit Nimiq Pay NIM status checks, with Android emulator Nimiq Pay Testnet verification completed on June 7, 2026.
-14. PB-POLISH Submission Vertical Slice - next.
-15. PB-MARKET Early Access And Community Feedback.
-16. PB-012A Desktop/Mobile Browser TestAlbatross Status - postponed until after the Android/Nimiq Pay submission path is stable.
+14. PB-013 Market Signal Scout Golden Signal foundation - implemented with transformed Binance BTCUSDT fixture evidence, accepted historic headline witnesses, Golden Signal scenario contract, and scene wiring.
+15. PB-POLISH Submission Vertical Slice - next.
+16. PB-MARKET Early Access And Community Feedback.
+17. PB-012A Desktop/Mobile Browser TestAlbatross Status - postponed until after the Android/Nimiq Pay submission path is stable.
 
 Use the subagent role plan in `docs/planning/mvp_implementation_plan.md`. `pocket_bot_nimiq_platform_worker` is active for Nimiq Mini App SDK/provider boundaries, local fallback, testnet status, and platform tests. Desktop/mobile browser TestAlbatross support is postponed.
 

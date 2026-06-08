@@ -196,12 +196,16 @@ Implemented groundwork from the earlier allowance-control cut:
 - PB-010 Session Lesson Application is implemented with trace-derived session lessons, inspect-before-act/residue/stop-condition lesson typing, next-proposal rewrite, prompt serialization, relay/client pass-through, and no persistence beyond the active run state.
 - PB-011 Trace Cards is implemented with player-facing trace-card records for accepted moves, receipt-backed money-like actions, residue/re-entry context serialization, latest-trace inspection, and safe/partial/false/open landfall labeling.
 - PB-012 Nimiq Testnet Pocket is implemented with a safe local fallback pocket, explicit Nimiq Pay NIM status check, testnet/local pocket HUD wording, pocket-status trace cards, no sign/send/payment authority, and Android emulator Nimiq Pay Testnet verification.
+- PB-013 Market Signal Scout Golden Signal foundation is implemented with a
+  transformed Binance BTCUSDT fixture evidence packet, accepted historic
+  headline witnesses, a Golden Signal scenario contract, and Pocket Bot
+  Workshop scene wiring.
 
 This work should be retained as supporting infrastructure. It becomes one possible resource-governance mechanic inside the broader resource-judgment game, not the active center of Phase 1.
 
-Next work should focus on the core playable story before submission polish:
+Next work should focus on submission polish around the Golden Signal loop:
 
-- PB-013 Market Signal Scout Witness-Governed Vertical Slice.
+- PB-POLISH Submission Vertical Slice.
 
 PB-012A Desktop/Mobile Browser TestAlbatross Status is postponed. The hosted
 web app should still remain playable in ordinary desktop/mobile browsers with
@@ -1478,26 +1482,25 @@ Implemented groundwork:
 12. PB-011 Trace Cards.
 13. PB-010 Session Lesson Application.
 14. PB-012 Nimiq Testnet Pocket.
+15. PB-013 Market Signal Scout Witness-Governed Vertical Slice.
 
 Revised next sequence:
 
-15. PB-013 Market Signal Scout Witness-Governed Vertical Slice.
 16. PB-POLISH Submission Vertical Slice.
 17. PB-MARKET Early Access And Community Feedback.
 18. PB-012A Desktop/Mobile Browser TestAlbatross Status, postponed until after
     the Android/Nimiq Pay submission path is stable.
 
-This order keeps CRPM/resource-judgment mechanics as the spine, pulls
-the core Market Signal Scout story in front of polish, and leaves
-polish/submission work as a focused vertical-slice pass rather than a product
-pivot.
+This order keeps CRPM/resource-judgment mechanics as the spine, keeps
+Golden Signal as the playable core, and leaves polish/submission work as a
+focused vertical-slice pass rather than a product pivot.
 
 ## Next Commit Recommendation
 
 The next implementation commit should be:
 
 ```text
-feat: add market signal scout golden signal slice
+feat: polish golden signal submission slice
 ```
 
 ## Risks And Controls

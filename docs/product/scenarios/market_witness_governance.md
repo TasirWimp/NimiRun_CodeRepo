@@ -304,8 +304,13 @@ preferred_market_data_source:
   source_urls:
     - "https://github.com/binance/binance-public-data"
     - "https://data.binance.vision/"
+    - "https://data.binance.vision/data/spot/monthly/klines/BTCUSDT/1d/BTCUSDT-1d-2017-12.zip"
+  source_checksum_url: "https://data.binance.vision/data/spot/monthly/klines/BTCUSDT/1d/BTCUSDT-1d-2017-12.zip.CHECKSUM"
+  source_checksum: "45bf1c515b1108668b6bf10f7af323585f30cdf68e096cb71e6e3bb6aa0e9cb4"
+  retrieval_date: "2026-06-08"
   pair: "BTCUSDT"
   market_scope: "Binance spot BTCUSDT venue history, not a global Bitcoin index"
+  covered_range: "2017-12-01 through 2017-12-24"
   intervals:
     - "1d for campaign arc"
     - "1h only for small local level windows if needed"

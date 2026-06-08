@@ -12,6 +12,18 @@
  * residue, and hindsight cards; they must not execute or imply real trading.
  */
 
+import {
+  BTCUSDT_FIXTURE_SOURCE,
+  getBtcusdtWitnessWindowById,
+} from './data/marketSignalScoutBtcusdtWindows.js';
+
+const GOLDEN_SIGNAL_WINDOW = getBtcusdtWitnessWindowById(
+  'btc_binance_btcusdt_2017_12_golden_signal'
+);
+
+const HEADLINE_WITNESS_NOTE =
+  'Source headline/title and URL are used for attribution; no article body is copied, and the mechanics connector is project-authored.';
+
 export const MARKET_WITNESS_SOURCE_CLASSES = Object.freeze({
   PRICE_SHAPE: "price_shape",
   MARKET_EVENT: "market_event",
@@ -72,32 +84,39 @@ export const marketWitnessLedger = Object.freeze({
   ]),
   witnesses: Object.freeze([
     Object.freeze({
-      id: "btc_window_02_price_shape_tbd",
-      title: "Golden Signal price-shape witness placeholder",
-      status: MARKET_WITNESS_STATUS.PLACEHOLDER,
+      id: "btc_binance_btcusdt_2017_12_price_shape",
+      title: "Golden Signal Binance BTCUSDT December 2017 price-shape witness",
+      status: MARKET_WITNESS_STATUS.ACCEPTED,
       sourceClass: MARKET_WITNESS_SOURCE_CLASSES.PRICE_SHAPE,
       sourceRecord: Object.freeze({
-        providerName: "tbd",
-        url: "tbd",
-        retrievalDate: "tbd",
-        coveredTimeRange: "tbd",
-        licenseOrTermsNote: "tbd",
+        providerName: BTCUSDT_FIXTURE_SOURCE.provider,
+        url: BTCUSDT_FIXTURE_SOURCE.sourceArchiveUrl,
+        licenseEvidenceUrl: BTCUSDT_FIXTURE_SOURCE.licenseEvidenceUrl,
+        retrievalDate: BTCUSDT_FIXTURE_SOURCE.retrievalDate,
+        coveredTimeRange: `${BTCUSDT_FIXTURE_SOURCE.coveredRange.start}..${BTCUSDT_FIXTURE_SOURCE.coveredRange.end}`,
+        licenseOrTermsNote: `${BTCUSDT_FIXTURE_SOURCE.licenseName} per Binance Public Data README; checksum ${BTCUSDT_FIXTURE_SOURCE.sourceChecksum}`,
+        sourceChecksumUrl: BTCUSDT_FIXTURE_SOURCE.sourceChecksumUrl,
+        sourceChecksum: BTCUSDT_FIXTURE_SOURCE.sourceChecksum,
         shippedAs: MARKET_WITNESS_SHIPPING.TRANSFORMED_FIXTURE
       }),
+      sourceWindowId: GOLDEN_SIGNAL_WINDOW.id,
+      mechanicsConnector: GOLDEN_SIGNAL_WINDOW.mechanicsConnector,
       usedForSurfaces: Object.freeze([
         MARKET_WITNESS_SURFACES.CHART,
         MARKET_WITNESS_SURFACES.HINDSIGHT
       ]),
       relatedLevelIds: Object.freeze(["level_02_golden_signal"]),
       transformedGameClaim:
-        "A strong visible signal can be authored as the opening lure for a level.",
+        "A strong visible BTCUSDT signal can be authored as the opening lure for a level.",
       supportsClaim:
         "The player and Pocket Bot may initially see a bright momentum-like signal.",
       doesNotSupport: Object.freeze([
+        "global Bitcoin price index",
         "live trading rule",
         "future price prediction",
         "player-specific portfolio advice",
-        "safe finish by profit alone"
+        "safe finish by profit alone",
+        "investment advice"
       ]),
       visibility: Object.freeze({
         visibleAtLevelStart: true,
@@ -112,18 +131,20 @@ export const marketWitnessLedger = Object.freeze({
       ])
     }),
     Object.freeze({
-      id: "btc_window_02_event_context_tbd",
-      title: "Golden Signal event-context witness placeholder",
-      status: MARKET_WITNESS_STATUS.PLACEHOLDER,
+      id: "btc_futures_gate_cboe_2017_12_04",
+      title: "Cboe Plans December 10 Launch of Bitcoin Futures Trading",
+      status: MARKET_WITNESS_STATUS.ACCEPTED,
       sourceClass: MARKET_WITNESS_SOURCE_CLASSES.MARKET_EVENT,
       sourceRecord: Object.freeze({
-        providerName: "tbd",
-        url: "tbd",
-        retrievalDate: "tbd",
-        coveredTimeRange: "tbd",
-        licenseOrTermsNote: "tbd",
+        providerName: "Cboe Global Markets",
+        url: "https://ir.cboe.com/news/news-details/2017/Cboe-Plans-December-10-Launch-of-Bitcoin-Futures-Trading-12-04-2017/default.aspx",
+        retrievalDate: "2026-06-08",
+        coveredTimeRange: "2017-12-04 source announcement",
+        licenseOrTermsNote: HEADLINE_WITNESS_NOTE,
         shippedAs: MARKET_WITNESS_SHIPPING.AUTHORING_REFERENCE_ONLY
       }),
+      mechanicsConnector:
+        "Futures Gate makes the signal brighter, but the route may be crowded.",
       usedForSurfaces: Object.freeze([
         MARKET_WITNESS_SURFACES.EVENT,
         MARKET_WITNESS_SURFACES.HINDSIGHT
@@ -136,11 +157,12 @@ export const marketWitnessLedger = Object.freeze({
       doesNotSupport: Object.freeze([
         "unscoped causal certainty",
         "documentary claim without attribution",
-        "trading instruction"
+        "trading instruction",
+        "investment advice"
       ]),
       visibility: Object.freeze({
         visibleAtLevelStart: false,
-        visibleAfterActions: Object.freeze(["check_event"]),
+        visibleAfterActions: Object.freeze(["check_event", "check_support"]),
         hiddenUntilHindsight: false,
         forbiddenBeforeFinish: Object.freeze(["terminal_reveal"])
       }),
@@ -150,18 +172,20 @@ export const marketWitnessLedger = Object.freeze({
       ])
     }),
     Object.freeze({
-      id: "btc_window_02_exit_friction_tbd",
-      title: "Golden Signal exit-friction witness placeholder",
-      status: MARKET_WITNESS_STATUS.PLACEHOLDER,
+      id: "btc_futures_gate_cftc_2017_12_01_risk_context",
+      title: "CFTC Statement on Self-Certification of Bitcoin Products by CME, CFE and Cantor Exchange",
+      status: MARKET_WITNESS_STATUS.ACCEPTED,
       sourceClass: MARKET_WITNESS_SOURCE_CLASSES.EXIT_FRICTION,
       sourceRecord: Object.freeze({
-        providerName: "tbd",
-        url: "tbd",
-        retrievalDate: "tbd",
-        coveredTimeRange: "tbd",
-        licenseOrTermsNote: "tbd",
+        providerName: "U.S. Commodity Futures Trading Commission",
+        url: "https://www.cftc.gov/PressRoom/PressReleases/7654-17",
+        retrievalDate: "2026-06-08",
+        coveredTimeRange: "2017-12-01 source statement",
+        licenseOrTermsNote: HEADLINE_WITNESS_NOTE,
         shippedAs: MARKET_WITNESS_SHIPPING.AUTHORING_REFERENCE_ONLY
       }),
+      mechanicsConnector:
+        "Exit Friction warns that a bright route can break if volatility and exit pressure are ignored.",
       usedForSurfaces: Object.freeze([
         MARKET_WITNESS_SURFACES.EXIT,
         MARKET_WITNESS_SURFACES.HINDSIGHT
@@ -175,7 +199,9 @@ export const marketWitnessLedger = Object.freeze({
         "real exchange execution",
         "wallet action",
         "guaranteed liquidity",
-        "safe finish by mark-to-market gain"
+        "safe finish by mark-to-market gain",
+        "legal advice",
+        "investment advice"
       ]),
       visibility: Object.freeze({
         visibleAtLevelStart: false,
@@ -189,18 +215,20 @@ export const marketWitnessLedger = Object.freeze({
       ])
     }),
     Object.freeze({
-      id: "btc_window_02_fomo_pressure_tbd",
-      title: "Golden Signal FOMO-pressure witness placeholder",
-      status: MARKET_WITNESS_STATUS.PLACEHOLDER,
+      id: "btc_futures_gate_cme_2017_12_01_event_pressure",
+      title: "CME Group Self-Certifies Bitcoin Futures to Launch Dec. 18",
+      status: MARKET_WITNESS_STATUS.ACCEPTED,
       sourceClass: MARKET_WITNESS_SOURCE_CLASSES.PSYCHOLOGY_PRESSURE,
       sourceRecord: Object.freeze({
-        providerName: "scenario_authoring",
-        url: "docs/product/scenarios/market_signal_scout.md",
-        retrievalDate: "n/a",
-        coveredTimeRange: "fictionalized level pressure",
-        licenseOrTermsNote: "internal design fixture",
-        shippedAs: MARKET_WITNESS_SHIPPING.TRANSFORMED_FIXTURE
+        providerName: "CME Group",
+        url: "https://www.cmegroup.com/media-room/press-releases/2017/12/01/cme_group_self-certifiesbitcoinfuturestolaunchdec18.html",
+        retrievalDate: "2026-06-08",
+        coveredTimeRange: "2017-12-01 source announcement",
+        licenseOrTermsNote: HEADLINE_WITNESS_NOTE,
+        shippedAs: MARKET_WITNESS_SHIPPING.AUTHORING_REFERENCE_ONLY
       }),
+      mechanicsConnector:
+        "Second Gate raises urgency pressure, but urgency is not support.",
       usedForSurfaces: Object.freeze([
         MARKET_WITNESS_SURFACES.PSYCHOLOGY
       ]),
@@ -208,11 +236,12 @@ export const marketWitnessLedger = Object.freeze({
       transformedGameClaim:
         "Pocket Bot may overweight a bright visible signal before the player teaches it to ask what remains unknown.",
       supportsClaim:
-        "The bot can begin with a bright_signal_fast_action bias.",
+        "The bot can begin with a bright_signal_fast_action bias around a busy event surface.",
       doesNotSupport: Object.freeze([
         "diagnosis of real player psychology",
         "claim about all market participants",
-        "trading advice"
+        "trading advice",
+        "investment advice"
       ]),
       visibility: Object.freeze({
         visibleAtLevelStart: false,
@@ -228,13 +257,20 @@ export const marketWitnessLedger = Object.freeze({
   ]),
   levelWitnessMap: Object.freeze({
     level_02_golden_signal: Object.freeze({
-      visibleAtStart: Object.freeze(["btc_window_02_price_shape_tbd"]),
+      visibleAtStart: Object.freeze(["btc_binance_btcusdt_2017_12_price_shape"]),
       inspectable: Object.freeze({
-        check_signal: Object.freeze(["btc_window_02_price_shape_tbd"]),
-        check_event: Object.freeze(["btc_window_02_event_context_tbd"]),
-        check_exit: Object.freeze(["btc_window_02_exit_friction_tbd"]),
-        check_fomo: Object.freeze(["btc_window_02_fomo_pressure_tbd"]),
-        ask_remaining_unknown: Object.freeze(["btc_window_02_fomo_pressure_tbd"])
+        check_signal: Object.freeze(["btc_binance_btcusdt_2017_12_price_shape"]),
+        check_support: Object.freeze([
+          "btc_binance_btcusdt_2017_12_price_shape",
+          "btc_futures_gate_cboe_2017_12_04"
+        ]),
+        check_event: Object.freeze([
+          "btc_futures_gate_cboe_2017_12_04",
+          "btc_futures_gate_cme_2017_12_01_event_pressure"
+        ]),
+        check_exit: Object.freeze(["btc_futures_gate_cftc_2017_12_01_risk_context"]),
+        check_fomo: Object.freeze(["btc_futures_gate_cme_2017_12_01_event_pressure"]),
+        ask_remaining_unknown: Object.freeze(["btc_futures_gate_cme_2017_12_01_event_pressure"])
       }),
       terminalRevealOnly: Object.freeze([
         "what_happened_next",
@@ -287,5 +323,46 @@ export function validateMarketWitnessBoundary(ledger = marketWitnessLedger) {
     reason: forbiddenEnabled
       ? "Market Signal Scout witness boundary enables a forbidden live-trading or reveal-leak surface."
       : "Market Signal Scout witness boundary stays inside static fictional scenario use."
+  };
+}
+
+export function validateMarketWitnessEvidence(ledger = marketWitnessLedger) {
+  const errors = [];
+
+  for (const witness of ledger.witnesses || []) {
+    const record = witness.sourceRecord || {};
+
+    if (witness.status === MARKET_WITNESS_STATUS.PLACEHOLDER) {
+      errors.push(`${witness.id} is still a placeholder.`);
+    }
+
+    for (const field of ["providerName", "url", "retrievalDate", "coveredTimeRange", "licenseOrTermsNote", "shippedAs"]) {
+      if (!record[field] || record[field] === "tbd") {
+        errors.push(`${witness.id} missing source record field: ${field}`);
+      }
+    }
+
+    if (!witness.mechanicsConnector) {
+      errors.push(`${witness.id} missing mechanics connector.`);
+    }
+
+    if (!witness.doesNotSupport?.includes("investment advice")) {
+      errors.push(`${witness.id} must reject investment-advice interpretation.`);
+    }
+
+    if (witness.sourceClass === MARKET_WITNESS_SOURCE_CLASSES.PRICE_SHAPE) {
+      if (!record.licenseEvidenceUrl || !record.sourceChecksumUrl || !record.sourceChecksum) {
+        errors.push(`${witness.id} missing Binance license or checksum evidence.`);
+      }
+
+      if (record.shippedAs !== MARKET_WITNESS_SHIPPING.TRANSFORMED_FIXTURE) {
+        errors.push(`${witness.id} must ship as a transformed fixture.`);
+      }
+    }
+  }
+
+  return {
+    ok: errors.length === 0,
+    errors,
   };
 }

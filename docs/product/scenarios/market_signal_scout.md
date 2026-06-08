@@ -1,6 +1,6 @@
 # Market Signal Scout Scenario
 
-Status: Phase 1 candidate scenario variant.
+Status: selected Phase 1 scenario; PB-013 Golden Signal foundation implemented.
 Role: first playable scenario script for the invariant Pocket Bot stage.
 
 ## Core Cut
@@ -341,8 +341,13 @@ preferred_market_data_source:
   source_urls:
     - "https://github.com/binance/binance-public-data"
     - "https://data.binance.vision/"
+    - "https://data.binance.vision/data/spot/monthly/klines/BTCUSDT/1d/BTCUSDT-1d-2017-12.zip"
+  source_checksum_url: "https://data.binance.vision/data/spot/monthly/klines/BTCUSDT/1d/BTCUSDT-1d-2017-12.zip.CHECKSUM"
+  source_checksum: "45bf1c515b1108668b6bf10f7af323585f30cdf68e096cb71e6e3bb6aa0e9cb4"
+  retrieval_date: "2026-06-08"
   pair: "BTCUSDT"
   market_scope: "Binance spot BTCUSDT venue history"
+  covered_range: "2017-12-01 through 2017-12-24"
   interval:
     campaign_arc: "1d"
     optional_level_texture: "1h"
@@ -977,7 +982,7 @@ scenario:
         - "noise source unknown"
         - "exit path unknown"
       historic_pattern_source:
-        event_window_id: "tbd"
+        event_window_id: "btc_binance_btcusdt_2017_12_golden_signal"
         pattern_type: "strong_signal_with_reversal_risk"
       false_landfall_trap:
         trigger: "act_without_support"

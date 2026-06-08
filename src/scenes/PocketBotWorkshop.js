@@ -24,10 +24,10 @@ import {
   NODE_KINDS,
   NODE_VISIBILITY,
   PATH_VISIBILITY,
-  createResourceMapScenario,
   getNodeById,
   getPathEndpoints,
 } from '../game/resourceMapScenario.js';
+import { createMarketSignalScoutScenario } from '../game/scenarios/marketSignalScoutScenario.js';
 import {
   createNimiqPocketStatus,
   getMiniAppEnvironment,
@@ -190,7 +190,7 @@ export default class PocketBotWorkshop extends Phaser.Scene {
   }
 
   create() {
-    this.mapScenario = createResourceMapScenario();
+    this.mapScenario = createMarketSignalScoutScenario();
     this.guidanceState = createPocketBotState(this.mapScenario);
     this.resourceState = this.guidanceState.mapState.resources;
     this.miniAppEnvironment = getMiniAppEnvironment(window);
@@ -207,7 +207,7 @@ export default class PocketBotWorkshop extends Phaser.Scene {
     this.drawMap();
     this.drawHud();
     this.drawBottomPanels();
-    this.selectNode('shortcut-bridge', { redirectProposal: false });
+    this.selectNode(this.mapScenario.proposalPreview.targetNodeId, { redirectProposal: false });
     this.setStatus(this.getDefaultStatus());
   }
 

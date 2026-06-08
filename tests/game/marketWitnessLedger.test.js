@@ -9,6 +9,7 @@ import {
   marketWitnessBoundary,
   marketWitnessLedger,
   validateMarketWitnessBoundary,
+  validateMarketWitnessEvidence,
 } from '../../src/game/scenarios/marketWitnessLedger.js';
 
 describe('market witness ledger', () => {
@@ -41,26 +42,49 @@ describe('market witness ledger', () => {
     expect(validation.reason).toContain('forbidden live-trading or reveal-leak surface');
   });
 
-  it('resolves witness ids and level mappings without live source access', () => {
-    const witness = getMarketWitnessById('btc_window_02_exit_friction_tbd');
+  it('resolves accepted witness ids and level mappings without live source access', () => {
+    const witness = getMarketWitnessById('btc_futures_gate_cftc_2017_12_01_risk_context');
 
     expect(witness).toMatchObject({
-      status: MARKET_WITNESS_STATUS.PLACEHOLDER,
+      status: MARKET_WITNESS_STATUS.ACCEPTED,
       sourceClass: MARKET_WITNESS_SOURCE_CLASSES.EXIT_FRICTION,
       sourceRecord: {
-        providerName: 'tbd',
+        providerName: 'U.S. Commodity Futures Trading Commission',
       },
     });
     expect(witness.doesNotSupport).toContain('real exchange execution');
+    expect(witness.mechanicsConnector).toContain('Exit Friction');
 
     const levelWitnesses = getMarketWitnessesForLevel('level_02_golden_signal');
 
     expect(levelWitnesses.map((item) => item.id)).toEqual([
-      'btc_window_02_price_shape_tbd',
-      'btc_window_02_event_context_tbd',
-      'btc_window_02_exit_friction_tbd',
-      'btc_window_02_fomo_pressure_tbd',
+      'btc_binance_btcusdt_2017_12_price_shape',
+      'btc_futures_gate_cboe_2017_12_04',
+      'btc_futures_gate_cftc_2017_12_01_risk_context',
+      'btc_futures_gate_cme_2017_12_01_event_pressure',
     ]);
+  });
+
+  it('keeps adopted witness evidence attribution-ready', () => {
+    const validation = validateMarketWitnessEvidence();
+    const priceShape = getMarketWitnessById('btc_binance_btcusdt_2017_12_price_shape');
+    const event = getMarketWitnessById('btc_futures_gate_cboe_2017_12_04');
+
+    expect(validation).toEqual({
+      ok: true,
+      errors: [],
+    });
+    expect(priceShape.sourceRecord).toMatchObject({
+      providerName: 'Binance Public Data',
+      licenseEvidenceUrl: 'https://github.com/binance/binance-public-data#licence',
+      sourceChecksum:
+        '45bf1c515b1108668b6bf10f7af323585f30cdf68e096cb71e6e3bb6aa0e9cb4',
+    });
+    expect(priceShape.doesNotSupport).toContain('global Bitcoin price index');
+    expect(event.title).toBe('Cboe Plans December 10 Launch of Bitcoin Futures Trading');
+    expect(event.mechanicsConnector).toBe(
+      'Futures Gate makes the signal brighter, but the route may be crowded.'
+    );
   });
 
   it('keeps terminal reveal fields out of proposal-visible witness ids', () => {
@@ -69,6 +93,7 @@ describe('market witness ledger', () => {
     const proposalVisibleIds = [
       ...getVisibleMarketWitnessIds('level_02_golden_signal'),
       ...getVisibleMarketWitnessIds('level_02_golden_signal', 'check_signal'),
+      ...getVisibleMarketWitnessIds('level_02_golden_signal', 'check_support'),
       ...getVisibleMarketWitnessIds('level_02_golden_signal', 'check_event'),
       ...getVisibleMarketWitnessIds('level_02_golden_signal', 'check_exit'),
       ...getVisibleMarketWitnessIds('level_02_golden_signal', 'check_fomo'),

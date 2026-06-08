@@ -663,16 +663,12 @@ The first milestone is complete when:
 
 Recommended next task:
 
-1. PB-013: implement the Golden Signal Market Signal Scout vertical slice using
-   a small bundled Binance BTCUSDT static fixture, actual attributed headline
-   witness cards with in-game mechanics connectors, static witness governance,
-   and no live trading/reward behavior.
-2. PB-POLISH: finish the 60-second Android/Nimiq Pay judge path around the
+1. PB-POLISH: finish the 60-second Android/Nimiq Pay judge path around the
    Golden Signal loop.
-3. PB-MARKET: prepare submission materials and record external feedback.
-4. Repeat the Nimiq Pay Testnet emulator check before final submission if
+2. PB-MARKET: prepare submission materials and record external feedback.
+3. Repeat the Nimiq Pay Testnet emulator check before final submission if
    PB-012, PB-013, or polish work changes the platform adapter.
-5. PB-012A: add desktop/mobile browser TestAlbatross status later, after the
+4. PB-012A: add desktop/mobile browser TestAlbatross status later, after the
    Android/Nimiq Pay submission path is stable.
 
 Run `npm run test`, `npm run build`, and browser/manual scene checks for source

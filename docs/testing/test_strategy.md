@@ -444,9 +444,10 @@ Implemented checks:
 
 ### PB-013 Market Signal Scout Witness-Governed Vertical Slice
 
-Status: planned next source slice.
+Status: implemented as Golden Signal foundation; manual/mobile submission
+polish remains in PB-POLISH.
 
-Expected automated tests:
+Implemented automated tests:
 
 - Golden Signal scenario loads with starting Bot Attention, Context Slots, and
   Pocket Spark / pocket-status capacity,

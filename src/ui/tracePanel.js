@@ -2,14 +2,14 @@ function normalizeList(value) {
   return Array.isArray(value) ? value.filter(Boolean) : [];
 }
 
-function formatList(items, fallback = 'none', limit = 2) {
+function formatList(items, fallback = 'none', limit = 1) {
   const values = normalizeList(items);
 
   if (values.length === 0) {
     return fallback;
   }
 
-  const visible = values.slice(0, limit).join(', ');
+  const visible = values.slice(0, limit).map((item) => formatText(item, 54)).join(', ');
   const remaining = values.length - limit;
 
   return remaining > 0 ? `${visible}, +${remaining} more` : visible;

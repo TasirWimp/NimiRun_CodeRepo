@@ -27,6 +27,30 @@ function normalizeList(value) {
   return Array.isArray(value) ? value.filter(Boolean) : [];
 }
 
+function unique(values) {
+  return [...new Set(normalizeList(values))];
+}
+
+function compactGuidanceLines(lines, limit = 4) {
+  const uniqueLines = unique(lines);
+
+  if (uniqueLines.length <= limit) {
+    return uniqueLines;
+  }
+
+  const selected = uniqueLines.slice(0, limit);
+  const falseFinishLine = uniqueLines.find((line) => /false finish/i.test(line));
+
+  if (falseFinishLine && !selected.includes(falseFinishLine)) {
+    selected[selected.length - 1] = falseFinishLine;
+  }
+
+  return [
+    ...selected,
+    `+${uniqueLines.length - limit} more still unknown`,
+  ];
+}
+
 function getNodeById(mapState, nodeId) {
   return mapState.scenario.nodes.find((node) => node.id === nodeId) || null;
 }
@@ -190,13 +214,22 @@ function findPreferredLessonNode(mapState, sessionLesson, fallbackNodeId) {
   const inspectedIds = new Set(mapState.inspectedNodeIds || []);
   const canInspect = (node) => node?.possibleMoves?.[MOVE_TYPES.INSPECT];
   const findNode = (predicate) => nodes.find((node) => canInspect(node) && predicate(node));
+  const findNodeById = (ids) => findNode((node) => ids.includes(node.id));
 
-  if (/warning|false|safe|finish/.test(lessonText)) {
-    return findNode((node) => node.id === 'warning-signal') || findNode((node) => node.id === 'safe-gate');
+  if (/support/.test(lessonText)) {
+    return findNodeById(['support-check', 'context-shrine']);
+  }
+
+  if (/fomo|urgency/.test(lessonText)) {
+    return findNodeById(['fomo-pressure']);
+  }
+
+  if (/exit|warning|false|safe|finish/.test(lessonText)) {
+    return findNodeById(['exit-friction', 'warning-signal', 'safe-gate']);
   }
 
   if (/context|clue|residue/.test(lessonText)) {
-    return findNode((node) => node.id === 'context-shrine');
+    return findNodeById(['context-shrine', 'support-check']);
   }
 
   return (
@@ -487,9 +520,11 @@ export function showRemainingUnknowns(state) {
   return {
     ...state,
     guidancePanel: createGuidancePanel('What remains unknown?', [
-      ...state.pendingProposal.cutPrice.leavesResidue,
-      ...state.mapState.residue,
-      ...state.mapState.remainingUnknowns,
+      ...compactGuidanceLines([
+        ...state.pendingProposal.cutPrice.leavesResidue,
+        ...state.mapState.residue,
+        ...state.mapState.remainingUnknowns,
+      ]),
     ]),
   };
 }
