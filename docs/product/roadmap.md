@@ -305,4 +305,13 @@ The immediate next step is **Phase 1**:
 
 > Implement a Nimiq Mini App-compatible Phaser/Vite resource-judgment mini game with RPG-style map navigation, LLM-backed route proposals, Bot Attention, Nimiq testnet pocket value, user guidance, session-only lessons, and trace cards.
 
-PB-001 through PB-012 are implemented as a playable local/browser slice, and the PB-012 Nimiq Pay Testnet Mini App path was verified on Android emulator on June 7, 2026. The next code slice should be **PB-POLISH Submission Vertical Slice** for the Android/Nimiq Pay competition path. **PB-012A Desktop/Mobile Browser TestAlbatross Status** is postponed until after the Android/Nimiq Pay submission path is stable.
+PB-001 through PB-012 are implemented as a playable local/browser slice, and the
+PB-012 Nimiq Pay Testnet Mini App path was verified on Android emulator on June
+7, 2026. The next code slice should be **PB-013 Market Signal Scout
+Witness-Governed Vertical Slice**, using a small bundled Binance BTCUSDT static
+fixture and actual attributed headline witness cards with in-game mechanics
+connectors, so the core Golden Signal story is implemented before submission
+polish. After PB-013, continue with **PB-POLISH Submission Vertical Slice** for
+the Android/Nimiq Pay competition path.
+**PB-012A Desktop/Mobile Browser TestAlbatross Status** is postponed until after
+the Android/Nimiq Pay submission path is stable.

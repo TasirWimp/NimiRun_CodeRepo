@@ -442,6 +442,57 @@ Implemented checks:
 - The June 7 emulator check confirmed the `Check` action created a pocket-status trace with one connected Nimiq account and a provider block height, while the trace still stated no NIM send, sign, checkout, or mainnet authority was requested.
 - Log review after the June 7 provider check found no `AndroidRuntime` crash, `am_crash`, sign/send/checkout call, transaction prompt, or mainnet error.
 
+### PB-013 Market Signal Scout Witness-Governed Vertical Slice
+
+Status: planned next source slice.
+
+Expected automated tests:
+
+- Golden Signal scenario loads with starting Bot Attention, Context Slots, and
+  Pocket Spark / pocket-status capacity,
+- bundled Binance BTCUSDT fixture declares source URL, license name, license
+  evidence URL, retrieval date, source archive/checksum reference, venue-scope
+  residue, interval, covered range, raw-vs-transformed shipping status, and
+  transformed/static status,
+- fixture metadata rejects vague provenance, global BTC index claims, live
+  trading rules, investment advice, reward-replay claims, or missing
+  `doesNotEstablish` boundaries,
+- headline witness cards include source headline/title, source URL, and
+  mechanics connector text,
+- witness ledger boundary stays static, non-trading, non-reward-bearing, and
+  hidden from proposal-only state where required,
+- terminal reveal, hindsight-only fields, and later level outcomes are not
+  available to proposal generation before finish,
+- support, exit friction, and FOMO pressure start hidden or residualized,
+- ask-unknowns names support, exit, and FOMO residue,
+- inspect support spends Bot Attention and records revealed clue plus remaining
+  residue,
+- entering/acting with hidden support or exit friction produces false finish,
+- explicitly named but unresolved uncertainty can produce partial finish without
+  a false-safe claim,
+- simulated gain cannot by itself produce safe finish,
+- trace cards record level, action, cost, reveal, still unknown, and lesson,
+- remembering "Fast signals need support" changes the next proposal inside the
+  active run only,
+- proposal validation rejects live-trading, wallet-authority,
+  brokerage/exchange execution, portfolio advice, persistent strategy export,
+  real reward/penalty, and terminal-reveal leakage claims.
+
+Expected manual checks:
+
+- first run can be completed in about 60 seconds on a mobile-sized viewport,
+- at least one real headline/title is visible as a historic witness and paired
+  with a plain in-game connector such as event pressure, exit pressure, or FOMO
+  pressure,
+- player-facing UI says signal, support, exit, FOMO, still unknown, trace, and
+  finish instead of CRPM terms,
+- Pocket Spark / Nimiq Pocket wording does not read as a trading balance or NIM
+  cost to enter a trade,
+- final status is safe, partial, false, or open and is recoverable from the
+  trace card,
+- Nimiq Pay/local fallback behavior remains unchanged unless the platform
+  adapter is intentionally touched.
+
 ### PB-012A Desktop/Mobile Browser TestAlbatross Status
 
 Status: postponed until after the Android/Nimiq Pay submission path is stable.

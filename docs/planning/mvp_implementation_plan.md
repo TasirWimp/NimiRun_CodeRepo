@@ -168,6 +168,9 @@ Scope boundary:
 - Phase 0 alignment: `docs/product/phase0_alignment.md`
 - Product pitch: `docs/product/pitch.md`
 - Art bible: `docs/product/art_bible.md`
+- Market Signal Scout scenario: `docs/product/scenarios/market_signal_scout.md`
+- Market witness governance: `docs/product/scenarios/market_witness_governance.md`
+- Reward mode boundary: `docs/product/reward_mode_boundary.md`
 - Infrastructure context: `docs/product/infrastructure_context.md`
 - Source attribution: `docs/product/source_attribution.md`
 - Competition scorecard: `docs/product/competition_scorecard.md`
@@ -196,10 +199,9 @@ Implemented groundwork from the earlier allowance-control cut:
 
 This work should be retained as supporting infrastructure. It becomes one possible resource-governance mechanic inside the broader resource-judgment game, not the active center of Phase 1.
 
-Next work should focus on the Android/Nimiq Pay competition path and move into
-submission polish:
+Next work should focus on the core playable story before submission polish:
 
-- PB-POLISH Submission Vertical Slice.
+- PB-013 Market Signal Scout Witness-Governed Vertical Slice.
 
 PB-012A Desktop/Mobile Browser TestAlbatross Status is postponed. The hosted
 web app should still remain playable in ordinary desktop/mobile browsers with
@@ -1243,6 +1245,140 @@ Acceptance:
 - repeat the separate Nimiq Pay device/emulator verification before final
   submission if this adapter changes.
 
+### PB-013 Market Signal Scout Witness-Governed Vertical Slice
+
+Goal:
+
+Turn the current abstract resource-judgment map into the first playable Market
+Signal Scout level, **Golden Signal**, using the witness ledger as static
+governance scaffolding without live market data, trading behavior, or reward
+mode.
+
+This slice should make the core game legible before polish: the player teaches
+Pocket Bot not to treat a bright signal as safe until support, exit friction,
+FOMO pressure, or remaining residue has been inspected or named.
+
+User-visible behavior:
+
+- the first run is framed as Golden Signal, not a generic shortcut map,
+- Pocket Bot initially proposes entering/acting on the bright signal,
+- the player can ask what remains unknown,
+- Pocket Bot names support, exit, and FOMO residue,
+- the player can redirect to inspect support,
+- historical witness cards can show the actual source headline/title plus a
+  short in-game mechanics connector, for example:
+  - headline/title: `Cboe Plans December 10 Launch of Bitcoin Futures Trading`,
+  - connector: `Futures Gate makes the signal brighter, but the route may be crowded`,
+- accepted inspection spends Bot Attention and reveals a bounded clue,
+- a trace records action, cost, reveal, still unknown, and lesson,
+- the player can remember "Fast signals need support",
+- the next proposal reflects the session lesson by suggesting safer route,
+  exit check, or partial finish,
+- a finish/hindsight card distinguishes safe, partial, false, or open outcome.
+
+Scenario and data boundary:
+
+- use `docs/product/scenarios/market_signal_scout.md` as the scenario source,
+- use `docs/product/scenarios/market_witness_governance.md` and
+  `src/game/scenarios/marketWitnessLedger.js` as static witness-governance
+  scaffolding,
+- use Binance Public Data as the selected bundled market-data source:
+  - source: `https://github.com/binance/binance-public-data` and
+    `https://data.binance.vision/`,
+  - license note: MIT licence stated in the Binance Public Data README,
+  - pair: Binance spot `BTCUSDT`,
+  - interval: `1d` for campaign arc; optional `1h` only for a small local
+    level window if needed,
+  - bundled shape: prefer transformed static fixture over broad raw archives,
+  - fixture path: `src/game/scenarios/data/marketSignalScoutBtcusdtWindows.js`,
+  - scope note: Binance BTCUSDT venue history, not a global Bitcoin price index,
+- treat the Bitcoin fixture as a license evidence packet before bundling:
+  - update `docs/product/source_attribution.md` from planned source to adopted
+    source with the exact data archive URL or URLs used, README/LICENSE evidence
+    URL, retrieval date, pair, interval, covered date range, raw-vs-transformed
+    shipping status, and transformation method,
+  - fixture metadata must include provider, source URLs, license name,
+    license evidence URL, retrieval date, source archive/checksum URL or checksum
+    note, pair, interval, covered range, venue scope, transformed/static status,
+    raw-data-shipped flag, and `doesNotEstablish` boundary claims,
+  - if raw zip or CSV data is ever shipped, include the exact license evidence
+    and checksum reference for that archive; if only a transformed gameplay
+    fixture is shipped, keep the archive URL and checksum reference as authoring
+    evidence without bundling the broad raw archive,
+  - tests must fail when this metadata is missing, vague, or claims a global BTC
+    index, live trading rule, investment advice, or reward-replay basis,
+- use actual historic headline/source titles as attributed witness labels, but
+  pair each with a fictionalized mechanics connector that explains what it
+  changes in the level,
+- keep event headline witnesses separate from market-data witnesses: headlines
+  may unlock event pressure, exit pressure, or FOMO pressure; they must not
+  establish a trading rule,
+- do not add live market APIs, raw historic data downloaders, exchange or
+  brokerage behavior, price prediction, portfolio advice, or persistent trading
+  strategy export,
+- do not use real NIM rewards or penalties,
+- player-facing pocket capacity remains Pocket Spark / Nimiq Pocket status, not
+  a trading balance or trade entry cost,
+- terminal reveal, hindsight-only fields, and later level outcomes must not be
+  visible to proposal generation before finish.
+
+Expected files:
+
+- `src/game/scenarios/marketSignalScoutScenario.js`
+- `src/game/scenarios/marketWitnessLedger.js`
+- `src/game/scenarios/data/marketSignalScoutBtcusdtWindows.js`
+- `src/game/pocketBotState.js`
+- `src/scenes/PocketBotWorkshop.js`
+- `src/domain/lossyMap.js`
+- `src/domain/guidanceLoop.js`
+- `src/domain/traces.js`
+- `src/domain/finishJudgment.js`
+- `tests/game/marketSignalScoutScenario.test.js`
+- `tests/game/marketWitnessLedger.test.js`
+- `docs/product/scenarios/market_signal_scout.md`
+- `docs/product/source_attribution.md`
+
+Test plan:
+
+- Golden Signal scenario loads with starting Bot Attention, Context Slots, and
+  Pocket Spark / pocket-status capacity,
+- bundled Binance BTCUSDT fixture declares source URL, MIT license note,
+  license evidence URL, retrieval date, source archive/checksum reference,
+  venue-scope residue, interval, covered range, raw-vs-transformed shipping
+  status, and transformed/static status,
+- headline witness cards include source headline/title, source URL, and
+  mechanics connector text,
+- witness ledger boundary remains static, non-trading, and non-reward-bearing,
+- terminal reveal is unavailable to proposal generation before finish,
+- support, exit, and FOMO pressure are hidden or residualized at level start,
+- ask-unknowns names support, exit, and FOMO residue,
+- inspect support spends Bot Attention and creates trace residue,
+- entering/acting with hidden support or exit friction creates false finish,
+- named but unresolved uncertainty can produce partial finish without a false
+  safe claim,
+- simulated gain cannot by itself produce safe finish,
+- trace card records level, action, cost, reveal, still unknown, and lesson,
+- next proposal changes after the remembered lesson,
+- proposal schema / adapter blocks live-trading, wallet-authority,
+  brokerage/exchange execution, portfolio advice, persistent strategy export,
+  and terminal-reveal leakage,
+- `npm run test` and `npm run build` pass,
+- browser/manual check confirms the first run is understandable on mobile/Nimiq
+  Pay sized viewports.
+
+Acceptance:
+
+- Golden Signal can be played as a complete 60-second loop,
+- the player can explain the lesson as "bright signals need support" without
+  seeing CRPM jargon,
+- the player sees at least one real historic headline/source title connected to
+  a game mechanic rather than a trading instruction,
+- Pocket Bot visibly learns a session-only proposal preference,
+- trace and finish cards make remaining uncertainty recoverable,
+- no UI copy implies live trading, real rewards, real NIM penalties, price
+  prediction, or wallet/exchange authority,
+- the slice is ready for PB-POLISH instead of competing with it.
+
 ### PB-POLISH Submission Vertical Slice
 
 Goal:
@@ -1345,21 +1481,23 @@ Implemented groundwork:
 
 Revised next sequence:
 
-15. PB-POLISH Submission Vertical Slice.
-16. PB-MARKET Early Access And Community Feedback.
-17. PB-012A Desktop/Mobile Browser TestAlbatross Status, postponed until after
+15. PB-013 Market Signal Scout Witness-Governed Vertical Slice.
+16. PB-POLISH Submission Vertical Slice.
+17. PB-MARKET Early Access And Community Feedback.
+18. PB-012A Desktop/Mobile Browser TestAlbatross Status, postponed until after
     the Android/Nimiq Pay submission path is stable.
 
 This order keeps CRPM/resource-judgment mechanics as the spine, pulls
-competition blockers forward, and leaves polish/submission work as a focused
-vertical-slice pass rather than a product pivot.
+the core Market Signal Scout story in front of polish, and leaves
+polish/submission work as a focused vertical-slice pass rather than a product
+pivot.
 
 ## Next Commit Recommendation
 
 The next implementation commit should be:
 
 ```text
-feat: polish submission vertical slice
+feat: add market signal scout golden signal slice
 ```
 
 ## Risks And Controls

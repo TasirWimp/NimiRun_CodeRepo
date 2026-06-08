@@ -333,6 +333,46 @@ Suggested workflow:
 
 Do not ship a general chart-data downloader in Phase 1.
 
+Preferred PB-013 market data source:
+
+```yaml
+preferred_market_data_source:
+  provider: "Binance Public Data"
+  source_urls:
+    - "https://github.com/binance/binance-public-data"
+    - "https://data.binance.vision/"
+  pair: "BTCUSDT"
+  market_scope: "Binance spot BTCUSDT venue history"
+  interval:
+    campaign_arc: "1d"
+    optional_level_texture: "1h"
+  license_note: "MIT licence stated in binance/binance-public-data README"
+  shipped_as: "small transformed static fixture"
+  fixture_path: "src/game/scenarios/data/marketSignalScoutBtcusdtWindows.js"
+  raw_data_shipped: "avoid broad raw archives; allow only tiny scoped excerpts if needed and attributed"
+  does_not_establish:
+    - "global Bitcoin price index"
+    - "live trading rule"
+    - "investment advice"
+    - "reward-bearing historical replay"
+```
+
+Historic event headlines should be used as immersive witness labels, not as
+bare game instructions. Each headline/title needs a mechanics connector:
+
+```yaml
+headline_witness_card:
+  source_title: "Cboe Plans December 10 Launch of Bitcoin Futures Trading"
+  source_url: "https://ir.cboe.com/news/news-details/2017/Cboe-Plans-December-10-Launch-of-Bitcoin-Futures-Trading-12-04-2017/default.aspx"
+  game_connector: "Futures Gate makes the signal brighter, but the route may be crowded."
+  unlocks_surface:
+    - event_surface
+    - psychology_surface
+  does_not_establish:
+    - "trade entry should happen"
+    - "price prediction"
+```
+
 ## Campaign Level List
 
 Suggested campaign:

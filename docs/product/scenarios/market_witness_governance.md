@@ -271,6 +271,8 @@ finish_status:
 ```yaml
 allowed:
   - historical OHLCV window -> chart-shape clue
+  - Binance BTCUSDT static fixture -> scoped chart-surface witness
+  - actual historical headline/title -> witness label plus in-game mechanics connector
   - drawdown/reversal window -> fictional signal archetype
   - exchange/event report -> event or exit-pressure clue
   - historical crowd narrative -> fictional FOMO/panic pressure
@@ -288,10 +290,39 @@ forbidden:
   - price prediction claims
   - persistent or downloadable trading strategy export
   - treating simulated profit as safe finish
+  - presenting a historical headline as a direct trading instruction
   - letting proposal generation inspect terminal reveal before finish
   - unattributed documentary claims
   - reward-bearing historical replay without a separate reward-mode boundary
 ```
+
+## Preferred PB-013 Market Data Source
+
+```yaml
+preferred_market_data_source:
+  provider: "Binance Public Data"
+  source_urls:
+    - "https://github.com/binance/binance-public-data"
+    - "https://data.binance.vision/"
+  pair: "BTCUSDT"
+  market_scope: "Binance spot BTCUSDT venue history, not a global Bitcoin index"
+  intervals:
+    - "1d for campaign arc"
+    - "1h only for small local level windows if needed"
+  license_note: "MIT licence stated in binance/binance-public-data README"
+  shipped_as: "transformed_static_fixture"
+  fixture_path: "src/game/scenarios/data/marketSignalScoutBtcusdtWindows.js"
+  residue:
+    - "Binance-specific venue history"
+    - "BTCUSDT pair, not BTC/EUR or global BTC/USD index"
+    - "coverage starts only when Binance/BTCUSDT data exists"
+    - "suitable for game fixture authoring, not live trading claims"
+```
+
+Actual headline/title witnesses may be player-visible when they are paired with
+a mechanics connector. The connector must explain what the headline changes in
+the level, such as event pressure, exit pressure, or FOMO pressure. It must not
+tell the player to trade.
 
 ## Source Attribution Duty
 
