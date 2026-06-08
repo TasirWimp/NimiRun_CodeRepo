@@ -35,6 +35,9 @@ The revised resource-judgment gameplay now has the first playable guidance loop 
 - Phase 1 implementation plan: `docs/planning/mvp_implementation_plan.md`
 - Test strategy: `docs/testing/test_strategy.md`
 - Source attribution register: `docs/product/source_attribution.md`
+- Market Signal Scout scenario: `docs/product/scenarios/market_signal_scout.md`
+- Market witness governance: `docs/product/scenarios/market_witness_governance.md`
+- Reward mode boundary: `docs/product/reward_mode_boundary.md`
 - Development workflow: `docs/process/development_workflow.md`
 - Documentation structure guide: `docs/README.md`
 

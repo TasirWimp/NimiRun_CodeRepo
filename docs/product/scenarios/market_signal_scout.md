@@ -55,6 +55,16 @@ historic chart data -> live trading model
 
 The player is teaching a proposal policy, not a trading strategy.
 
+Related governance artifacts:
+
+- `docs/product/scenarios/market_witness_governance.md` governs how historical
+  market material becomes attributed static witnesses, clues, hidden pressure,
+  and hindsight cards.
+- `src/game/scenarios/marketWitnessLedger.js` is the current static witness
+  ledger scaffold for level-to-witness mapping and proposal visibility guards.
+- `docs/product/reward_mode_boundary.md` keeps Pocket Spark, trace quality, and
+  finish cards separate from any future NIM-denominated reward experiment.
+
 ## Game-Theory Contract
 
 Market Signal Scout is an imperfect-information route game. The player shapes

@@ -166,7 +166,7 @@ preferred_reward_basis:
   learning_quality:
     - bot_policy_improved
     - unsafe_bias_corrected
-    - future_proposal_gets_more cautious in the right place
+    - future_proposals_become_more_cautious_in_the_right_place
 ```
 
 Low-weight or diagnostic-only:
