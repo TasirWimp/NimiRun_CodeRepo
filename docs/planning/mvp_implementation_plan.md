@@ -1419,6 +1419,25 @@ Test plan:
 - screenshots/demo assets are attributed if used.
 - competition scorecard reflects the current vertical-slice status.
 
+PB-POLISH-001 Golden Signal 60-second path and witness-card polish:
+
+Status: implemented for local browser, mobile viewport, and Android emulator
+Nimiq Pay local Mini App smoke checks on June 8, 2026.
+
+- expose a compact historic witness cue in the HUD,
+- show a `Historic Witness` card with source headline/title, mechanics
+  connector, source provider, and "not trading advice" boundary when a
+  witness-bearing node is selected or inspected,
+- preserve trace cards as the archive while letting the witness card be the
+  immediate post-inspection reveal for Support Check / Futures Gate surfaces,
+- keep the first useful route legible: the bot wants the bright signal, the
+  player can reveal unknowns, redirect to Support Check, approve inspection,
+  and carry trace residue forward,
+- use a phone-portrait layout for narrow browser viewports and high-density
+  Nimiq Pay WebViews so the game does not collapse into a tiny desktop strip,
+- document hosted Vercel usage for normal browser and Nimiq Pay
+  emulator/device checks.
+
 Acceptance:
 
 - one vertical slice is polished enough for early access feedback,

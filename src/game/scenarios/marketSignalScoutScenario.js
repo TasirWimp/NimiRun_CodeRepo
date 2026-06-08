@@ -22,6 +22,7 @@ const MARKET_SIGNAL_SCOUT_SCENARIO = Object.freeze({
     witnessWindowId: GOLDEN_SIGNAL_WINDOW_ID,
     witnessWindow: getBtcusdtWitnessWindowById(GOLDEN_SIGNAL_WINDOW_ID),
     visibleWitnessIds: getVisibleMarketWitnessIds(LEVEL_ID),
+    featuredWitnessIds: ['btc_futures_gate_cboe_2017_12_04'],
   }),
   viewport: {
     width: 640,

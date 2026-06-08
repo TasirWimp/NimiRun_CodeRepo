@@ -3,11 +3,14 @@ import Phaser from 'phaser';
 
 import PocketBotWorkshop from './scenes/PocketBotWorkshop.js';
 import SideScrollerScene from './scenes/Street.js';
+import { getInitialGameSize } from './ui/gameViewport.js';
+
+const gameSize = getInitialGameSize(window);
 
 const config = {
     type: Phaser.AUTO,
-    width: 1024,
-    height: 768,
+    width: gameSize.width,
+    height: gameSize.height,
     parent: 'game-container',
     backgroundColor: '#000000',
     scale: {

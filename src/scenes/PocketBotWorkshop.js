@@ -39,6 +39,11 @@ import {
   createTracePanelContent,
   formatTraceArchiveLabel,
 } from '../ui/tracePanel.js';
+import {
+  createWitnessHudSummary,
+  createWitnessPanelContent,
+} from '../ui/witnessPanel.js';
+import { createWorkshopLayout } from '../ui/workshopLayout.js';
 
 const COLORS = Object.freeze({
   background: 0x050b10,
@@ -60,13 +65,6 @@ const COLORS = Object.freeze({
   residueShadow: 0x2d2438,
   warningRed: 0xff5a3d,
   safeGreen: 0x58d68d,
-});
-
-const LAYOUT = Object.freeze({
-  map: { x: 32, y: 112, width: 650, height: 430 },
-  hud: { x: 704, y: 112, width: 288, height: 430 },
-  details: { x: 32, y: 558, width: 470, height: 170 },
-  proposal: { x: 520, y: 558, width: 472, height: 170 },
 });
 
 const NODE_STYLES = Object.freeze({
@@ -123,11 +121,27 @@ const NODE_ASSETS = Object.freeze({
   },
 });
 
-function toWorldPosition(node) {
+function toWorldPosition(node, layout, mapSize) {
+  const scaleX = layout.map.innerWidth / mapSize.width;
+  const usableHeight = layout.isMobile ? layout.map.innerHeight - 28 : layout.map.innerHeight;
+  const scaleY = usableHeight / mapSize.height;
+
   return {
-    x: LAYOUT.map.x + 5 + node.position.x,
-    y: LAYOUT.map.y + 5 + node.position.y,
+    x: layout.map.x + 5 + node.position.x * scaleX,
+    y: layout.map.y + 5 + node.position.y * scaleY,
   };
+}
+
+function scaleValue(value, scale, minimum = 1) {
+  return Math.max(minimum, Math.round(value * scale));
+}
+
+function scaleSignedValue(value, scale, minimum = 1) {
+  if (value === 0) {
+    return 0;
+  }
+
+  return Math.sign(value) * Math.max(minimum, Math.round(Math.abs(value) * scale));
 }
 
 function createTextStyle(overrides = {}) {
@@ -163,7 +177,10 @@ function formatList(items, fallback = 'none') {
     return fallback;
   }
 
-  return items.join(', ');
+  const visible = items.slice(0, 2).join(', ');
+  const remaining = items.length - 2;
+
+  return remaining > 0 ? `${visible}, +${remaining} more` : visible;
 }
 
 function formatGuidanceValue(userGuidance) {
@@ -180,6 +197,25 @@ function truncateText(value, limit = 120) {
   return `${value.slice(0, limit - 3)}...`;
 }
 
+function createNodeDetailLines({ knownState, riskState, inspectSummary, remainingUnknowns, witnessPanel }) {
+  if (!witnessPanel) {
+    return [
+      `State: ${knownState}`,
+      `Risk: ${riskState}`,
+      `Inspect: ${inspectSummary}`,
+      `Residue: ${formatList(remainingUnknowns)}`,
+    ];
+  }
+
+  return [
+    `State: ${knownState}`,
+    `Risk: ${riskState}`,
+    `Witness: ${witnessPanel.witness.title}`,
+    `Game: ${witnessPanel.witness.mechanicsConnector}`,
+    'Not: trading advice',
+  ];
+}
+
 export default class PocketBotWorkshop extends Phaser.Scene {
   constructor() {
     super({ key: 'PocketBotWorkshop' });
@@ -191,6 +227,12 @@ export default class PocketBotWorkshop extends Phaser.Scene {
 
   create() {
     this.mapScenario = createMarketSignalScoutScenario();
+    this.layout = createWorkshopLayout(this.scale.width, this.scale.height);
+    this.mapSize = this.mapScenario.map || { width: 640, height: 420 };
+    this.mapScale = Math.min(
+      this.layout.map.innerWidth / this.mapSize.width,
+      this.layout.map.innerHeight / this.mapSize.height
+    );
     this.guidanceState = createPocketBotState(this.mapScenario);
     this.resourceState = this.guidanceState.mapState.resources;
     this.miniAppEnvironment = getMiniAppEnvironment(window);
@@ -211,52 +253,75 @@ export default class PocketBotWorkshop extends Phaser.Scene {
     this.setStatus(this.getDefaultStatus());
   }
 
+  getNodePosition(node) {
+    return toWorldPosition(node, this.layout, this.mapSize);
+  }
+
+  scaleMapValue(value, minimum = 1) {
+    return scaleValue(value, this.mapScale, minimum);
+  }
+
   drawBackground() {
     const { width, height } = this.scale;
+    const headerHeight = this.layout.isMobile ? 88 : 96;
 
     this.add.rectangle(0, 0, width, height, COLORS.background).setOrigin(0);
-    this.add.rectangle(0, 0, width, 96, 0x071018, 0.98).setOrigin(0);
-    this.add.rectangle(0, 96, width, 1, COLORS.panelStroke, 0.6).setOrigin(0);
+    this.add.rectangle(0, 0, width, headerHeight, 0x071018, 0.98).setOrigin(0);
+    this.add.rectangle(0, headerHeight, width, 1, COLORS.panelStroke, 0.6).setOrigin(0);
 
     for (let index = 0; index < 42; index += 1) {
       const x = 18 + ((index * 73) % width);
-      const y = 18 + ((index * 41) % 70);
+      const y = 18 + ((index * 41) % Math.max(24, headerHeight - 24));
       const alpha = 0.18 + ((index % 5) * 0.04);
       this.add.circle(x, y, 1.2, 0xf3e4c2, alpha);
     }
   }
 
   drawHeader() {
-    this.add.text(32, 22, this.mapScenario.title, {
-      ...createTextStyle({ fontSize: '30px', color: '#f2b33d', fontStyle: '700' }),
+    const header = this.layout.header;
+
+    this.add.text(header.titleX, header.titleY, this.mapScenario.title, {
+      ...createTextStyle({ fontSize: header.titleSize, color: '#f2b33d', fontStyle: '700' }),
     });
 
-    this.add.text(34, 62, this.mapScenario.supportLine, {
-      ...createTextStyle({ fontSize: '15px', color: '#f3e4c2' }),
+    this.add.text(header.supportX, header.supportY, this.mapScenario.supportLine, {
+      ...createTextStyle({ fontSize: header.supportSize, color: '#f3e4c2' }),
     });
 
     const environmentText = this.miniAppEnvironment.isNimiqPay
       ? `Mini App: Nimiq Pay detected | ${this.miniAppEnvironment.language} | ${this.miniAppEnvironment.network}`
       : `Mini App: local simulated mode | ${this.miniAppEnvironment.language}`;
 
-    this.add.text(704, 28, environmentText, {
-      ...createTextStyle({ fontSize: '13px', color: '#f3e4c2', align: 'right' }),
-      wordWrap: { width: 280 },
+    this.add.text(header.environmentX, header.environmentY, environmentText, {
+      ...createTextStyle({
+        fontSize: this.layout.isMobile ? '9px' : '13px',
+        color: '#f3e4c2',
+        align: 'right',
+      }),
+      wordWrap: { width: header.environmentWidth },
     });
 
-    this.add.text(704, 58, 'Mainnet wallet actions disabled', {
-      ...createTextStyle({ fontSize: '13px', color: '#aab4bd', align: 'right' }),
-      wordWrap: { width: 280 },
+    this.add.text(header.environmentX, this.layout.isMobile ? header.environmentY + 28 : 58, 'Mainnet wallet actions disabled', {
+      ...createTextStyle({
+        fontSize: this.layout.isMobile ? '9px' : '13px',
+        color: '#aab4bd',
+        align: 'right',
+      }),
+      wordWrap: { width: header.environmentWidth },
     });
 
-    this.statusText = this.add.text(34, 80, '', {
-      ...createTextStyle({ fontSize: '12px', color: '#48a8ff', fontStyle: '700' }),
-      wordWrap: { width: 620 },
+    this.statusText = this.add.text(header.statusX, header.statusY, '', {
+      ...createTextStyle({
+        fontSize: this.layout.isMobile ? '10px' : '12px',
+        color: '#48a8ff',
+        fontStyle: '700',
+      }),
+      wordWrap: { width: header.statusWidth },
     });
   }
 
   drawMap() {
-    createPanel(this, LAYOUT.map);
+    createPanel(this, this.layout.map);
 
     this.drawMapGround();
     this.drawPaths();
@@ -265,18 +330,22 @@ export default class PocketBotWorkshop extends Phaser.Scene {
   }
 
   drawMapGround() {
-    const map = LAYOUT.map;
+    const map = this.layout.map;
 
     if (this.textures.exists('source_ocean_moonlit_640x420')) {
       this.add
         .image(map.x + 5, map.y + 5, 'source_ocean_moonlit_640x420')
         .setOrigin(0)
-        .setDisplaySize(640, 420);
+        .setDisplaySize(map.innerWidth, map.innerHeight);
     } else {
-      this.add.rectangle(map.x + 5, map.y + 5, 640, 420, COLORS.sourceNight, 0.9).setOrigin(0);
+      this.add
+        .rectangle(map.x + 5, map.y + 5, map.innerWidth, map.innerHeight, COLORS.sourceNight, 0.9)
+        .setOrigin(0);
     }
 
-    this.add.rectangle(map.x + 5, map.y + 5, 640, 420, COLORS.sourceNight, 0.12).setOrigin(0);
+    this.add
+      .rectangle(map.x + 5, map.y + 5, map.innerWidth, map.innerHeight, COLORS.sourceNight, 0.12)
+      .setOrigin(0);
   }
 
   drawPaths() {
@@ -287,8 +356,8 @@ export default class PocketBotWorkshop extends Phaser.Scene {
         continue;
       }
 
-      const start = toWorldPosition(from);
-      const end = toWorldPosition(to);
+      const start = this.getNodePosition(from);
+      const end = this.getNodePosition(to);
       const style = this.getPathStyle(path);
       const midX = (start.x + end.x) / 2;
       const midY = (start.y + end.y) / 2;
@@ -300,12 +369,12 @@ export default class PocketBotWorkshop extends Phaser.Scene {
           .image(midX, midY, style.asset)
           .setOrigin(0.5)
           .setRotation(angle)
-          .setDisplaySize(length, style.height)
+          .setDisplaySize(length, this.scaleMapValue(style.height, 10))
           .setAlpha(style.alpha);
       } else {
         this.add
           .graphics()
-          .lineStyle(style.width, style.color, style.alpha)
+          .lineStyle(this.scaleMapValue(style.width, 2), style.color, style.alpha)
           .lineBetween(start.x, start.y, end.x, end.y);
       }
     }
@@ -313,7 +382,7 @@ export default class PocketBotWorkshop extends Phaser.Scene {
 
   drawNodes() {
     for (const node of this.mapScenario.nodes) {
-      const position = toWorldPosition(node);
+      const position = this.getNodePosition(node);
       const style = this.getNodeStyle(node);
       const asset = this.getNodeAsset(node);
       const isFogged = node.visibility === NODE_VISIBILITY.FOGGED;
@@ -322,7 +391,7 @@ export default class PocketBotWorkshop extends Phaser.Scene {
       if (isFogged) {
         this.add
           .image(position.x, position.y, 'fog_residue_cloud_192')
-          .setDisplaySize(106, 106)
+          .setDisplaySize(this.scaleMapValue(106, 54), this.scaleMapValue(106, 54))
           .setAlpha(0.72);
       }
 
@@ -331,21 +400,21 @@ export default class PocketBotWorkshop extends Phaser.Scene {
       if (isHiddenPressure && !isFogged && this.textures.exists('fog_residue_overlay_96')) {
         this.add
           .image(position.x, position.y, 'fog_residue_overlay_96')
-          .setDisplaySize(72, 72)
+          .setDisplaySize(this.scaleMapValue(72, 36), this.scaleMapValue(72, 36))
           .setAlpha(0.28);
       }
 
-      this.add.text(position.x, position.y + 32, node.label, {
+      this.add.text(position.x, position.y + this.scaleMapValue(32, 18), node.label, {
         ...createTextStyle({
-          fontSize: '12px',
+          fontSize: this.layout.isMobile ? '9px' : '12px',
           color: isFogged ? '#aab4bd' : '#f3e4c2',
           align: 'center',
         }),
-        wordWrap: { width: 92 },
+        wordWrap: { width: this.scaleMapValue(92, 58) },
       }).setOrigin(0.5, 0);
 
       const hitArea = this.add
-        .circle(position.x, position.y, node.interaction.radius, 0xffffff, 0.001)
+        .circle(position.x, position.y, this.scaleMapValue(node.interaction.radius, 24), 0xffffff, 0.001)
         .setInteractive({ useHandCursor: true });
 
       hitArea.on('pointerover', () => this.previewNode(node.id));
@@ -358,37 +427,48 @@ export default class PocketBotWorkshop extends Phaser.Scene {
 
   drawPocketBotMarker() {
     const startNode = getNodeById(this.mapScenario, 'source-edge');
-    const position = toWorldPosition(startNode);
+    const position = this.getNodePosition(startNode);
+    const botOffset = this.scaleMapValue(58, 30);
 
     if (this.textures.exists('node_ring_current_96')) {
       this.add
-        .image(position.x, position.y - 58, 'node_ring_current_96')
-        .setDisplaySize(82, 82)
+        .image(position.x, position.y - botOffset, 'node_ring_current_96')
+        .setDisplaySize(this.scaleMapValue(82, 40), this.scaleMapValue(82, 40))
         .setAlpha(0.82);
     }
 
     if (this.textures.exists('bot_v2_idle')) {
       this.add
-        .image(position.x, position.y - 58, 'bot_v2_idle')
-        .setDisplaySize(78, 78);
+        .image(position.x, position.y - botOffset, 'bot_v2_idle')
+        .setDisplaySize(this.scaleMapValue(78, 38), this.scaleMapValue(78, 38));
     } else {
-      const bodyPoints = [0, -25, 23, -12, 23, 12, 0, 25, -23, 12, -23, -12];
+      const bodyPoints = [0, -25, 23, -12, 23, 12, 0, 25, -23, 12, -23, -12]
+        .map((point) => scaleSignedValue(point, this.mapScale, 1));
       this.add
-        .polygon(position.x, position.y - 58, bodyPoints, COLORS.nimiqGold, 0.94)
+        .polygon(position.x, position.y - botOffset, bodyPoints, COLORS.nimiqGold, 0.94)
         .setStrokeStyle(3, COLORS.emberGold, 0.95);
-      this.add.rectangle(position.x, position.y - 58, 28, 16, COLORS.sourceNight, 0.96);
-      this.add.circle(position.x - 8, position.y - 58, 3, COLORS.nimiqGold, 1);
-      this.add.circle(position.x + 8, position.y - 58, 3, COLORS.nimiqGold, 1);
+      this.add.rectangle(position.x, position.y - botOffset, this.scaleMapValue(28, 14), this.scaleMapValue(16, 8), COLORS.sourceNight, 0.96);
+      this.add.circle(position.x - this.scaleMapValue(8, 4), position.y - botOffset, this.scaleMapValue(3, 2), COLORS.nimiqGold, 1);
+      this.add.circle(position.x + this.scaleMapValue(8, 4), position.y - botOffset, this.scaleMapValue(3, 2), COLORS.nimiqGold, 1);
     }
 
-    this.add.text(position.x, position.y - 28, 'Pocket Bot', {
-      ...createTextStyle({ fontSize: '12px', color: '#f2b33d', align: 'center' }),
+    this.add.text(position.x, position.y - this.scaleMapValue(28, 16), 'Pocket Bot', {
+      ...createTextStyle({
+        fontSize: this.layout.isMobile ? '9px' : '12px',
+        color: '#f2b33d',
+        align: 'center',
+      }),
     }).setOrigin(0.5);
   }
 
   drawHud() {
+    if (this.layout.isMobile) {
+      this.drawMobileHud();
+      return;
+    }
+
     const resources = this.guidanceState.mapState.resources;
-    const hud = LAYOUT.hud;
+    const hud = this.layout.hud;
 
     createPanel(this, hud, COLORS.panelStroke, 'hud_panel_frame_v2');
 
@@ -400,6 +480,17 @@ export default class PocketBotWorkshop extends Phaser.Scene {
       ...createTextStyle({ fontSize: '13px', color: '#f3e4c2' }),
       wordWrap: { width: 246 },
     });
+
+    const witnessSummary = createWitnessHudSummary(
+      this.mapScenario.level?.featuredWitnessIds || this.mapScenario.level?.visibleWitnessIds
+    );
+
+    if (witnessSummary) {
+      this.add.text(hud.x + 20, hud.y + 82, witnessSummary, {
+        ...createTextStyle({ fontSize: '10px', color: '#d6c08f' }),
+        wordWrap: { width: 246 },
+      });
+    }
 
     this.attentionMeter = this.drawMeter({
       x: hud.x + 20,
@@ -455,12 +546,87 @@ export default class PocketBotWorkshop extends Phaser.Scene {
       .on('pointerdown', () => this.renderLatestTraceCard());
   }
 
-  drawMeter({ x, y, label, value, color, current, max }) {
-    this.add.text(x, y, label, {
-      ...createTextStyle({ fontSize: '14px', color: '#f3e4c2', fontStyle: '700' }),
+  drawMobileHud() {
+    const resources = this.guidanceState.mapState.resources;
+    const hud = this.layout.hud;
+
+    createPanel(this, hud, COLORS.panelStroke, 'hud_panel_frame_v2');
+
+    this.add.text(hud.x + 14, hud.y + 10, 'Current Run', {
+      ...createTextStyle({ fontSize: '14px', color: '#f2b33d', fontStyle: '700' }),
     });
-    const valueText = this.add.text(x + 184, y, value, {
-      ...createTextStyle({ fontSize: '14px', color: '#f3e4c2', align: 'right' }),
+
+    const witnessSummary = createWitnessHudSummary(
+      this.mapScenario.level?.featuredWitnessIds || this.mapScenario.level?.visibleWitnessIds
+    );
+
+    this.add.text(hud.x + 14, hud.y + 32, witnessSummary || this.mapScenario.goal, {
+      ...createTextStyle({ fontSize: '9px', color: '#d6c08f' }),
+      wordWrap: { width: hud.width - 28 },
+    });
+
+    this.attentionMeter = this.drawMeter({
+      x: hud.x + 14,
+      y: hud.y + 58,
+      label: resources.botAttention.label,
+      value: `${resources.botAttention.current}/${resources.botAttention.max}`,
+      color: COLORS.attentionBlue,
+      current: resources.botAttention.current,
+      max: resources.botAttention.max,
+    });
+
+    const pocketDisplay = createNimiqPocketDisplay(this.nimiqPocketStatus);
+
+    this.add.circle(hud.x + 205, hud.y + 63, 5, COLORS.nimiqGold, 0.95);
+    this.add.text(hud.x + 218, hud.y + 58, resources.nimiqPocket.label, {
+      ...createTextStyle({ fontSize: '11px', color: '#f3e4c2', fontStyle: '700' }),
+    });
+    this.nimiqValueText = this.add.text(hud.x + 318, hud.y + 58, pocketDisplay.value, {
+      ...createTextStyle({ fontSize: '11px', color: '#f3e4c2', align: 'right' }),
+    });
+    this.nimiqPocketStatusText = this.add.text(hud.x + 218, hud.y + 78, pocketDisplay.status, {
+      ...createTextStyle({ fontSize: '9px', color: '#aab4bd' }),
+      wordWrap: { width: 96 },
+    });
+    createGuidanceButton(this, {
+      x: hud.x + hud.width - 62,
+      y: hud.y + 76,
+      width: 48,
+      height: 20,
+      label: 'Check',
+      onClick: () => this.handleCheckPocketStatus(),
+    });
+
+    this.add.circle(hud.x + 19, hud.y + 110, 5, COLORS.warningRed, 0.95);
+    this.add.text(hud.x + 32, hud.y + 105, 'Guidance', {
+      ...createTextStyle({ fontSize: '11px', color: '#f3e4c2', fontStyle: '700' }),
+    });
+    this.userGuidanceValueText = this.add.text(hud.x + 92, hud.y + 105, formatGuidanceValue(resources.userGuidance), {
+      ...createTextStyle({ fontSize: '11px', color: '#f3e4c2' }),
+    });
+
+    this.add.text(hud.x + 196, hud.y + 105, 'Trace Archive', {
+      ...createTextStyle({ fontSize: '12px', color: '#f2b33d', fontStyle: '700' }),
+    });
+    this.traceArchiveText = this.add.text(hud.x + 196, hud.y + 122, 'No trace card yet', {
+      ...createTextStyle({ fontSize: '10px', color: '#aab4bd' }),
+    });
+    this.add
+      .rectangle(hud.x + 188, hud.y + 98, hud.width - 202, 36, 0xffffff, 0.001)
+      .setOrigin(0)
+      .setInteractive({ useHandCursor: true })
+      .on('pointerdown', () => this.renderLatestTraceCard());
+  }
+
+  drawMeter({ x, y, label, value, color, current, max }) {
+    const isMobile = this.layout.isMobile;
+
+    this.add.text(x, y, label, {
+      ...createTextStyle({ fontSize: isMobile ? '11px' : '14px', color: '#f3e4c2', fontStyle: '700' }),
+    });
+    const segmentStep = isMobile ? 14 : 20;
+    const valueText = this.add.text(x + (isMobile ? 130 : 184), y, value, {
+      ...createTextStyle({ fontSize: isMobile ? '11px' : '14px', color: '#f3e4c2', align: 'right' }),
     });
 
     const segments = [];
@@ -468,7 +634,14 @@ export default class PocketBotWorkshop extends Phaser.Scene {
     for (let index = 0; index < max; index += 1) {
       const filled = index < current;
       const segment = this.add
-        .rectangle(x + index * 20, y + 30, 14, 12, filled ? color : COLORS.panelSoft, 1)
+        .rectangle(
+          x + index * segmentStep,
+          y + (isMobile ? 22 : 30),
+          isMobile ? 10 : 14,
+          isMobile ? 9 : 12,
+          filled ? color : COLORS.panelSoft,
+          1
+        )
         .setOrigin(0)
         .setStrokeStyle(1, filled ? color : COLORS.panelDimStroke, 0.9);
       segments.push(segment);
@@ -478,12 +651,15 @@ export default class PocketBotWorkshop extends Phaser.Scene {
   }
 
   drawValueRow({ x, y, label, value, color }) {
-    this.add.circle(x + 7, y + 7, 7, color, 0.95);
+    const isMobile = this.layout.isMobile;
+    const dotRadius = isMobile ? 5 : 7;
+
+    this.add.circle(x + dotRadius, y + dotRadius, dotRadius, color, 0.95);
     this.add.text(x + 24, y, label, {
-      ...createTextStyle({ fontSize: '14px', color: '#f3e4c2', fontStyle: '700' }),
+      ...createTextStyle({ fontSize: isMobile ? '11px' : '14px', color: '#f3e4c2', fontStyle: '700' }),
     });
-    return this.add.text(x + 176, y, value, {
-      ...createTextStyle({ fontSize: '14px', color: '#f3e4c2', align: 'right' }),
+    return this.add.text(x + (isMobile ? 92 : 176), y, value, {
+      ...createTextStyle({ fontSize: isMobile ? '11px' : '14px', color: '#f3e4c2', align: 'right' }),
     });
   }
 
@@ -517,61 +693,73 @@ export default class PocketBotWorkshop extends Phaser.Scene {
   }
 
   drawBottomPanels() {
-    createPanel(this, LAYOUT.details, COLORS.panelDimStroke, 'trace_card_frame_v2');
-    createPanel(this, LAYOUT.proposal, COLORS.panelStroke, 'proposal_card_frame_v2');
+    const { details, proposal, isMobile } = this.layout;
 
-    this.detailTitle = this.add.text(LAYOUT.details.x + 18, LAYOUT.details.y + 16, '', {
-      ...createTextStyle({ fontSize: '17px', color: '#f2b33d', fontStyle: '700' }),
+    createPanel(this, details, COLORS.panelDimStroke, 'trace_card_frame_v2');
+    createPanel(this, proposal, COLORS.panelStroke, 'proposal_card_frame_v2');
+
+    this.detailTitle = this.add.text(details.x + 18, details.y + (isMobile ? 12 : 16), '', {
+      ...createTextStyle({ fontSize: isMobile ? '14px' : '17px', color: '#f2b33d', fontStyle: '700' }),
     });
-    this.detailBody = this.add.text(LAYOUT.details.x + 18, LAYOUT.details.y + 48, '', {
-      ...createTextStyle({ fontSize: '13px', color: '#f3e4c2' }),
-      lineSpacing: 3,
-      wordWrap: { width: 430 },
+    this.detailBody = this.add.text(details.x + 18, details.y + (isMobile ? 38 : 48), '', {
+      ...createTextStyle({ fontSize: isMobile ? '11px' : '13px', color: '#f3e4c2' }),
+      lineSpacing: isMobile ? 1 : 3,
+      wordWrap: { width: details.width - 40 },
     });
 
     this.drawProposalPreview();
   }
 
   drawProposalPreview() {
-    const x = LAYOUT.proposal.x + 18;
-    const y = LAYOUT.proposal.y + 16;
+    const { proposal, isMobile } = this.layout;
+    const x = proposal.x + 18;
+    const y = proposal.y + (isMobile ? 12 : 16);
 
     this.proposalTitleText = this.add.text(x, y, 'Bot Proposal', {
-      ...createTextStyle({ fontSize: '17px', color: '#f2b33d', fontStyle: '700' }),
+      ...createTextStyle({ fontSize: isMobile ? '14px' : '17px', color: '#f2b33d', fontStyle: '700' }),
     });
-    this.proposalMoveText = this.add.text(x, y + 28, '', {
-      ...createTextStyle({ fontSize: '14px', color: '#f3e4c2', fontStyle: '700' }),
+    this.proposalMoveText = this.add.text(x, y + (isMobile ? 24 : 28), '', {
+      ...createTextStyle({ fontSize: isMobile ? '11px' : '14px', color: '#f3e4c2', fontStyle: '700' }),
     });
-    this.proposalReasonText = this.add.text(x, y + 50, '', {
-      ...createTextStyle({ fontSize: '13px', color: '#f3e4c2' }),
-      wordWrap: { width: 430 },
+    this.proposalReasonText = this.add.text(x, y + (isMobile ? 44 : 50), '', {
+      ...createTextStyle({ fontSize: isMobile ? '10px' : '13px', color: '#f3e4c2' }),
+      wordWrap: { width: proposal.width - 40 },
     });
-    this.proposalCostText = this.add.text(x, y + 88, '', {
-      ...createTextStyle({ fontSize: '13px', color: '#48a8ff' }),
+    this.proposalCostText = this.add.text(x, y + (isMobile ? 91 : 88), '', {
+      ...createTextStyle({ fontSize: isMobile ? '10px' : '13px', color: '#48a8ff' }),
     });
-    this.proposalCheckText = this.add.text(x, y + 104, '', {
-      ...createTextStyle({ fontSize: '13px', color: '#80c84d' }),
+    this.proposalCheckText = this.add.text(x, y + (isMobile ? 106 : 104), '', {
+      ...createTextStyle({ fontSize: isMobile ? '10px' : '13px', color: '#80c84d' }),
     });
 
-    this.drawGuidanceControls(x, y + 122);
+    this.drawGuidanceControls(x, y + (isMobile ? 122 : 122));
     this.updateProposalPanel();
   }
 
   drawGuidanceControls(x, y) {
+    const isMobile = this.layout.isMobile;
     const buttons = [
-      ['Approve', () => this.handleApproveProposal(), 76],
-      ['Why', () => this.handleWhyRoute(), 58],
-      ['Unknowns', () => this.handleRemainingUnknowns(), 78],
-      ['Inspect 1st', () => this.handleInspectFirst(), 82],
-      ['Partial', () => this.handleMarkPartial(), 66],
+      ['Approve', () => this.handleApproveProposal(), isMobile ? 70 : 76],
+      ['Why', () => this.handleWhyRoute(), isMobile ? 52 : 58],
+      ['Unknowns', () => this.handleRemainingUnknowns(), isMobile ? 72 : 78],
+      ['Inspect 1st', () => this.handleInspectFirst(), isMobile ? 78 : 82],
+      ['Partial', () => this.handleMarkPartial(), isMobile ? 62 : 66],
     ];
     let offsetX = 0;
+    let rowY = y;
+    const maxWidth = this.layout.proposal.width - 36;
 
     for (const [label, onClick, width] of buttons) {
+      if (isMobile && offsetX > 0 && offsetX + width > maxWidth) {
+        offsetX = 0;
+        rowY += 26;
+      }
+
       createGuidanceButton(this, {
         x: x + offsetX,
-        y,
+        y: rowY,
         width,
+        height: isMobile ? 22 : 22,
         label,
         onClick,
       });
@@ -586,7 +774,7 @@ export default class PocketBotWorkshop extends Phaser.Scene {
     const nodeLabel = node?.label || proposal.targetNodeId;
 
     this.proposalMoveText?.setText(`${proposal.moveType.toUpperCase()} -> ${nodeLabel}`);
-    this.proposalReasonText?.setText(truncateText(proposal.reason));
+    this.proposalReasonText?.setText(truncateText(proposal.reason, this.layout.isMobile ? 108 : 120));
     this.proposalCostText?.setText(
       `Cost: ${evaluation.cost.botAttention} Bot Attention | Guidance: ${evaluation.cost.userGuidance}`
     );
@@ -664,11 +852,13 @@ export default class PocketBotWorkshop extends Phaser.Scene {
   drawNodeAsset({ node, position, style, asset, isFogged }) {
     const alpha = isFogged ? 0.52 : 0.96;
     const ringAlpha = isFogged ? 0.46 : 0.72;
+    const largeNode = node.kind === NODE_KINDS.FALSE_FINISH || node.kind === NODE_KINDS.SAFE_FINISH;
+    const nodeSize = this.scaleMapValue(largeNode ? 78 : 72, largeNode ? 42 : 38);
 
     if (this.textures.exists(asset.ring)) {
       this.add
         .image(position.x, position.y, asset.ring)
-        .setDisplaySize(76, 76)
+        .setDisplaySize(this.scaleMapValue(76, 40), this.scaleMapValue(76, 40))
         .setAlpha(ringAlpha);
     }
 
@@ -677,18 +867,18 @@ export default class PocketBotWorkshop extends Phaser.Scene {
     if (this.textures.exists(asset.pad)) {
       marker = this.add
         .image(position.x, position.y, asset.pad)
-        .setDisplaySize(node.kind === NODE_KINDS.FALSE_FINISH || node.kind === NODE_KINDS.SAFE_FINISH ? 78 : 72, node.kind === NODE_KINDS.FALSE_FINISH || node.kind === NODE_KINDS.SAFE_FINISH ? 78 : 72)
+        .setDisplaySize(nodeSize, nodeSize)
         .setAlpha(alpha);
     } else {
       marker = this.add
-        .circle(position.x, position.y, 24, style.fill, alpha)
+        .circle(position.x, position.y, this.scaleMapValue(24, 16), style.fill, alpha)
         .setStrokeStyle(isFogged ? 2 : 3, style.stroke, isFogged ? 0.55 : 0.95);
     }
 
     if (this.textures.exists(asset.icon)) {
       this.add
         .image(position.x, position.y, asset.icon)
-        .setDisplaySize(44, 44)
+        .setDisplaySize(this.scaleMapValue(44, 24), this.scaleMapValue(44, 24))
         .setAlpha(isFogged ? 0.62 : 1);
     } else {
       this.add.text(position.x, position.y - 8, isFogged ? '?' : style.icon, {
@@ -704,7 +894,7 @@ export default class PocketBotWorkshop extends Phaser.Scene {
     if (isFogged && this.textures.exists('fog_residue_overlay_96')) {
       this.add
         .image(position.x, position.y, 'fog_residue_overlay_96')
-        .setDisplaySize(82, 82)
+        .setDisplaySize(this.scaleMapValue(82, 42), this.scaleMapValue(82, 42))
         .setAlpha(0.8);
     }
 
@@ -731,15 +921,15 @@ export default class PocketBotWorkshop extends Phaser.Scene {
     }
 
     this.selectedNodeId = nodeId;
-    const position = toWorldPosition(node);
+    const position = this.getNodePosition(node);
 
     if (!this.selectedRing) {
       if (this.textures.exists('node_ring_selected_96')) {
         this.selectedRing = this.add
           .image(position.x, position.y, 'node_ring_selected_96')
-          .setDisplaySize(88, 88);
+          .setDisplaySize(this.scaleMapValue(88, 44), this.scaleMapValue(88, 44));
       } else {
-        this.selectedRing = this.add.circle(position.x, position.y, 32, COLORS.nimiqGold, 0)
+        this.selectedRing = this.add.circle(position.x, position.y, this.scaleMapValue(32, 20), COLORS.nimiqGold, 0)
           .setStrokeStyle(3, COLORS.nimiqGold, 0.98);
       }
     } else {
@@ -755,14 +945,16 @@ export default class PocketBotWorkshop extends Phaser.Scene {
     const riskState = view.pressure?.hidden ? 'Hidden until inspected' : view.pressure?.summary;
     const inspectSummary = view.visibleClue || node.reveal?.inspect?.summary || 'No inspect detail yet.';
     const remainingUnknowns = view.remainingUnknowns.length > 0 ? view.remainingUnknowns : node.residue;
+    const witnessPanel = createWitnessPanelContent(node.witnessIds);
 
     this.detailTitle.setText(node.label);
-    this.detailBody.setText([
-      `State: ${knownState}`,
-      `Risk: ${riskState}`,
-      `Inspect: ${inspectSummary}`,
-      `Residue: ${formatList(remainingUnknowns)}`,
-    ].join('\n'));
+    this.detailBody.setText(createNodeDetailLines({
+      knownState,
+      riskState,
+      inspectSummary,
+      remainingUnknowns,
+      witnessPanel,
+    }).join('\n'));
   }
 
   redirectProposalToNode(node) {
@@ -829,6 +1021,20 @@ export default class PocketBotWorkshop extends Phaser.Scene {
     this.setStatus(traceCard ? 'Latest trace card shown.' : 'No trace card recorded yet.');
   }
 
+  renderWitnessCardForNode(nodeId) {
+    const node = getNodeById(this.mapScenario, nodeId);
+    const panel = createWitnessPanelContent(node?.witnessIds);
+
+    if (!panel) {
+      return false;
+    }
+
+    this.detailTitle.setText(panel.title);
+    this.detailBody.setText(panel.lines.join('\n'));
+    this.setStatus(`Historic witness revealed for ${node.label}.`);
+    return true;
+  }
+
   handleApproveProposal() {
     const targetNodeId = this.guidanceState.pendingProposal.targetNodeId;
     const result = approvePendingProposal(this.guidanceState);
@@ -839,7 +1045,12 @@ export default class PocketBotWorkshop extends Phaser.Scene {
 
     if (result.applied) {
       this.selectNode(targetNodeId, { redirectProposal: false });
-      this.renderLatestTraceCard();
+      const witnessShown = result.state.mapState.inspectedNodeIds.includes(targetNodeId) &&
+        this.renderWitnessCardForNode(targetNodeId);
+
+      if (!witnessShown) {
+        this.renderLatestTraceCard();
+      }
       const lessonApplied =
         this.guidanceState.sessionLesson?.appliedToProposalId === this.guidanceState.pendingProposal.id;
       this.setStatus(

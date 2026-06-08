@@ -94,6 +94,12 @@ describe('Market Signal Scout Golden Signal scenario', () => {
     expect(getNodeById(scenario, 'support-check').witnessIds).toContain(
       'btc_futures_gate_cboe_2017_12_04'
     );
+    expect(scenario.level.featuredWitnessIds).toEqual([
+      'btc_futures_gate_cboe_2017_12_04',
+    ]);
+    expect(scenario.level.visibleWitnessIds).not.toContain(
+      'btc_futures_gate_cboe_2017_12_04'
+    );
   });
 
   it('starts with a bot proposal to act on a bright signal while key unknowns remain visible', () => {

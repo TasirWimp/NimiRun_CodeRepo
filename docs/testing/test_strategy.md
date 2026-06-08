@@ -592,3 +592,33 @@ Phase 1 should be considered tested enough for the first milestone when:
 - manual acceptance checks include at least one inspect-first correction and one visible remaining-unknown/residue case,
 - final status can distinguish safe finish, partial finish, false finish, and open run,
 - normal player-facing UI uses the game glossary rather than raw CRPM terms.
+
+## PB-POLISH-001 Checks
+
+Golden Signal polish must verify:
+
+- the HUD shows a compact historical witness cue without trading instructions,
+- selecting or inspecting Support Check / Futures Gate can reveal a witness card
+  with source headline/title, mechanics connector, source provider, and an
+  explicit "not trading advice" boundary,
+- the 60-second path remains usable on a phone-sized viewport:
+  Unknowns -> Support Check -> Approve -> trace/witness reveal,
+- high-density Nimiq Pay WebViews are classified as phone portrait surfaces
+  rather than desktop canvases,
+- trace archive remains reachable after the witness card is shown,
+- Vercel deployment usage is documented for hosted browser and Nimiq Pay
+  emulator/device checks,
+- no Mini App provider, NIM status, sign/send, or mainnet boundary changes are
+  introduced unless the platform adapter is intentionally changed.
+
+Verification on June 8, 2026:
+
+- local browser desktop smoke check rendered the Golden Signal scene with no
+  console errors,
+- browser phone viewport `390x844` completed Support Check selection,
+  approval, Historic Witness reveal, and Trace Archive opening,
+- Android emulator Nimiq Pay Testnet opened the local Mini App through the
+  Mini Apps menu and `10.0.2.2` recent entry, rendered the phone-portrait
+  layout, selected Support Check, approved inspection, and showed the Historic
+  Witness card with attention reduced to `8/10`,
+- no sign, send, payment, checkout, top-up, or mainnet action was triggered.
