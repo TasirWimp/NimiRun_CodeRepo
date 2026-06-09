@@ -1438,6 +1438,25 @@ Nimiq Pay local Mini App smoke checks on June 8, 2026.
 - document hosted Vercel usage for normal browser and Nimiq Pay
   emulator/device checks.
 
+PB-POLISH-002 Hosted Vercel/Nimiq Pay submission verification:
+
+Status: URL recorded; hosted browser and Nimiq Pay checks pending.
+
+- record the active hosted Vercel URL in `docs/architecture/deployment.md`
+  and `docs/product/competition_scorecard.md` once the project owner confirms
+  the deployment target. Canonical URL:
+  `https://nimi-run-code-repo.vercel.app`,
+- open that URL in a normal browser and verify the Phaser scene plus
+  same-origin `/api/route-proposal` relay behavior,
+- open the same hosted URL inside Nimiq Pay Mini Apps on the Android emulator
+  or a real phone,
+- run the 60-second judge path: Support Check -> Approve -> Historic Witness
+  -> Trace Archive,
+- confirm the Mini App shell still shows Nimiq Pay/local status correctly and
+  does not trigger sign, send, checkout, top-up, payment, or mainnet authority,
+- update the test strategy and competition scorecard with the hosted
+  verification result.
+
 Acceptance:
 
 - one vertical slice is polished enough for early access feedback,

@@ -622,3 +622,21 @@ Verification on June 8, 2026:
   layout, selected Support Check, approved inspection, and showed the Historic
   Witness card with attention reduced to `8/10`,
 - no sign, send, payment, checkout, top-up, or mainnet action was triggered.
+
+## PB-POLISH-002 Checks
+
+Hosted submission verification must not be inferred from the local Mini App
+check. It must verify:
+
+- the active Production Vercel URL is recorded in the deployment doc and
+  competition scorecard: `https://nimi-run-code-repo.vercel.app`,
+- the hosted app opens in a normal browser and renders the Golden Signal scene,
+- same-origin `/api/route-proposal` works in the hosted environment without
+  exposing provider keys,
+- the hosted URL opens inside Nimiq Pay Mini Apps on an emulator or real phone,
+- the 60-second judge path works inside Nimiq Pay:
+  Support Check -> Approve -> Historic Witness -> Trace Archive,
+- the Mini App shell does not trigger sign, send, payment, checkout, top-up, or
+  mainnet authority,
+- if hosted verification is skipped or blocked, the reason is recorded before
+  submission readiness is claimed.

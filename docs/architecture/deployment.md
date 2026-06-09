@@ -50,6 +50,20 @@ Use Production and Preview scopes as needed. Do not prefix secret names with
 After changing Vercel environment variables, trigger a new deployment. Existing
 deployments keep the values they were built or invoked with.
 
+## Deployment Target Status
+
+Current hosted Vercel URL:
+
+```text
+https://nimi-run-code-repo.vercel.app
+```
+
+This is the canonical public app URL for submission and Nimiq Pay Mini Apps
+checks. Deployment-specific URLs can be useful for testing one exact deployment,
+but the stable domain above is the URL to record in competition-facing docs.
+Use a public app URL only; never record deployment secrets, provider keys,
+private dashboard URLs, or local `.env` values.
+
 ## Vercel Deployment Use
 
 Use this path when testing the hosted Mini App candidate instead of the local

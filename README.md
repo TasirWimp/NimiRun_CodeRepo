@@ -94,6 +94,12 @@ for the Vite build output. Configure `NIMIRUN_LLM_MODE`,
 `OPENAI_ROUTE_PROPOSAL_MODEL`, and `OPENAI_API_KEY` in Vercel Project Settings
 -> Environment Variables.
 
+Current hosted app URL:
+
+```text
+https://nimi-run-code-repo.vercel.app
+```
+
 ## Project Structure
 
 ```text
