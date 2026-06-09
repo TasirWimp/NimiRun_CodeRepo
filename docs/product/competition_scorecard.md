@@ -35,8 +35,10 @@ documented exception accepted by the project owner.
 
 - First impression:
 - Mobile readability: pass for local browser phone viewport and Android
-  emulator Nimiq Pay local Mini App check on June 8, 2026; hosted Vercel check
-  remains blocked until the public URL is recorded and tested.
+  emulator Nimiq Pay local Mini App check on June 8, 2026. A June 9 hosted
+  Nimiq Pay check exposed a desktop-canvas regression; local WebView metric
+  fallback now fixes the phone canvas smoke, but hosted Vercel still needs
+  redeploy and recheck.
 - Touch-friendly controls: pass for the Golden Signal Support Check -> Approve
   local/emulator path on June 8, 2026.
 - 60-second onboarding: pass for local/mobile vertical slice; hosted Nimiq Pay
@@ -55,8 +57,8 @@ documented exception accepted by the project owner.
   app URL as of June 9, 2026.
 - Hosted Vercel URL inside Nimiq Pay: blocked until PB-POLISH-002 verifies the
   public URL through the Mini Apps flow. June 9, 2026 check opened the hosted
-  URL but showed a desktop-centered canvas build; portrait-ratio fix is pending
-  redeploy.
+  URL but showed a desktop-centered canvas build; stylesheet and WebView metric
+  fixes are local and pending redeploy/recheck.
 - NIM/USDT support path: NIM testnet/local status path implemented in PB-012 and emulator-verified in Nimiq Pay Testnet on June 7, 2026. USDT support remains future scope.
 - Pocket Bot loop works:
 - Bot Attention spend rules work:
@@ -96,8 +98,8 @@ Current URL status:
 ```text
 Local emulator path: http://10.0.2.2:8080/ verified on June 8, 2026.
 Hosted Vercel path: https://nimi-run-code-repo.vercel.app recorded on June 9,
-2026; Nimiq Pay hosted verification is still blocked until the portrait-ratio
-fix is deployed and rechecked.
+2026; Nimiq Pay hosted verification is still blocked until the stylesheet and
+WebView metric fixes are deployed and rechecked.
 ```
 
 Target first 60 seconds:

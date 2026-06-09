@@ -50,6 +50,10 @@ Use Production and Preview scopes as needed. Do not prefix secret names with
 After changing Vercel environment variables, trigger a new deployment. Existing
 deployments keep the values they were built or invoked with.
 
+When source code changes, redeploy the latest `main` deployment. A Vercel
+deployment is built from the full repository state at that commit; earlier
+commits do not need to be redeployed separately.
+
 ## Deployment Target Status
 
 Current hosted Vercel URL:

@@ -649,6 +649,10 @@ June 9, 2026 hosted check result:
   phone-portrait layout,
 - hosted `/api/route-proposal` returned `502` when OpenAI output failed
   deterministic proposal validation,
-- local fixes now preserve the Mini App WebView aspect ratio and make invalid
-  OpenAI output fall back to a deterministic mock proposal; repeat the hosted
-  check after redeploy.
+- local fixes now sync the deployed stylesheet, preserve Mini App WebView
+  aspect ratio through `visualViewport` / document / screen fallbacks, and make
+  invalid OpenAI output fall back to a deterministic mock proposal,
+- local browser smoke after the WebView-metric fix confirmed a phone viewport
+  initializes a 390x844 Phaser canvas instead of a 1024x768 desktop canvas,
+- repeat the hosted Nimiq Pay check after redeploy and keep this blocked until
+  the public URL passes inside the Mini App shell.

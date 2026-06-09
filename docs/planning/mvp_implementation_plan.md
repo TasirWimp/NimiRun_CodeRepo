@@ -1442,8 +1442,12 @@ PB-POLISH-002 Hosted Vercel/Nimiq Pay submission verification:
 
 Status: URL recorded; hosted browser and Nimiq Pay checks pending. On June 9,
 2026, the hosted URL opened inside Nimiq Pay but served a desktop-centered
-canvas build. A local portrait-ratio fix is prepared and must be redeployed
-before repeating the hosted Mini App check.
+canvas build. Local fixes now sync the deployed stylesheet, degrade invalid
+OpenAI relay output to deterministic mock fallback, and classify embedded
+phone WebViews through `visualViewport`, document, and screen metrics instead
+of trusting only `window.innerWidth`. A local 390x844 browser smoke confirmed
+the Phaser canvas now initializes as 390x844. Redeploy and repeat the hosted
+Mini App check before marking this pass.
 
 - record the active hosted Vercel URL in `docs/architecture/deployment.md`
   and `docs/product/competition_scorecard.md` once the project owner confirms
