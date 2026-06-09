@@ -4,6 +4,48 @@ Pocket Bot is a Phaser 3 + Vite prototype for a Nimiq mini app concept.
 
 The app explores how an independent individual can guide a small software helper with limited Bot Attention, limited context, and a small Nimiq pocket through messy, lossy task landscapes.
 
+## What It Does
+
+Pocket Bot turns user-bot alignment into a small RPG-style game. The bot has
+limited Bot Attention and proposes moves through a messy map. The player can
+ask the bot for a bounded LLM route proposal, inspect a node, redirect the bot,
+approve a move, reveal hidden assumptions, and inspect trace cards that bind
+action, cost, reveal, residue, and lesson.
+
+The current playable scenario is `Market Signal Scout`. It teaches the bot not
+to treat a bright market signal as safe until support, exit friction, urgency
+pressure, and false-finish risks are checked. It is fictionalized educational
+gameplay, not trading advice.
+
+## Who It Is For
+
+Pocket Bot is for independent users who want AI helpers to become useful
+without surrendering judgment or broad authority. The prototype is also for
+Nimiq Mini App judges and early testers who want to see a concrete mobile-first
+loop: user guidance changes a bot proposal, resources are spent deliberately,
+and the result remains inspectable.
+
+## How It Uses Nimiq Pay
+
+The app runs as a Nimiq Mini App inside Nimiq Pay and has been verified on an
+Android emulator with the hosted Vercel URL. Phase 1 uses Nimiq as the visible
+pocket/control layer: the player sees a Nimiq Pocket status surface while Bot
+Attention remains the resource spent on proposals and map moves.
+
+The current build supports explicit NIM status checks through the Mini App
+provider boundary and local/testnet fallback. It does not request signing,
+sending, checkout, top-up, mainnet spending, custody, or broad wallet authority.
+
+## Competition Submission Draft
+
+Pocket Bot is a playable Nimiq Mini App about teaching a small software helper to spend scarce attention wisely. The player and Pocket Bot enter a compact RPG-style market map called Market Signal Scout. The bot starts with a tempting policy: bright signal looks promising, act quickly. The player can ask the bot for a bounded LLM route proposal, approve it, redirect it, inspect first, ask what remains unknown, or mark progress as partial.
+
+Every move has visible cost. Bot Attention is spent only after the player approves a legal deterministic move. Nimiq Pocket value is shown as a low-stakes testnet/local pocket status, not as broad wallet authority. The app never asks for signing, sending, checkout, mainnet spending, or custody. OpenAI proposals run through a server-side relay and are schema-validated before they can update the pending move.
+
+The first scenario uses transformed Binance BTCUSDT public market data and attributed historical headlines as fictionalized game witnesses. The goal is not trading advice. The goal is to teach the bot to notice hidden support, exit friction, urgency pressure, and false-finish traps before calling a path safe.
+
+Pocket Bot is for independent users who want useful AI helpers without surrendering judgment. It turns alignment into gameplay: spend attention, reveal partial truth, carry residue, record a trace, and let user guidance shape the next proposal. Phase 1 demonstrates the loop inside Nimiq Pay on mobile while keeping real-value risk postponed. The build is hosted on Vercel and verified in Android Nimiq Pay for submission.
+
 ## Current Status
 
 The repository currently contains:
@@ -60,6 +102,7 @@ Role-specific Codex agents live in `.codex/agents/`:
 
 ```bash
 npm install
+npm run check:no-secrets
 npm run dev
 npm run test
 npm run build
@@ -87,6 +130,17 @@ npm run dev -- --host 127.0.0.1
 For hosted builds, set the same values through deployment secrets or server-side
 environment configuration. Provider keys must never be committed or bundled into
 browser code.
+
+Competition no-secrets check:
+
+```bash
+npm run check:no-secrets
+```
+
+This scans tracked/unignored files plus forbidden repo-local env files for
+high-confidence provider keys, private-key blocks, and wallet-secret
+assignments. It is a guardrail for hardcoded credentials, not a replacement for
+deployment-secret hygiene.
 
 The first hosted deployment target is Vercel. The repo includes
 `api/route-proposal.js` for the production serverless relay and `vercel.json`

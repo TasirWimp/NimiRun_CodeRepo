@@ -26,6 +26,25 @@ from the relevant planning or product document.
 - If a source informs gameplay or architecture but is not shipped as code, say
   that clearly.
 
+## Competition License And Use Proof Summary
+
+This summary is the competition-facing proof surface. Package license values
+are taken from the installed package metadata in `node_modules/*/package.json`
+and the locked package entries in `package-lock.json`; source and data licenses
+are backed by the URLs in the attribution table below.
+
+| Resource | Proof recorded | Bundled / runtime use | Competition note |
+|---|---|---|---|
+| Pocket Bot repo code | Root `LICENSE` and `package.json` declare MIT. | Public app source and docs. | Repo license is explicit for reviewers. |
+| `@nimiq/mini-app-sdk` `0.1.0` | Installed package metadata declares MIT; package-lock pins `0.1.0`. | Runtime dependency behind `src/platform/nimiqMiniApp.js`. | Used for Mini App provider/status boundary only; no sign/send authority in Phase 1. |
+| Phaser `3.87.0` | Installed package metadata declares MIT; package-lock pins `3.87.0`. | Bundled client game framework. | Primary 2D scene/runtime framework. |
+| Vite `7.3.3` and Vitest `3.2.4` | Installed package metadata declares MIT; package-lock pins both versions. | Build and test tooling. | Development tooling, not player-facing source material. |
+| Terser `5.31.2` | Installed package metadata declares BSD-2-Clause; package-lock pins `5.31.2`. | Production minifier through Vite config. | Build tooling. |
+| Binance Public Data BTCUSDT fixture | Binance Public Data README lists MIT; exact archive URL and checksum are recorded below. | Transformed static witness fixture only; raw archive is not shipped. | Venue-scoped Binance BTCUSDT witness, not global Bitcoin index or investment advice. |
+| Historical market headlines | Cboe, CME, and CFTC URLs/titles are recorded below. | Static title/URL witness metadata only; no article bodies copied. | Used as event witnesses and mechanics connectors, not trading/legal advice. |
+| NimiRun V2 asset pack | Project-owner-provided generated asset pack, copied from the local source path listed below. | Bundled runtime art under `public/assets/nimirun-v2/`. | No stock/source pack is known; if the submission form asks for generation tool/model proof, project owner should provide that provenance note. |
+| OpenAI route proposal service | Official OpenAI API/structured-output docs are recorded below; no OpenAI SDK or model weights are bundled. | Optional server-side relay call only when deployment secrets configure it. | API keys live in shell/deployment secrets; browser bundle must not include provider keys. |
+
 ## Current Known Sources
 
 | Source | Type | How Pocket Bot uses it | Shipping / runtime status |

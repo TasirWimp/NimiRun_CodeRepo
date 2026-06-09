@@ -17,13 +17,13 @@ Use status values: `pass`, `blocked`, `unknown`, or `not_started`.
 competition_submission_status:
   mini_app_framework_path: pass
   nim_or_usdt_support: pass
-  no_secrets_scan: unknown
-  mit_license_public_repo: unknown
+  no_secrets_scan: pass
+  mit_license_public_repo: pass
   hosted_vercel_url_recorded: pass
   hosted_nimiq_pay_check: pass
   mobile_ux_60s_path: pass
   vertical_slice: pass
-  submission_story: unknown
+  submission_story: pass
   community_feedback: unknown
   overall: blocked
 ```
@@ -69,7 +69,10 @@ documented exception accepted by the project owner.
   `openai` proposal via `gpt-5.4-mini`, no spend before approval, and
   deterministic spend/trace after approval.
 - Deterministic rules validate before state changes:
-- No secrets / no unsafe wallet authority:
+- No secrets / no unsafe wallet authority: pass through repeatable
+  `npm run check:no-secrets`, `.gitignore` exclusion of repo-local env files
+  except `.env.example`, hosted bundle scan on June 9, 2026, and Nimiq Pay
+  emulator checks that triggered no sign/send/payment/mainnet prompt.
 
 ## Usefulness & Originality / 25
 
@@ -83,10 +86,10 @@ documented exception accepted by the project owner.
 
 ## Marketing & Distribution / 25
 
-- 250-word submission description:
+- 250-word submission description: pass; draft lives in `README.md`.
 - 30-60 second demo video or GIF:
 - 3-5 screenshots:
-- README has "What it does / Who it is for / How it uses Nimiq Pay":
+- README has "What it does / Who it is for / How it uses Nimiq Pay": pass.
 - Community post:
 - Tester feedback:
 - Feedback-driven update:

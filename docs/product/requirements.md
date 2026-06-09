@@ -670,12 +670,10 @@ The first milestone is complete when:
 
 Recommended next task:
 
-1. PB-POLISH-002: verify the hosted Vercel/Nimiq Pay judge path around the
-   Golden Signal loop. PB-POLISH-001 already proved the local browser, phone
-   viewport, and Android emulator local Mini App path on June 8, 2026; the
-   remaining submission question is the deployed Vercel URL inside Nimiq Pay.
-2. PB-POLISH-003 / PB-MARKET: prepare README/submission materials,
-   screenshots or demo capture, and record external feedback.
+1. PB-MARKET: capture screenshots or a short demo only when the project owner
+   is ready to prepare final submission media.
+2. PB-MARKET: record external tester feedback when entering the public
+   competition-feedback cycle.
 3. Repeat the Nimiq Pay Testnet emulator check before final submission if
    PB-012, PB-013, or polish work changes the platform adapter.
 4. PB-012A: add desktop/mobile browser TestAlbatross status later, after the
