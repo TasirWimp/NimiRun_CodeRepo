@@ -369,6 +369,13 @@ These may be considered future features after the first milestone demonstrates t
 
 - The LLM must return a structured move proposal.
 - The proposal must be schema-validated before entering game state.
+- Validation should distinguish hard safety failures from recoverable wording.
+  Malformed moves, unknown targets, missing cost/residue fields, and actual
+  checkout, wallet, payment, trading, external-tool, or persistent-memory
+  authority requests are hard failures. Overconfident wording such as claiming
+  final success, full terrain certainty, or safe finish before deterministic
+  judgment should be normalized into player-safe wording with a governance
+  warning when the move is otherwise bounded.
 - Deterministic resource rules must check the proposal against active resources and blocked actions.
 - The gate must provide one of three outcomes: approved/available, redirected by user, or rejected/blocked.
 - A request to complete checkout, enter payment information, access broad wallet authority, or call an unbounded external service must be blocked in the MVP.

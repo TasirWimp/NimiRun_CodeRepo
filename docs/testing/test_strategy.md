@@ -154,16 +154,21 @@ Minimum checks:
 - proposal with missing resource cost is rejected,
 - proposal with missing considered alternative, cut price, residue, or stop condition is rejected,
 - proposal cannot request unchecked payment, checkout, or wallet authority,
-- full resource-map route-proposal fixture, including pocket and false-finish nodes, does not produce unsafe authority language in reason, alternatives, cut price, or stop condition,
-- proposal cannot claim that its chosen route proves the whole terrain,
-- proposal cannot render `safe_finish` wording unless the deterministic finish check has assigned that status,
+- full resource-map route-proposal fixture, including pocket and false-finish
+  nodes, does not accept chosen moves that request unsafe authority,
+- recoverable boundary mentions in rejected alternatives are normalized with
+  governance warnings rather than forcing mock fallback,
+- proposal overclaims that its chosen route proves the whole terrain are
+  normalized before rendering,
+- proposal `safe_finish` or full-success wording before deterministic finish
+  judgment is normalized before rendering,
 - browser client calls only the backend relay,
 - relay reads model id and API key from environment,
 - offline/mock mode works without a provider key.
 
 Live LLM checks may be manual or smoke checks when explicitly planned. Report model id, prompt shape, pass/fail result, and approximate token/cost risk if run.
 
-Regression note from the June 6, 2026 Vercel smoke: a broad production payload reached the server-side OpenAI relay correctly, but validation rejected model wording in `considered_alternatives.3.why_not_selected` as unsafe authority language. Before wiring live route proposals into the playable scene, add an automated full-scenario prompt/relay regression that covers the pocket node, false-finish node, session lesson, and residue carry-forward. The expected result is either a valid bounded proposal or a deterministic validation error that is surfaced readably; the model must not mention wallet authority, checkout, payment execution, mainnet spend, private keys, persistent memory, external tools, or unbounded actions anywhere in proposal text.
+Regression note from the June 6, 2026 Vercel smoke: a broad production payload reached the server-side OpenAI relay correctly, but validation rejected model wording in `considered_alternatives.3.why_not_selected` as unsafe authority language. The current governance split is: malformed schema, unknown moves/targets, missing cost/residue fields, and chosen moves that request wallet/payment/trading/tool authority remain hard failures; recoverable overconfident or boundary wording is normalized with `governanceWarnings` so a bounded proposal can still reach gameplay.
 
 ### Nimiq Mini App Checks
 
@@ -305,11 +310,13 @@ Status: implemented, including PB-007R full-scenario unsafe-authority relay regr
 Expected automated tests:
 
 - valid structured move proposal is accepted,
-- malformed/unsafe proposals are rejected,
+- malformed proposals and chosen unsafe-authority proposals are rejected,
 - missing cost, considered alternatives, cut price, residue, or stop condition is rejected,
 - unbounded payment/tool/wallet requests are rejected,
 - full resource-map prompt fixture with pocket and false-finish nodes stays inside the unsafe-authority wording guard,
-- proposal cannot claim full terrain certainty from one route choice,
+- recoverable boundary wording in rejected alternatives is normalized,
+- proposal cannot render full terrain certainty or premature final-success
+  claims; those phrases are normalized with governance warnings,
 - proposal prompt uses the run carrier rather than hidden scene state,
 - client calls backend relay only,
 - relay uses environment configuration,
@@ -328,7 +335,10 @@ Implemented regression coverage:
 
 - mocked full-scenario relay test includes pocket, false-finish, trace-card, session-lesson, and residue context,
 - accepted mocked output validates as a bounded proposal,
-- unsafe authority wording in a considered alternative returns a readable relay validation error,
+- blocked-boundary wording in a considered alternative normalizes without mock
+  fallback,
+- chosen unsafe-authority wording returns a readable relay validation error and
+  mock fallback,
 - prompt boundary tests prevent reintroducing exact unsafe output phrases into the system instruction.
 
 ### PB-008 Lossy Map Scenario
@@ -475,7 +485,7 @@ Implemented automated tests:
 - trace cards record level, action, cost, reveal, still unknown, and lesson,
 - remembering "Fast signals need support" changes the next proposal inside the
   active run only,
-- proposal validation rejects live-trading, wallet-authority,
+- proposal validation rejects actual live-trading, wallet-authority,
   brokerage/exchange execution, portfolio advice, persistent strategy export,
   real reward/penalty, and terminal-reveal leakage claims.
 
@@ -632,8 +642,9 @@ check. It must verify:
   competition scorecard: `https://nimi-run-code-repo.vercel.app`,
 - the hosted app opens in a normal browser and renders the Golden Signal scene,
 - same-origin `/api/route-proposal` works in the hosted environment without
-  exposing provider keys; invalid or unsafe OpenAI output must degrade to a
-  deterministic mock-fallback proposal rather than breaking the hosted app,
+  exposing provider keys; recoverable overclaim wording must normalize, while
+  hard-invalid or actual unsafe OpenAI output must degrade to a deterministic
+  mock-fallback proposal rather than breaking the hosted app,
 - the hosted URL opens inside Nimiq Pay Mini Apps on an emulator or real phone,
 - the 60-second judge path works inside Nimiq Pay:
   Support Check -> Approve -> Historic Witness -> Trace Archive,

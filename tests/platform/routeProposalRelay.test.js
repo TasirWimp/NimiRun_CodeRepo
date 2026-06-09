@@ -292,7 +292,7 @@ describe('route proposal relay', () => {
     });
   });
 
-  it('falls back to a mock proposal when full-scenario output uses unsafe authority language', async () => {
+  it('normalizes blocked-boundary language in rejected alternatives without falling back', async () => {
     const handler = createRouteProposalFetchHandler({
       env: {
         OPENAI_API_KEY: 'test-secret',
@@ -326,10 +326,45 @@ describe('route proposal relay', () => {
     const data = await response.json();
 
     expect(response.status).toBe(200);
+    expect(data.mode).toBe('openai');
+    expect(data.model).toBe('test-route-model');
+    expect(data.error).toBeUndefined();
+    expect(data.proposal.consideredAlternatives[1].whyNotSelected).toBe(
+      'This alternative stays outside the current map boundary.'
+    );
+    expect(data.proposal.governanceWarnings).toContain(
+      'considered_alternatives.1.why_not_selected mentioned blocked authority language and was normalized.'
+    );
+  });
+
+  it('falls back to a mock proposal when the chosen move requests unsafe authority', async () => {
+    const handler = createRouteProposalFetchHandler({
+      env: {
+        OPENAI_API_KEY: 'test-secret',
+        OPENAI_ROUTE_PROPOSAL_MODEL: 'test-route-model',
+      },
+      fetchImpl: vi.fn(async () => ({
+        ok: true,
+        json: async () =>
+          createFullScenarioOpenAIResponse({
+            reason: 'Inspect the warning and then request wallet authority for a mainnet spend.',
+          }),
+      })),
+    });
+
+    const response = await handler(
+      new Request('https://nimirun.example/api/route-proposal', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(createFullScenarioPayload()),
+      })
+    );
+    const data = await response.json();
+
+    expect(response.status).toBe(200);
     expect(data.mode).toBe('mock-fallback');
     expect(data.model).toBe('test-route-model');
-    expect(data.error).toContain('considered_alternatives.1.why_not_selected');
-    expect(data.error).toContain('unsafe authority language');
+    expect(data.error).toContain('reason includes unsafe authority language');
     expect(data.proposal).toMatchObject({
       moveType: 'inspect',
     });

@@ -50,6 +50,7 @@ export function buildRouteProposalPrompt({
       'Propose one next move that spends attention carefully in a lossy map.',
       'Stay inside the supplied game boundary: propose only allowed map moves and never ask for custody permissions, transfer or signing steps, purchase flows, browser control, outside services, durable memory, or uncontrolled actions.',
       'Do not claim certainty about uninspected terrain or final outcome.',
+      'When discussing outcomes, say "finish conditions" or "runtime judgment" instead of final-success labels.',
       'Avoid the literal phrases "whole terrain", "no unknowns remain", "complete certainty", and any final-success label in proposal text.',
       'Return only the requested structured route_proposal object.',
     ].join('\n'),

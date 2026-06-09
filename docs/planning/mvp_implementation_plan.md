@@ -190,7 +190,7 @@ Implemented groundwork from the earlier allowance-control cut:
 - PB-005 RPG Map Tooling And Scene Direction is implemented with a Phaser-native custom node-map workflow and NimiRun V2 runtime assets, documented in `docs/architecture/rpg_map_tooling.md`.
 - PB-006 Core Resource Model is implemented with deterministic Bot Attention, Nimiq Pocket, User Guidance, Context Slot, and move-cost checks in `src/domain/`.
 - PB-006A Run Session And Transition Runtime is implemented with scenario contract validation, move transition gates, run carriers, and finish judgment packets.
-- PB-007 LLM Route Proposal Bridge is implemented with a strict route proposal schema, run-carrier prompt builder, browser relay client, Vite dev relay middleware, Vercel production function, OpenAI Responses API relay, offline/mock fallback, and full-scenario unsafe-authority relay regression coverage.
+- PB-007 LLM Route Proposal Bridge is implemented with a structured route proposal schema, hard/soft governance validation, run-carrier prompt builder, browser relay client, Vite dev relay middleware, Vercel production function, OpenAI Responses API relay, offline/mock fallback, and full-scenario unsafe-authority relay regression coverage.
 - PB-008 Lossy Map Scenario is implemented with deterministic hidden-pressure reveal, inspect/skip/act behavior, false-landfall traps, safe-finish judgment, and prompt serialization in `src/domain/lossyMap.js`.
 - PB-009 User-Bot Guidance Loop is implemented with a testable guidance-loop domain module, scene state setup, Phaser proposal controls, redirect-by-node selection, why/unknowns/inspect-first/partial controls, deterministic approval, and HUD/map updates.
 - PB-010 Session Lesson Application is implemented with trace-derived session lessons, inspect-before-act/residue/stop-condition lesson typing, next-proposal rewrite, prompt serialization, relay/client pass-through, and no persistence beyond the active run state.
@@ -804,7 +804,10 @@ Test plan:
 
 - schema accepts a valid route proposal,
 - schema rejects unknown actions, missing costs, missing residue/cut-price fields, or unbounded tool/payment requests,
-- schema rejects proposals that treat a path choice as proof of the whole map,
+- schema normalizes overconfident wording that treats a path choice as proof of
+  the whole map, claims full success, or mentions safe finish before runtime
+  judgment,
+- schema records governance warnings for normalized proposal wording,
 - full resource-map prompt fixture, including pocket and false-finish nodes, stays inside the unsafe-authority wording guard,
 - client calls only the backend relay, not OpenAI directly from browser code,
 - relay reads API key from environment,
@@ -814,14 +817,16 @@ Test plan:
 
 Implementation note:
 
-- PB-007R full-scenario relay regression is implemented with mocked OpenAI responses that include pocket, false-finish, trace-card, session-lesson, and residue context. The positive case validates a bounded proposal; the negative case confirms unsafe authority wording is surfaced as a readable relay validation error before gameplay.
+- PB-007R full-scenario relay regression is implemented with mocked OpenAI responses that include pocket, false-finish, trace-card, session-lesson, and residue context. The positive case validates a bounded proposal; recoverable overclaim/boundary wording is normalized with governance warnings; chosen moves that request unsafe authority still surface a readable relay validation error before gameplay.
 - The prompt boundary avoids seeding exact forbidden proposal phrases such as wallet authority, checkout, payment execution, mainnet spend, private key, persistent memory, external tools, or unbounded tool language into the model instruction.
 
 Acceptance:
 
 - LLM proposals are structured, bounded, and validated before entering game state,
 - every proposal says what it reveals, what it leaves unresolved, and what cheaper/safer alternative was considered,
-- broad scenario prompts either return a valid bounded proposal or fail with a readable deterministic validation error before entering gameplay,
+- broad scenario prompts return a valid bounded proposal, a normalized bounded
+  proposal with governance warnings, or a readable deterministic validation
+  error before entering gameplay,
 - no provider API key is bundled into client code,
 - failure/offline states produce a readable fallback move,
 - the bot's proposal can reference only current session context and provided game state.
@@ -1024,7 +1029,7 @@ Implementation note:
 
 - `src/domain/traces.js` promotes trace lesson candidates into active session lessons and serializes them in the player-facing `session_lesson` shape.
 - `src/domain/guidanceLoop.js` applies the active session lesson by rewriting the next pending proposal inside the current run only.
-- Cut-preference lessons can force inspect-before-act ordering, residue-rule lessons carry unresolved residue into the next proposal, and stop-condition lessons block premature full-success claims through route proposal validation.
+- Cut-preference lessons can force inspect-before-act ordering, residue-rule lessons carry unresolved residue into the next proposal, and stop-condition lessons normalize premature full-success claims through route proposal validation.
 - `src/llm/routeProposalPrompt.js`, `src/llm/routeProposalClient.js`, and `server/routeProposalRelay.js` pass the active session lesson to the bounded LLM proposal path.
 - `src/ui/tracePanel.js` shows promoted lesson wording without claiming durable training.
 
@@ -1443,11 +1448,12 @@ PB-POLISH-002 Hosted Vercel/Nimiq Pay submission verification:
 Status: URL recorded; hosted browser and Nimiq Pay checks pending. On June 9,
 2026, the hosted URL opened inside Nimiq Pay but served a desktop-centered
 canvas build. Local fixes now sync the deployed stylesheet, degrade invalid
-OpenAI relay output to deterministic mock fallback, and classify embedded
-phone WebViews through `visualViewport`, document, and screen metrics instead
-of trusting only `window.innerWidth`. A local 390x844 browser smoke confirmed
-the Phaser canvas now initializes as 390x844. Redeploy and repeat the hosted
-Mini App check before marking this pass.
+OpenAI relay output to deterministic mock fallback, normalize recoverable LLM
+overclaim wording, and classify embedded phone WebViews through
+`visualViewport`, document, and screen metrics instead of trusting only
+`window.innerWidth`. A local 390x844 browser smoke confirmed the Phaser canvas
+now initializes as 390x844. Redeploy and repeat the hosted Mini App check
+before marking this pass.
 
 - record the active hosted Vercel URL in `docs/architecture/deployment.md`
   and `docs/product/competition_scorecard.md` once the project owner confirms

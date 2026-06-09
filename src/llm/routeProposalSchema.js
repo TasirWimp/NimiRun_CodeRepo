@@ -126,6 +126,8 @@ const SAFE_FINISH_PATTERN = /\bsafe[\s_-]?finish\b/i;
 const FULL_SUCCESS_PATTERN = /\b(done|solved|complete|completed|finished|full success|fully successful)\b/i;
 const FULL_SUCCESS_CAUTION_PATTERN =
   /\b(not|not yet|cannot|can't|must not|do not|don't|avoid|without claiming)\b/i;
+const BOUNDARY_CAUTION_PATTERN =
+  /\b(not|never|avoid|without|blocked|outside|instead of|rather than|cannot|can't|must not|do not|don't|no)\b/i;
 
 function getRouteProposalPayload(raw) {
   if (raw?.[ROUTE_PROPOSAL_RESPONSE_KEY]) {
@@ -209,7 +211,17 @@ function collectTerrainCertaintyAssertionText(payload) {
     .join('\n');
 }
 
-function collectUnsafeFindings(value, path = [], output = []) {
+function isRecoverableBoundaryMention(path, text) {
+  return path.includes('why_not_selected') || BOUNDARY_CAUTION_PATTERN.test(text);
+}
+
+function createWarning(warnings, message) {
+  if (!warnings.includes(message)) {
+    warnings.push(message);
+  }
+}
+
+function collectUnsafeFindings(value, path = [], output = { errors: [], warnings: [] }) {
   if (Array.isArray(value)) {
     value.forEach((item, index) => collectUnsafeFindings(item, [...path, String(index)], output));
     return output;
@@ -217,7 +229,14 @@ function collectUnsafeFindings(value, path = [], output = []) {
 
   if (!value || typeof value !== 'object') {
     if (typeof value === 'string' && FORBIDDEN_TEXT_PATTERN.test(value)) {
-      output.push(`${path.join('.') || 'proposal'} includes unsafe authority language.`);
+      if (isRecoverableBoundaryMention(path, value)) {
+        createWarning(
+          output.warnings,
+          `${path.join('.') || 'proposal'} mentioned blocked authority language and was normalized.`
+        );
+      } else {
+        output.errors.push(`${path.join('.') || 'proposal'} includes unsafe authority language.`);
+      }
     }
     return output;
   }
@@ -226,7 +245,7 @@ function collectUnsafeFindings(value, path = [], output = []) {
     const nextPath = [...path, key];
 
     if (FORBIDDEN_KEY_PATTERN.test(key)) {
-      output.push(`${nextPath.join('.')} requests unsafe authority.`);
+      output.errors.push(`${nextPath.join('.')} requests unsafe authority.`);
     }
 
     collectUnsafeFindings(item, nextPath, output);
@@ -255,6 +274,73 @@ function hasFullSuccessClaim(text) {
         FULL_SUCCESS_PATTERN.test(sentence) &&
         !FULL_SUCCESS_CAUTION_PATTERN.test(sentence)
     );
+}
+
+function hasTerrainCertaintyClaim(text) {
+  return text
+    .split(/[.!?\n]/)
+    .some(
+      (sentence) =>
+        TERRAIN_CERTAINTY_PATTERN.test(sentence) &&
+        !isTerrainCertaintyCaution(sentence)
+    );
+}
+
+function hasSafeFinishMention(text) {
+  return SAFE_FINISH_PATTERN.test(text);
+}
+
+function splitSentences(text) {
+  return text
+    .split(/(?<=[.!?])\s+|\n/)
+    .map((sentence) => sentence.trim())
+    .filter(Boolean);
+}
+
+function normalizeSentences(text, replaceSentence) {
+  const normalized = normalizeString(text);
+
+  if (!normalized) {
+    return normalized;
+  }
+
+  const sentences = splitSentences(normalized);
+
+  if (sentences.length === 0) {
+    return normalized;
+  }
+
+  const nextText = sentences.map((sentence) => replaceSentence(sentence)).join(' ');
+
+  return nextText || normalized;
+}
+
+function normalizeGovernedText(value, { finishStatus, sessionLesson }, path = []) {
+  return normalizeSentences(value, (sentence) => {
+    if (FORBIDDEN_TEXT_PATTERN.test(sentence) && isRecoverableBoundaryMention(path, sentence)) {
+      return path.includes('why_not_selected')
+        ? 'This alternative stays outside the current map boundary.'
+        : 'This move stays inside the current map boundary.';
+    }
+
+    if (hasTerrainCertaintyClaim(sentence)) {
+      return 'This move only checks the next visible step; unknowns may remain.';
+    }
+
+    if (finishStatus !== FINISH_STATUSES.SAFE && SAFE_FINISH_PATTERN.test(sentence)) {
+      return 'This move can check finish conditions; runtime judgment still decides final status.';
+    }
+
+    if (
+      getSessionLessonType(sessionLesson) === 'stop_condition' &&
+      finishStatus !== FINISH_STATUSES.SAFE &&
+      hasFullSuccessClaim(sentence)
+    ) {
+      return 'This move is useful progress; runtime judgment still decides final status.';
+    }
+
+    return sentence;
+  });
 }
 
 function addRequiredStringError(errors, payload, key) {
@@ -313,16 +399,25 @@ function validateCutPrice(errors, cutPrice) {
   });
 }
 
-function normalizeProposal(payload) {
+function normalizeTextList(value, governance, path) {
+  return Array.isArray(value)
+    ? value
+        .map((item, index) => normalizeGovernedText(item, governance, [...path, String(index)]))
+        .filter((item) => item.length > 0)
+    : [];
+}
+
+function normalizeProposal(payload, { finishStatus, sessionLesson, warnings = [] } = {}) {
   const moveType = normalizeString(payload.move_type);
   const targetNodeId = normalizeString(payload.target_node);
+  const governance = { finishStatus, sessionLesson };
 
   return {
     id: payload.id || `proposal-${moveType}-${targetNodeId}`,
     source: 'route-proposal',
     moveType,
     targetNodeId,
-    reason: normalizeString(payload.reason),
+    reason: normalizeGovernedText(payload.reason, governance, ['reason']),
     resourceCost: {
       moveType,
       botAttention: payload.resource_cost.bot_attention,
@@ -330,15 +425,28 @@ function normalizeProposal(payload) {
       contextSlots: payload.resource_cost.context_slots,
     },
     consideredAlternatives: payload.considered_alternatives.map((alternative) => ({
-      move: normalizeString(alternative.move),
-      whyNotSelected: normalizeString(alternative.why_not_selected),
+      move: normalizeGovernedText(alternative.move, governance, [
+        'considered_alternatives',
+        'move',
+      ]),
+      whyNotSelected: normalizeGovernedText(alternative.why_not_selected, governance, [
+        'considered_alternatives',
+        'why_not_selected',
+      ]),
     })),
     cutPrice: {
-      reveals: normalizeStringList(payload.cut_price.reveals),
-      suppresses: normalizeStringList(payload.cut_price.suppresses),
-      leavesResidue: normalizeStringList(payload.cut_price.leaves_residue),
+      reveals: normalizeTextList(payload.cut_price.reveals, governance, ['cut_price', 'reveals']),
+      suppresses: normalizeTextList(payload.cut_price.suppresses, governance, [
+        'cut_price',
+        'suppresses',
+      ]),
+      leavesResidue: normalizeTextList(payload.cut_price.leaves_residue, governance, [
+        'cut_price',
+        'leaves_residue',
+      ]),
     },
-    stopCondition: normalizeString(payload.stop_condition),
+    stopCondition: normalizeGovernedText(payload.stop_condition, governance, ['stop_condition']),
+    governanceWarnings: warnings,
   };
 }
 
@@ -353,6 +461,7 @@ export function createRouteProposalTextFormat() {
 
 export function validateRouteProposal(raw, options = {}) {
   const errors = [];
+  const warnings = [];
   const payload = getRouteProposalPayload(raw);
   const allowedMoves = options.allowedMoves || DEFAULT_ROUTE_PROPOSAL_MOVE_TYPES;
   const allowedTargetNodeIds = options.allowedTargetNodeIds || [];
@@ -388,25 +497,24 @@ export function validateRouteProposal(raw, options = {}) {
   }
 
   const unsafeFindings = collectUnsafeFindings(payload);
-  errors.push(...unsafeFindings);
+  errors.push(...unsafeFindings.errors);
+  warnings.push(...unsafeFindings.warnings);
 
   const allText = collectText(payload).join('\n');
   const terrainCertaintyAssertionText = collectTerrainCertaintyAssertionText(payload);
 
-  const hasTerrainCertaintyClaim = terrainCertaintyAssertionText
-    .split(/[.!?\n]/)
-    .some(
-      (sentence) =>
-        TERRAIN_CERTAINTY_PATTERN.test(sentence) &&
-        !isTerrainCertaintyCaution(sentence)
+  if (hasTerrainCertaintyClaim(terrainCertaintyAssertionText)) {
+    createWarning(
+      warnings,
+      'proposal claimed complete terrain certainty and was normalized.'
     );
-
-  if (hasTerrainCertaintyClaim) {
-    errors.push('proposal must not claim complete terrain certainty from one route choice.');
   }
 
-  if (finishStatus !== FINISH_STATUSES.SAFE && SAFE_FINISH_PATTERN.test(allText)) {
-    errors.push('proposal must not claim safe finish before deterministic finish judgment.');
+  if (finishStatus !== FINISH_STATUSES.SAFE && hasSafeFinishMention(allText)) {
+    createWarning(
+      warnings,
+      'proposal mentioned safe finish before deterministic finish judgment and was normalized.'
+    );
   }
 
   if (
@@ -414,7 +522,10 @@ export function validateRouteProposal(raw, options = {}) {
     finishStatus !== FINISH_STATUSES.SAFE &&
     hasFullSuccessClaim(allText)
   ) {
-    errors.push('proposal must not claim full success while a stop-condition lesson is active.');
+    createWarning(
+      warnings,
+      'proposal claimed full success while a stop-condition lesson was active and was normalized.'
+    );
   }
 
   if (errors.length > 0) {
@@ -422,13 +533,15 @@ export function validateRouteProposal(raw, options = {}) {
       valid: false,
       proposal: null,
       errors,
+      warnings,
     };
   }
 
   return {
     valid: true,
-    proposal: normalizeProposal(payload),
+    proposal: normalizeProposal(payload, { finishStatus, sessionLesson, warnings }),
     errors: [],
+    warnings,
   };
 }
 

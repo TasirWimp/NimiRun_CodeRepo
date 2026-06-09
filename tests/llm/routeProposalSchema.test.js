@@ -138,7 +138,7 @@ describe('route proposal schema validation', () => {
     expect(validation.errors.join(' ')).toContain('unsafe authority');
   });
 
-  it('rejects unsafe authority language inside considered alternatives', () => {
+  it('normalizes blocked authority language inside considered alternatives', () => {
     const validation = validateRouteProposal(
       createValidRawProposal({
         considered_alternatives: [
@@ -150,22 +150,28 @@ describe('route proposal schema validation', () => {
       })
     );
 
-    expect(validation.valid).toBe(false);
-    expect(validation.errors).toContain(
-      'considered_alternatives.0.why_not_selected includes unsafe authority language.'
+    expect(validation.valid).toBe(true);
+    expect(validation.warnings).toContain(
+      'considered_alternatives.0.why_not_selected mentioned blocked authority language and was normalized.'
+    );
+    expect(validation.proposal.consideredAlternatives[0].whyNotSelected).toBe(
+      'This alternative stays outside the current map boundary.'
     );
   });
 
-  it('rejects route choices that claim complete terrain certainty', () => {
+  it('normalizes route choices that claim complete terrain certainty', () => {
     const validation = validateRouteProposal(
       createValidRawProposal({
         reason: 'This route proves the whole terrain and no unknowns remain.',
       })
     );
 
-    expect(validation.valid).toBe(false);
-    expect(validation.errors).toContain(
-      'proposal must not claim complete terrain certainty from one route choice.'
+    expect(validation.valid).toBe(true);
+    expect(validation.warnings).toContain(
+      'proposal claimed complete terrain certainty and was normalized.'
+    );
+    expect(validation.proposal.reason).toBe(
+      'This move only checks the next visible step; unknowns may remain.'
     );
   });
 
@@ -193,17 +199,22 @@ describe('route proposal schema validation', () => {
     expect(validation.valid).toBe(true);
   });
 
-  it('blocks safe-finish claims until deterministic finish judgment allows them', () => {
-    expect(() =>
-      assertRouteProposal(
-        createValidRawProposal({
-          stop_condition: 'This gives a safe finish.',
-        })
-      )
-    ).toThrow('proposal must not claim safe finish before deterministic finish judgment.');
+  it('normalizes safe-finish claims until deterministic finish judgment allows them', () => {
+    const proposal = assertRouteProposal(
+      createValidRawProposal({
+        stop_condition: 'This gives a safe finish.',
+      })
+    );
+
+    expect(proposal.stopCondition).toBe(
+      'This move can check finish conditions; runtime judgment still decides final status.'
+    );
+    expect(proposal.governanceWarnings).toContain(
+      'proposal mentioned safe finish before deterministic finish judgment and was normalized.'
+    );
   });
 
-  it('blocks full-success claims while a stop-condition lesson is active', () => {
+  it('normalizes full-success claims while a stop-condition lesson is active', () => {
     const validation = validateRouteProposal(
       createValidRawProposal({
         reason: 'The partial route is complete now.',
@@ -220,9 +231,12 @@ describe('route proposal schema validation', () => {
       }
     );
 
-    expect(validation.valid).toBe(false);
-    expect(validation.errors).toContain(
-      'proposal must not claim full success while a stop-condition lesson is active.'
+    expect(validation.valid).toBe(true);
+    expect(validation.warnings).toContain(
+      'proposal claimed full success while a stop-condition lesson was active and was normalized.'
+    );
+    expect(validation.proposal.reason).toBe(
+      'This move is useful progress; runtime judgment still decides final status.'
     );
   });
 });
