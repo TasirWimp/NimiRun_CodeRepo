@@ -693,9 +693,10 @@ June 9, 2026 hosted check result:
 - hosted `/api/route-proposal` returned `200` in live `openai` mode with
   `gpt-5.4-mini`, a bounded `inspect -> support-check` proposal, and one
   governance warning,
-- that June 9 relay check was direct/backend-only; after the Ask Bot scene
-  wiring is deployed, repeat the hosted Nimiq Pay check by tapping `Ask Bot`
-  inside the scene before approving the proposed move,
+- after the Ask Bot scene wiring was deployed, Android emulator Nimiq Pay
+  tapped `Ask Bot`, received a live `openai` proposal using `gpt-5.4-mini`,
+  updated the pending move to `inspect -> Support Check`, kept Bot Attention at
+  `10/10` and Trace Archive empty before approval, then approved the move,
 - Android emulator Nimiq Pay opened the hosted URL, rendered the portrait
   Golden Signal scene, selected Support Check, approved inspection, showed the
   Historic Witness card, reduced Bot Attention to `8/10`, and opened Trace
@@ -703,4 +704,5 @@ June 9, 2026 hosted check result:
 - emulator log scan found no `AndroidRuntime`, `am_crash`, checkout, payment,
   mainnet, transaction prompt, sign, or send error,
 - browser bundle scan found no `OPENAI_API_KEY`, `Bearer`, or `api.openai.com`;
-  a raw `sk-` substring was checked and came from `ask-user`, not a secret.
+  raw `sk-` substrings were checked and came from strings such as `ask-user`,
+  `ask-bot`, and scenario text, not a secret.

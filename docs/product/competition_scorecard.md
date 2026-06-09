@@ -65,8 +65,9 @@ documented exception accepted by the project owner.
 - Runtime transition / finish judgment works:
 - LLM proposal bridge works or mock fallback is clear: backend relay verified on
   June 9, 2026; local 390x844 scene smoke verified `Ask Bot` mock fallback
-  without spending Bot Attention; hosted Nimiq Pay tap-through needs the next
-  redeploy check.
+  without spending Bot Attention; hosted Nimiq Pay tap-through verified live
+  `openai` proposal via `gpt-5.4-mini`, no spend before approval, and
+  deterministic spend/trace after approval.
 - Deterministic rules validate before state changes:
 - No secrets / no unsafe wallet authority:
 

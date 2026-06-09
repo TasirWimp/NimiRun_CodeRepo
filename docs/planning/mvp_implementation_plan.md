@@ -1498,11 +1498,12 @@ payment, and mainnet authority inactive.
 Hosted relay verification on June 9, 2026 returned `200` from
 `/api/route-proposal` in live `openai` mode using `gpt-5.4-mini`, with a
 bounded `inspect -> support-check` proposal and one governance warning.
-That check was a direct relay smoke. The scene now also exposes the same path
-through the proposal-panel `Ask Bot` button; after this change is deployed, the
-hosted Nimiq Pay manual check should tap `Ask Bot`, confirm the pending proposal
-updates, and then approve the deterministic move without any wallet authority
-prompt.
+After the `Ask Bot` scene wiring was deployed, the Android emulator Nimiq Pay
+check tapped `Ask Bot`, received a live `openai` proposal using
+`gpt-5.4-mini`, updated the pending move to `inspect -> Support Check`, kept
+Bot Attention at `10/10` before approval, then approved the deterministic move,
+spent `2` Bot Attention and `1` User Guidance, opened the Historic Witness
+card, and recorded `Trace 1: Open run` without any wallet authority prompt.
 
 - record the active hosted Vercel URL in `docs/architecture/deployment.md`
   and `docs/product/competition_scorecard.md` once the project owner confirms
@@ -1514,6 +1515,8 @@ prompt.
   emulator,
 - verified: run the 60-second judge path: Support Check -> Approve ->
   Historic Witness -> Trace Archive,
+- verified: run the hosted scene-level LLM path: Ask Bot -> live OpenAI
+  proposal -> Approve -> Historic Witness -> Trace Archive,
 - verified: confirm the Mini App shell still shows Nimiq Pay/local status
   correctly and does not trigger sign, send, checkout, top-up, payment, or
   mainnet authority,
