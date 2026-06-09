@@ -20,4 +20,15 @@ describe('createWorkshopLayout', () => {
     expect(layout.details.y).toBeGreaterThan(layout.proposal.y + layout.proposal.height);
     expect(layout.hud.y + layout.hud.height).toBeLessThanOrEqual(844);
   });
+
+  it('fits a shorter high-density Mini App portrait surface', () => {
+    const layout = createWorkshopLayout(430, 790);
+
+    expect(layout.isMobile).toBe(true);
+    expect(layout.map.height).toBeLessThan(277);
+    expect(layout.proposal.height).toBe(158);
+    expect(layout.details.height).toBe(126);
+    expect(layout.hud.height).toBe(126);
+    expect(layout.hud.y + layout.hud.height).toBeLessThanOrEqual(790);
+  });
 });

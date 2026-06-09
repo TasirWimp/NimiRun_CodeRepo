@@ -28,10 +28,22 @@ export function createWorkshopLayout(width, height) {
   const margin = 12;
   const panelWidth = Math.max(320, width - margin * 2);
   const headerHeight = 88;
-  const mapHeight = Math.round(panelWidth * (420 / 640)) + 10;
-  const proposalHeight = 176;
-  const detailsHeight = 142;
-  const hudHeight = Math.max(138, height - headerHeight - mapHeight - proposalHeight - detailsHeight - margin * 5);
+  const isCompactPortrait = height < 830;
+  const proposalHeight = isCompactPortrait ? 158 : 176;
+  const detailsHeight = isCompactPortrait ? 126 : 142;
+  const minimumHudHeight = isCompactPortrait ? 126 : 138;
+  const preferredMapHeight = Math.round(panelWidth * (420 / 640)) + 10;
+  const maximumMapHeight = height -
+    headerHeight -
+    proposalHeight -
+    detailsHeight -
+    minimumHudHeight -
+    margin * 5;
+  const mapHeight = Math.max(190, Math.min(preferredMapHeight, maximumMapHeight));
+  const hudHeight = Math.max(
+    minimumHudHeight,
+    height - headerHeight - mapHeight - proposalHeight - detailsHeight - margin * 5
+  );
 
   const mapY = headerHeight + margin;
   const proposalY = mapY + mapHeight + margin;

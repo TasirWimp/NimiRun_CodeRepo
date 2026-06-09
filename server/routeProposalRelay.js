@@ -120,11 +120,26 @@ export function createRouteProposalRelay({
       };
     }
 
-    return {
-      mode: 'openai',
-      model: getRouteProposalModel(env),
-      proposal: await requestOpenAIRouteProposal(payload, { env, fetchImpl }),
-    };
+    const model = getRouteProposalModel(env);
+
+    try {
+      return {
+        mode: 'openai',
+        model,
+        proposal: await requestOpenAIRouteProposal(payload, { env, fetchImpl }),
+      };
+    } catch (error) {
+      return {
+        mode: 'mock-fallback',
+        model,
+        error: error.message,
+        proposal: createMockRouteProposal({
+          carrier: payload.carrier,
+          allowedMoves,
+          targetNodeIds,
+        }),
+      };
+    }
   };
 }
 

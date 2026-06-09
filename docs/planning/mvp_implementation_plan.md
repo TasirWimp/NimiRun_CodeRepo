@@ -1440,7 +1440,10 @@ Nimiq Pay local Mini App smoke checks on June 8, 2026.
 
 PB-POLISH-002 Hosted Vercel/Nimiq Pay submission verification:
 
-Status: URL recorded; hosted browser and Nimiq Pay checks pending.
+Status: URL recorded; hosted browser and Nimiq Pay checks pending. On June 9,
+2026, the hosted URL opened inside Nimiq Pay but served a desktop-centered
+canvas build. A local portrait-ratio fix is prepared and must be redeployed
+before repeating the hosted Mini App check.
 
 - record the active hosted Vercel URL in `docs/architecture/deployment.md`
   and `docs/product/competition_scorecard.md` once the project owner confirms

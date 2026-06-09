@@ -632,7 +632,8 @@ check. It must verify:
   competition scorecard: `https://nimi-run-code-repo.vercel.app`,
 - the hosted app opens in a normal browser and renders the Golden Signal scene,
 - same-origin `/api/route-proposal` works in the hosted environment without
-  exposing provider keys,
+  exposing provider keys; invalid or unsafe OpenAI output must degrade to a
+  deterministic mock-fallback proposal rather than breaking the hosted app,
 - the hosted URL opens inside Nimiq Pay Mini Apps on an emulator or real phone,
 - the 60-second judge path works inside Nimiq Pay:
   Support Check -> Approve -> Historic Witness -> Trace Archive,
@@ -640,3 +641,14 @@ check. It must verify:
   mainnet authority,
 - if hosted verification is skipped or blocked, the reason is recorded before
   submission readiness is claimed.
+
+June 9, 2026 hosted check result:
+
+- `https://nimi-run-code-repo.vercel.app` opened inside Nimiq Pay, but the
+  hosted build rendered a desktop-centered canvas strip instead of the
+  phone-portrait layout,
+- hosted `/api/route-proposal` returned `502` when OpenAI output failed
+  deterministic proposal validation,
+- local fixes now preserve the Mini App WebView aspect ratio and make invalid
+  OpenAI output fall back to a deterministic mock proposal; repeat the hosted
+  check after redeploy.

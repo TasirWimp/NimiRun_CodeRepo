@@ -20,7 +20,7 @@ describe('getInitialGameSize', () => {
   it('treats high-density Mini App WebViews as phone portrait', () => {
     expect(getInitialGameSize({ innerWidth: 980, innerHeight: 1800 })).toEqual({
       width: 430,
-      height: 932,
+      height: 790,
     });
   });
 

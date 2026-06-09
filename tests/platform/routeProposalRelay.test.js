@@ -292,7 +292,7 @@ describe('route proposal relay', () => {
     });
   });
 
-  it('surfaces a readable validation error when full-scenario output uses unsafe authority language', async () => {
+  it('falls back to a mock proposal when full-scenario output uses unsafe authority language', async () => {
     const handler = createRouteProposalFetchHandler({
       env: {
         OPENAI_API_KEY: 'test-secret',
@@ -325,10 +325,14 @@ describe('route proposal relay', () => {
     );
     const data = await response.json();
 
-    expect(response.status).toBe(502);
-    expect(data.error).toBe('Route proposal relay failed.');
-    expect(data.detail).toContain('considered_alternatives.1.why_not_selected');
-    expect(data.detail).toContain('unsafe authority language');
+    expect(response.status).toBe(200);
+    expect(data.mode).toBe('mock-fallback');
+    expect(data.model).toBe('test-route-model');
+    expect(data.error).toContain('considered_alternatives.1.why_not_selected');
+    expect(data.error).toContain('unsafe authority language');
+    expect(data.proposal).toMatchObject({
+      moveType: 'inspect',
+    });
   });
 
   it('serves the Web Request handler used by production functions', async () => {

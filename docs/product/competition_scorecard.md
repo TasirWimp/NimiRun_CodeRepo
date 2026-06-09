@@ -54,7 +54,9 @@ documented exception accepted by the project owner.
   `https://nimi-run-code-repo.vercel.app` is recorded as the canonical public
   app URL as of June 9, 2026.
 - Hosted Vercel URL inside Nimiq Pay: blocked until PB-POLISH-002 verifies the
-  public URL through the Mini Apps flow.
+  public URL through the Mini Apps flow. June 9, 2026 check opened the hosted
+  URL but showed a desktop-centered canvas build; portrait-ratio fix is pending
+  redeploy.
 - NIM/USDT support path: NIM testnet/local status path implemented in PB-012 and emulator-verified in Nimiq Pay Testnet on June 7, 2026. USDT support remains future scope.
 - Pocket Bot loop works:
 - Bot Attention spend rules work:
@@ -94,7 +96,8 @@ Current URL status:
 ```text
 Local emulator path: http://10.0.2.2:8080/ verified on June 8, 2026.
 Hosted Vercel path: https://nimi-run-code-repo.vercel.app recorded on June 9,
-2026; Nimiq Pay hosted verification is still pending.
+2026; Nimiq Pay hosted verification is still blocked until the portrait-ratio
+fix is deployed and rechecked.
 ```
 
 Target first 60 seconds:

@@ -19,14 +19,17 @@ export function getInitialGameSize(globalObject = globalThis) {
     return DESKTOP_GAME_SIZE;
   }
 
+  const width = clamp(
+    Math.round(viewportWidth),
+    PORTRAIT_GAME_SIZE_LIMITS.minWidth,
+    PORTRAIT_GAME_SIZE_LIMITS.maxWidth
+  );
+  const viewportRatio = viewportHeight / viewportWidth;
+
   return {
-    width: clamp(
-      Math.round(viewportWidth),
-      PORTRAIT_GAME_SIZE_LIMITS.minWidth,
-      PORTRAIT_GAME_SIZE_LIMITS.maxWidth
-    ),
+    width,
     height: clamp(
-      Math.round(viewportHeight),
+      Math.round(width * viewportRatio),
       PORTRAIT_GAME_SIZE_LIMITS.minHeight,
       PORTRAIT_GAME_SIZE_LIMITS.maxHeight
     ),
