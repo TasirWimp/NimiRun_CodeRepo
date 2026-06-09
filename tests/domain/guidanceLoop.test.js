@@ -95,6 +95,31 @@ describe('guidance loop domain rules', () => {
     });
   });
 
+  it('approves pending ask proposals without requiring a node-local ask move', () => {
+    const state = createState({
+      pendingProposal: createPendingProposal({
+        moveType: 'ask',
+        targetNodeId: 'shortcut-bridge',
+        reason: 'Ask the user how much attention to spend before moving.',
+        cutPrice: {
+          reveals: ['user preference'],
+          suppresses: ['autonomous closure'],
+          leavesResidue: ['map uncertainty remains'],
+        },
+      }),
+    });
+    const result = approvePendingProposal(state);
+
+    expect(result.applied).toBe(true);
+    expect(result.state.mapState.resources.botAttention.current).toBe(9);
+    expect(result.state.mapState.resources.userGuidance.prompts).toBe(1);
+    expect(result.state.guidanceTrace.at(-1)).toMatchObject({
+      action: 'ask-user',
+      moveType: 'ask',
+      targetNodeId: 'shortcut-bridge',
+    });
+  });
+
   it('asking why-this-route exposes the proposal rationale and considered alternative', () => {
     const state = createState();
     const nextState = showWhyThisRoute(state);

@@ -20,7 +20,7 @@ competition_submission_status:
   no_secrets_scan: unknown
   mit_license_public_repo: unknown
   hosted_vercel_url_recorded: pass
-  hosted_nimiq_pay_check: blocked
+  hosted_nimiq_pay_check: pass
   mobile_ux_60s_path: pass
   vertical_slice: pass
   submission_story: unknown
@@ -36,13 +36,12 @@ documented exception accepted by the project owner.
 - First impression:
 - Mobile readability: pass for local browser phone viewport and Android
   emulator Nimiq Pay local Mini App check on June 8, 2026. A June 9 hosted
-  Nimiq Pay check exposed a desktop-canvas regression; local WebView metric
-  fallback now fixes the phone canvas smoke, but hosted Vercel still needs
-  redeploy and recheck.
+  Nimiq Pay check exposed a desktop-canvas regression; after redeploy, the
+  hosted Vercel app rendered correctly in portrait inside Nimiq Pay.
 - Touch-friendly controls: pass for the Golden Signal Support Check -> Approve
   local/emulator path on June 8, 2026.
-- 60-second onboarding: pass for local/mobile vertical slice; hosted Nimiq Pay
-  judge path still needs PB-POLISH-002 verification.
+- 60-second onboarding: pass for local/mobile vertical slice and hosted Nimiq
+  Pay judge path as of June 9, 2026.
 - Visual trust:
 - Asset consistency follows art bible:
 - Trace readability:
@@ -55,15 +54,19 @@ documented exception accepted by the project owner.
 - Active hosted Vercel URL: pass;
   `https://nimi-run-code-repo.vercel.app` is recorded as the canonical public
   app URL as of June 9, 2026.
-- Hosted Vercel URL inside Nimiq Pay: blocked until PB-POLISH-002 verifies the
-  public URL through the Mini Apps flow. June 9, 2026 check opened the hosted
-  URL but showed a desktop-centered canvas build; stylesheet and WebView metric
-  fixes are local and pending redeploy/recheck.
+- Hosted Vercel URL inside Nimiq Pay: pass on June 9, 2026 after redeploy.
+  The public URL opened in Nimiq Pay, rendered the phone portrait layout,
+  completed Support Check -> Approve -> Historic Witness -> Trace Archive,
+  and did not trigger sign, send, payment, checkout, top-up, or mainnet
+  authority.
 - NIM/USDT support path: NIM testnet/local status path implemented in PB-012 and emulator-verified in Nimiq Pay Testnet on June 7, 2026. USDT support remains future scope.
 - Pocket Bot loop works:
 - Bot Attention spend rules work:
 - Runtime transition / finish judgment works:
-- LLM proposal bridge works or mock fallback is clear:
+- LLM proposal bridge works or mock fallback is clear: backend relay verified on
+  June 9, 2026; local 390x844 scene smoke verified `Ask Bot` mock fallback
+  without spending Bot Attention; hosted Nimiq Pay tap-through needs the next
+  redeploy check.
 - Deterministic rules validate before state changes:
 - No secrets / no unsafe wallet authority:
 
@@ -98,8 +101,7 @@ Current URL status:
 ```text
 Local emulator path: http://10.0.2.2:8080/ verified on June 8, 2026.
 Hosted Vercel path: https://nimi-run-code-repo.vercel.app recorded on June 9,
-2026; Nimiq Pay hosted verification is still blocked until the stylesheet and
-WebView metric fixes are deployed and rechecked.
+2026; Nimiq Pay hosted verification passed on June 9, 2026 after redeploy.
 ```
 
 Target first 60 seconds:

@@ -14,6 +14,8 @@ function normalizeVisibleNodes(visibleNodes = []) {
     label: node.label,
     kind: node.kind,
     status: node.status,
+    visible_clue: node.visibleClue || node.visible_clue || null,
+    remaining_unknowns: node.remainingUnknowns || node.remaining_unknowns || [],
   }));
 }
 

@@ -179,6 +179,13 @@ function validateProposalTarget(state) {
     };
   }
 
+  if (state.pendingProposal.moveType === MOVE_TYPES.ASK) {
+    return {
+      valid: true,
+      node,
+    };
+  }
+
   if (!node.possibleMoves?.[state.pendingProposal.moveType]) {
     return {
       valid: false,

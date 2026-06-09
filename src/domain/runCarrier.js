@@ -44,6 +44,7 @@ export function createRunCarrier({
   resources,
   visibleNodeIds = [],
   residue = [],
+  revealedEvidence = [],
   trace = [],
   finishStatus = FINISH_STATUSES.OPEN,
 }) {
@@ -54,7 +55,7 @@ export function createRunCarrier({
     resources: summarizeResources(resources),
     visibleNodeIds: normalizeList(visibleNodeIds),
     residue: normalizeList(residue),
-    revealedEvidence: [],
+    revealedEvidence: normalizeList(revealedEvidence),
     trace: trace.map(clone),
     finishStatus,
   };
@@ -111,4 +112,3 @@ export function serializeRunCarrierForPrompt(carrier) {
     finish_status: carrier.finishStatus || FINISH_STATUSES.OPEN,
   };
 }
-

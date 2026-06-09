@@ -12,7 +12,12 @@ describe('route proposal prompt', () => {
     const session = createRunSession(createResourceMapScenario(), { id: 'run-prompt-test' });
     const prompt = buildRouteProposalPrompt({
       carrier: session.carrier,
-      visibleNodes: [{ id: 'source-edge', label: 'Source Edge' }],
+      visibleNodes: [{
+        id: 'source-edge',
+        label: 'Source Edge',
+        visibleClue: 'A route starts with unresolved pressure.',
+        remainingUnknowns: ['long route safety unknown'],
+      }],
       allowedMoves: session.contract.allowedMoves,
     });
 
@@ -24,6 +29,10 @@ describe('route proposal prompt', () => {
     expect(prompt.user).toContain('"run_carrier"');
     expect(prompt.user).toContain('"current_node": "source-edge"');
     expect(prompt.user).toContain('"visible_nodes"');
+    expect(prompt.payload.visible_nodes[0]).toMatchObject({
+      visible_clue: 'A route starts with unresolved pressure.',
+      remaining_unknowns: ['long route safety unknown'],
+    });
     expect(prompt.user).not.toContain('hiddenPressure');
     expect(prompt.user).not.toContain('runtimeContract');
   });

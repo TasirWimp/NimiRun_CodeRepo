@@ -768,12 +768,14 @@ Expected files:
 - `src/llm/routeProposalPrompt.js`
 - `src/llm/routeProposalClient.js`
 - `src/llm/routeProposalMock.js`
+- `src/game/routeProposalRuntime.js`
 - `server/routeProposalRelay.js`
 - `api/route-proposal.js`
 - `vercel.json`
 - `tests/llm/routeProposalSchema.test.js`
 - `tests/llm/routeProposalPrompt.test.js`
 - `tests/llm/routeProposalClient.test.js`
+- `tests/game/routeProposalRuntime.test.js`
 - `tests/platform/routeProposalRelay.test.js`
 
 Route proposal shape should include:
@@ -818,6 +820,11 @@ Test plan:
 Implementation note:
 
 - PB-007R full-scenario relay regression is implemented with mocked OpenAI responses that include pocket, false-finish, trace-card, session-lesson, and residue context. The positive case validates a bounded proposal; recoverable overclaim/boundary wording is normalized with governance warnings; chosen moves that request unsafe authority still surface a readable relay validation error before gameplay.
+- `src/game/routeProposalRuntime.js` turns the current guidance state into the
+  compact same-origin relay payload used by the Phaser scene, filters out
+  non-playable Phase 1 moves such as `remember`, normalizes model-claimed costs
+  to deterministic scenario costs, and records the proposal source in
+  guidance trace without spending resources.
 - The prompt boundary avoids seeding exact forbidden proposal phrases such as wallet authority, checkout, payment execution, mainnet spend, private key, persistent memory, external tools, or unbounded tool language into the model instruction.
 - Boundary-language recovery is path-aware: rejected alternatives may mention
   blocked authority as the reason they were not selected, and explicit boundary
@@ -950,7 +957,7 @@ Connect LLM proposals, deterministic resource checks, and player guidance.
 
 User-visible behavior:
 
-The bot proposes a move. In the implemented PB-009 vertical slice, the player can approve, redirect by selecting a node, ask why this route, ask what remains unknown, ask the bot to inspect first, or mark a result as partial. The bot spends resources only after a legal move is accepted.
+The bot proposes a move. In the implemented PB-009 vertical slice, the player can request a fresh route proposal with `Ask Bot`, approve, redirect by selecting a node, ask why this route, ask what remains unknown, ask the bot to inspect first, or mark a result as partial. The bot spends resources only after a legal move is accepted.
 
 Cheaper-route controls and remember/forget clue controls remain later refinements tied to session lessons, context-slot handling, and trace cards.
 
@@ -959,14 +966,19 @@ Implemented files:
 - `src/scenes/PocketBotWorkshop.js`
 - `src/ui/guidanceControls.js`
 - `src/game/pocketBotState.js`
+- `src/game/routeProposalRuntime.js`
 - `src/domain/guidanceLoop.js`
 - `src/domain/lossyMap.js`
+- `src/llm/routeProposalClient.js`
 - `tests/domain/guidanceLoop.test.js`
 - `tests/domain/lossyMap.test.js`
+- `tests/game/routeProposalRuntime.test.js`
 
 Test plan:
 
 - approved inspect move spends Bot Attention and reveals state,
+- Ask Bot creates a bounded relay request from guidance state and updates the
+  pending proposal without spending resources,
 - redirect updates the pending move without spending the original cost,
 - ask-user actions are represented as user attention prompts,
 - asking "why this route" exposes the proposal's reason and considered alternatives,
@@ -982,8 +994,14 @@ Implementation note:
 
 - `src/domain/guidanceLoop.js` owns proposal approval, redirect, inspect-first, remaining-unknown, why-route, partial-result, ask-user, and guidance-trace behavior.
 - `src/game/pocketBotState.js` builds the scene-independent guidance state from the lossy-map scenario.
+- `src/game/routeProposalRuntime.js` is the scene-independent bridge between
+  guidance state and the same-origin LLM relay. It applies only validated
+  proposals and lets deterministic rules keep legal moves and costs
+  authoritative.
 - `src/ui/guidanceControls.js` supplies compact Phaser controls for the proposal panel.
-- `src/scenes/PocketBotWorkshop.js` wires approve, node-click redirect, why, unknowns, inspect first, and mark partial into deterministic map/resource state.
+- `src/scenes/PocketBotWorkshop.js` wires Ask Bot, approve, node-click redirect,
+  why, unknowns, inspect first, and mark partial into deterministic
+  map/resource state.
 
 Acceptance:
 
@@ -1469,29 +1487,37 @@ Nimiq Pay local Mini App smoke checks on June 8, 2026.
 
 PB-POLISH-002 Hosted Vercel/Nimiq Pay submission verification:
 
-Status: URL recorded; hosted browser and Nimiq Pay checks pending. On June 9,
-2026, the hosted URL opened inside Nimiq Pay but served a desktop-centered
-canvas build. Local fixes now sync the deployed stylesheet, degrade invalid
-OpenAI relay output to deterministic mock fallback, normalize recoverable LLM
-overclaim wording, and classify embedded phone WebViews through
-`visualViewport`, document, and screen metrics instead of trusting only
-`window.innerWidth`. A local 390x844 browser smoke confirmed the Phaser canvas
-now initializes as 390x844. Redeploy and repeat the hosted Mini App check
-before marking this pass.
+Status: verified on hosted Vercel and Android emulator Nimiq Pay on June 9,
+2026. The first hosted Nimiq Pay attempt exposed a desktop-centered canvas
+strip and relay fallback issue. After redeploy, the hosted app served the
+fixed stylesheet and current bundle, classified the embedded WebView as phone
+portrait, opened inside Nimiq Pay, completed Support Check -> Approve ->
+Historic Witness -> Trace Archive, and kept sign, send, checkout, top-up,
+payment, and mainnet authority inactive.
+
+Hosted relay verification on June 9, 2026 returned `200` from
+`/api/route-proposal` in live `openai` mode using `gpt-5.4-mini`, with a
+bounded `inspect -> support-check` proposal and one governance warning.
+That check was a direct relay smoke. The scene now also exposes the same path
+through the proposal-panel `Ask Bot` button; after this change is deployed, the
+hosted Nimiq Pay manual check should tap `Ask Bot`, confirm the pending proposal
+updates, and then approve the deterministic move without any wallet authority
+prompt.
 
 - record the active hosted Vercel URL in `docs/architecture/deployment.md`
   and `docs/product/competition_scorecard.md` once the project owner confirms
   the deployment target. Canonical URL:
   `https://nimi-run-code-repo.vercel.app`,
-- open that URL in a normal browser and verify the Phaser scene plus
+- verified: open that URL in a normal browser and verify the Phaser scene plus
   same-origin `/api/route-proposal` relay behavior,
-- open the same hosted URL inside Nimiq Pay Mini Apps on the Android emulator
-  or a real phone,
-- run the 60-second judge path: Support Check -> Approve -> Historic Witness
-  -> Trace Archive,
-- confirm the Mini App shell still shows Nimiq Pay/local status correctly and
-  does not trigger sign, send, checkout, top-up, payment, or mainnet authority,
-- update the test strategy and competition scorecard with the hosted
+- verified: open the same hosted URL inside Nimiq Pay Mini Apps on the Android
+  emulator,
+- verified: run the 60-second judge path: Support Check -> Approve ->
+  Historic Witness -> Trace Archive,
+- verified: confirm the Mini App shell still shows Nimiq Pay/local status
+  correctly and does not trigger sign, send, checkout, top-up, payment, or
+  mainnet authority,
+- verified: update the test strategy and competition scorecard with the hosted
   verification result.
 
 Acceptance:

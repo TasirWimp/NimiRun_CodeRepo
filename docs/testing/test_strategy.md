@@ -323,12 +323,19 @@ Expected automated tests:
 - client calls backend relay only,
 - relay uses environment configuration,
 - Vercel function uses the same route proposal relay and falls back to mock without a key,
+- game runtime builds a compact relay payload from guidance state and normalizes
+  relay proposal costs back to deterministic scenario costs,
+- pending `ask` proposals can be approved without requiring a node-local
+  `possibleMoves.ask`,
 - mock/offline fallback works.
 
 Expected manual or smoke checks:
 
-- user can request a bot proposal,
+- user can tap `Ask Bot` in the proposal panel and receive a relay or mock
+  proposal in the playable scene,
 - proposal displays reason, resource cost, considered alternative, and remaining unknown,
+- no Bot Attention, Nimiq Pocket, or wallet authority is spent by requesting the
+  proposal; spending happens only after `Approve`,
 - no API key appears in browser-visible configuration,
 - production relay smoke with the full scenario reports whether validation accepted the proposal or blocked unsafe wording, and the browser shows only same-origin `/api/route-proposal` traffic,
 - failure state is readable when no relay/API key is configured.
@@ -343,6 +350,13 @@ Implemented regression coverage:
   mock fallback,
 - active unsafe-authority wording with soft contrast language stays rejected
   while explicit boundary cautions can normalize,
+- `tests/game/routeProposalRuntime.test.js` covers compact guidance-state
+  payload creation, deterministic cost normalization, and unsupported move
+  adjustment before a proposal reaches the playable scene,
+- local 390x844 browser smoke after scene wiring tapped `Ask Bot`, received a
+  mock fallback proposal (`inspect -> Bright Signal`), kept Bot Attention at
+  `10/10`, created no trace card before approval, and produced no browser
+  errors.
 - prompt boundary tests prevent reintroducing exact unsafe output phrases into the system instruction.
 
 Later governance tests should cover typed warning objects, tri-state validation
@@ -664,14 +678,29 @@ check. It must verify:
 June 9, 2026 hosted check result:
 
 - `https://nimi-run-code-repo.vercel.app` opened inside Nimiq Pay, but the
-  hosted build rendered a desktop-centered canvas strip instead of the
+  first hosted build rendered a desktop-centered canvas strip instead of the
   phone-portrait layout,
 - hosted `/api/route-proposal` returned `502` when OpenAI output failed
   deterministic proposal validation,
 - local fixes now sync the deployed stylesheet, preserve Mini App WebView
   aspect ratio through `visualViewport` / document / screen fallbacks, and make
-  invalid OpenAI output fall back to a deterministic mock proposal,
+  invalid OpenAI output fall back to a deterministic mock proposal while
+  normalizing recoverable governance wording,
 - local browser smoke after the WebView-metric fix confirmed a phone viewport
   initializes a 390x844 Phaser canvas instead of a 1024x768 desktop canvas,
-- repeat the hosted Nimiq Pay check after redeploy and keep this blocked until
-  the public URL passes inside the Mini App shell.
+- after redeploy, the hosted Vercel app served the fixed stylesheet and current
+  bundle,
+- hosted `/api/route-proposal` returned `200` in live `openai` mode with
+  `gpt-5.4-mini`, a bounded `inspect -> support-check` proposal, and one
+  governance warning,
+- that June 9 relay check was direct/backend-only; after the Ask Bot scene
+  wiring is deployed, repeat the hosted Nimiq Pay check by tapping `Ask Bot`
+  inside the scene before approving the proposed move,
+- Android emulator Nimiq Pay opened the hosted URL, rendered the portrait
+  Golden Signal scene, selected Support Check, approved inspection, showed the
+  Historic Witness card, reduced Bot Attention to `8/10`, and opened Trace
+  Archive with `Trace 1: Open run`,
+- emulator log scan found no `AndroidRuntime`, `am_crash`, checkout, payment,
+  mainnet, transaction prompt, sign, or send error,
+- browser bundle scan found no `OPENAI_API_KEY`, `Bearer`, or `api.openai.com`;
+  a raw `sk-` substring was checked and came from `ask-user`, not a secret.

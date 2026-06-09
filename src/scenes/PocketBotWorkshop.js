@@ -21,6 +21,10 @@ import { getLossyMapNodeView } from '../domain/lossyMap.js';
 import { preloadNimiRunV2Assets } from '../game/assets/preloadNimiRunV2Assets.js';
 import { createPocketBotState } from '../game/pocketBotState.js';
 import {
+  applyRouteProposalResult,
+  createRouteProposalRuntimeInput,
+} from '../game/routeProposalRuntime.js';
+import {
   NODE_KINDS,
   NODE_VISIBILITY,
   PATH_VISIBILITY,
@@ -28,6 +32,7 @@ import {
   getPathEndpoints,
 } from '../game/resourceMapScenario.js';
 import { createMarketSignalScoutScenario } from '../game/scenarios/marketSignalScoutScenario.js';
+import { requestRouteProposal } from '../llm/routeProposalClient.js';
 import {
   createNimiqPocketStatus,
   getMiniAppEnvironment,
@@ -718,6 +723,14 @@ export default class PocketBotWorkshop extends Phaser.Scene {
     this.proposalTitleText = this.add.text(x, y, 'Bot Proposal', {
       ...createTextStyle({ fontSize: isMobile ? '14px' : '17px', color: '#f2b33d', fontStyle: '700' }),
     });
+    createGuidanceButton(this, {
+      x: proposal.x + proposal.width - (isMobile ? 76 : 94),
+      y: y - (isMobile ? 1 : 2),
+      width: isMobile ? 64 : 78,
+      height: isMobile ? 20 : 22,
+      label: 'Ask Bot',
+      onClick: () => this.handleAskBotProposal(),
+    });
     this.proposalMoveText = this.add.text(x, y + (isMobile ? 24 : 28), '', {
       ...createTextStyle({ fontSize: isMobile ? '11px' : '14px', color: '#f3e4c2', fontStyle: '700' }),
     });
@@ -1094,6 +1107,49 @@ export default class PocketBotWorkshop extends Phaser.Scene {
     this.updateHud();
     this.renderLatestTraceCard();
     this.setStatus('Marked as partial progress.');
+  }
+
+  async handleAskBotProposal() {
+    if (this.routeProposalPending) {
+      this.setStatus('Pocket Bot is already preparing a route proposal.');
+      return;
+    }
+
+    this.routeProposalPending = true;
+    this.setStatus('Asking Pocket Bot for a bounded route proposal...');
+
+    try {
+      const requestPayload = createRouteProposalRuntimeInput(this.guidanceState, {
+        sessionId: `run-${this.mapScenario.id}`,
+      });
+      const result = await requestRouteProposal({
+        ...requestPayload,
+        mockFallback: true,
+      });
+
+      this.guidanceState = applyRouteProposalResult(this.guidanceState, result);
+      this.updateProposalPanel();
+      this.selectNode(this.guidanceState.pendingProposal.targetNodeId, { redirectProposal: false });
+      this.renderGuidancePanel();
+      this.setStatus(
+        `Bot proposal updated via ${result.mode}. Approve still controls resource spending.`
+      );
+    } catch (error) {
+      this.guidanceState = {
+        ...this.guidanceState,
+        guidancePanel: {
+          title: 'Bot Proposal Unavailable',
+          lines: [
+            'The route relay did not return a usable proposal.',
+            error.message,
+          ],
+        },
+      };
+      this.renderGuidancePanel();
+      this.setStatus('Bot proposal request failed before resources were spent.');
+    } finally {
+      this.routeProposalPending = false;
+    }
   }
 
   async handleCheckPocketStatus() {
