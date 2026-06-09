@@ -819,6 +819,30 @@ Implementation note:
 
 - PB-007R full-scenario relay regression is implemented with mocked OpenAI responses that include pocket, false-finish, trace-card, session-lesson, and residue context. The positive case validates a bounded proposal; recoverable overclaim/boundary wording is normalized with governance warnings; chosen moves that request unsafe authority still surface a readable relay validation error before gameplay.
 - The prompt boundary avoids seeding exact forbidden proposal phrases such as wallet authority, checkout, payment execution, mainnet spend, private key, persistent memory, external tools, or unbounded tool language into the model instruction.
+- Boundary-language recovery is path-aware: rejected alternatives may mention
+  blocked authority as the reason they were not selected, and explicit boundary
+  cautions such as "do not" / "must not" / "outside" may normalize. Soft
+  contrast wording such as "instead of" or "rather than" must not soften an
+  active proposal that requests unsafe authority.
+
+Later governance refinements, after the current submission path is stable:
+
+- replace string-only `governanceWarnings` with typed warning objects that
+  include a code, field path, severity, original text, normalized text, and
+  false-closure family,
+- return a tri-state validation status such as `accepted`,
+  `accepted_with_normalization`, or `rejected` instead of relying only on
+  `valid: true` plus warnings,
+- derive an internal transition packet from accepted proposals that records
+  preserved content, suppressed content, newly visible content, residue, and
+  reversibility,
+- carry governance warnings into trace cards so overclaim repairs remain
+  recoverable as run residue rather than disappearing as validator metadata,
+- add finish evidence packets that make safe/partial/false/open judgments
+  auditable through protected evidence, missing evidence, residue, remaining
+  unknowns, scope, and re-entry condition,
+- compare LLM-claimed resource cost with deterministic runtime cost and record
+  a warning when runtime overrides the model's cost claim.
 
 Acceptance:
 

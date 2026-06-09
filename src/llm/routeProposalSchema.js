@@ -127,7 +127,7 @@ const FULL_SUCCESS_PATTERN = /\b(done|solved|complete|completed|finished|full su
 const FULL_SUCCESS_CAUTION_PATTERN =
   /\b(not|not yet|cannot|can't|must not|do not|don't|avoid|without claiming)\b/i;
 const BOUNDARY_CAUTION_PATTERN =
-  /\b(not|never|avoid|without|blocked|outside|instead of|rather than|cannot|can't|must not|do not|don't|no)\b/i;
+  /\b(do not|don't|never|must not|cannot|can't|without claiming|blocked|outside|forbidden|no)\b/i;
 
 function getRouteProposalPayload(raw) {
   if (raw?.[ROUTE_PROPOSAL_RESPONSE_KEY]) {
@@ -212,7 +212,9 @@ function collectTerrainCertaintyAssertionText(payload) {
 }
 
 function isRecoverableBoundaryMention(path, text) {
-  return path.includes('why_not_selected') || BOUNDARY_CAUTION_PATTERN.test(text);
+  const isRejectedAlternative = path.includes('why_not_selected');
+
+  return isRejectedAlternative || BOUNDARY_CAUTION_PATTERN.test(text);
 }
 
 function createWarning(warnings, message) {

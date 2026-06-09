@@ -158,6 +158,8 @@ Minimum checks:
   nodes, does not accept chosen moves that request unsafe authority,
 - recoverable boundary mentions in rejected alternatives are normalized with
   governance warnings rather than forcing mock fallback,
+- active unsafe authority wording remains a hard failure when it only uses
+  soft contrast phrases such as "instead of" or "rather than",
 - proposal overclaims that its chosen route proves the whole terrain are
   normalized before rendering,
 - proposal `safe_finish` or full-success wording before deterministic finish
@@ -339,7 +341,13 @@ Implemented regression coverage:
   fallback,
 - chosen unsafe-authority wording returns a readable relay validation error and
   mock fallback,
+- active unsafe-authority wording with soft contrast language stays rejected
+  while explicit boundary cautions can normalize,
 - prompt boundary tests prevent reintroducing exact unsafe output phrases into the system instruction.
+
+Later governance tests should cover typed warning objects, tri-state validation
+status, transition-packet derivation, warning carry-forward into trace cards,
+finish evidence packets, and deterministic runtime-cost override warnings.
 
 ### PB-008 Lossy Map Scenario
 

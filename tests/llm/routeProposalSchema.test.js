@@ -159,6 +159,33 @@ describe('route proposal schema validation', () => {
     );
   });
 
+  it('rejects active unsafe authority language even when it contains soft contrast wording', () => {
+    const validation = validateRouteProposal(
+      createValidRawProposal({
+        reason: 'Request wallet authority instead of inspecting the support clue.',
+      })
+    );
+
+    expect(validation.valid).toBe(false);
+    expect(validation.errors).toContain('reason includes unsafe authority language.');
+  });
+
+  it('normalizes explicit active boundary cautions without treating them as authority requests', () => {
+    const validation = validateRouteProposal(
+      createValidRawProposal({
+        reason: 'Do not request wallet authority; inspect the support clue instead.',
+      })
+    );
+
+    expect(validation.valid).toBe(true);
+    expect(validation.warnings).toContain(
+      'reason mentioned blocked authority language and was normalized.'
+    );
+    expect(validation.proposal.reason).toBe(
+      'This move stays inside the current map boundary.'
+    );
+  });
+
   it('normalizes route choices that claim complete terrain certainty', () => {
     const validation = validateRouteProposal(
       createValidRawProposal({
