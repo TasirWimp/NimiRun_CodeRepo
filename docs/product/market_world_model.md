@@ -11,11 +11,13 @@ Source status:
 
 ## Core Design Cut
 
-The trading interaction is intentionally simple.
+The trading-like interaction is intentionally simple.
 
 ```text
-buy / sell / wait / inspect
+fictional enter / exit / wait / inspect
 ```
+
+Player-facing copy may use buy/sell flavor only when it is clearly fictional, educational, and never connected to exchange execution, wallet signing, custody, real value movement, or investment advice.
 
 The game complexity comes from the world those decisions live inside:
 
@@ -222,6 +224,43 @@ world_build_pipeline:
       - bot_repair_edge
 ```
 
+## Canonical World Enums
+
+Use these names consistently in docs and runtime objects.
+
+```yaml
+relation_status:
+  hidden:
+    meaning: "exists in the authored arena but is not visible to the player or bot"
+  visible:
+    meaning: "can be sensed or hinted, but has not been inspected or narrator-revealed"
+  revealed:
+    meaning: "made explicit by a player action, bot analysis tool, or allowed narrator reveal"
+  residualized:
+    meaning: "named as still unknown and carried in the trace without pretending resolution"
+
+relation_severity:
+  - low
+  - medium
+  - high
+
+finish_status:
+  - safe_finish
+  - partial_finish
+  - false_finish
+  - open_finish
+
+finish_safety_rule:
+  safe_finish:
+    meaning: "blocking relations have been checked or declared non-blocking by explicit level rules"
+  partial_finish:
+    meaning: "important relations remain unresolved, but they are named and carried without overclaim"
+  false_finish:
+    meaning: "a goal-looking or profit-looking route hides blocking residue"
+  open_finish:
+    meaning: "the run remains unsettled without enough trace support for safe or partial finish"
+```
+
 ## Market Arena Schema
 
 Use this as the initial data shape for authored levels.
@@ -287,6 +326,8 @@ market_world_level:
 
   player_actions:
     available: []
+    first_slice_recommended: []
+    later_iteration_actions: []
 
   finish_logic:
     safe_finish:
@@ -327,19 +368,19 @@ market_world_state:
     exit:
     psychology:
 
-  hidden_relations:
+  relations:
     signal_support:
-      status: hidden | revealed | residualized
-      severity:
+      status: hidden | visible | revealed | residualized
+      severity: low | medium | high
     signal_event:
-      status:
-      severity:
+      status: hidden | visible | revealed | residualized
+      severity: low | medium | high
     signal_exit:
-      status:
-      severity:
+      status: hidden | visible | revealed | residualized
+      severity: low | medium | high
     signal_crowd:
-      status:
-      severity:
+      status: hidden | visible | revealed | residualized
+      severity: low | medium | high
 
   bot_analysis_state:
     tools_used: []
@@ -495,6 +536,8 @@ bot_analysis_tools:
       "The glow did not disappear. It is no longer the only pressure in the arena."
 ```
 
+Implementation note: the first Golden Signal playable slice should not expose the full toolbox. Start with the smallest set that proves the world loop. Add deeper bot analysis tools after the first relation-state and finish checks feel playable.
+
 ## Action Effect Contract
 
 Every player action should update the world through a relation-aware effect packet.
@@ -637,13 +680,15 @@ Lesson candidate: bright signals deserve a wider look before action
 
 A finish is not a route endpoint. It is a boundary crossing where Pocket Bot must explain what was seen, what remains unknown, and why the level is safe, partial, false, or open.
 
+Safe finish should not mean "some residue exists but we call it safe anyway." Residue usually points to partial finish unless the level explicitly declares the unresolved relation non-blocking.
+
 ```yaml
 finish_logic:
   safe_finish:
     requires:
       - trace_exists
-      - support_checked_or_residualized_as_safe_by_level_rules
-      - exit_checked_or_residualized_as_safe_by_level_rules
+      - all_blocking_relations_checked_or_declared_non_blocking_by_level_rules
+      - no_blocking_exit_or_support_residue
       - major_pressure_named
       - bot_repair_scope_declared
       - no_terminal_reveal_used_before_finish
@@ -652,6 +697,7 @@ finish_logic:
     requires:
       - at_least_one_major_relation_checked
       - remaining_unknowns_named
+      - unresolved_blocking_relations_are_carried_as_residue
       - player_or_bot_does_not_claim_full_safety
       - trace_supports_later_reentry
 
@@ -777,6 +823,28 @@ market_world_level:
       - enter_when_signal_bright
       - underweight_exit_friction
 
+  player_actions:
+    available:
+      - approve_enter
+      - wide_scan
+      - check_exit
+      - ask_remaining_unknown
+      - check_signal
+      - check_support
+      - check_event
+      - check_crowd
+    first_slice_recommended:
+      - approve_enter
+      - wide_scan
+      - check_exit
+      - ask_remaining_unknown
+    later_iteration_actions:
+      - check_signal
+      - check_support
+      - check_event
+      - check_crowd
+      - check_volatility
+
   narrator_rules:
     knows_authored_relations: true
     may_reveal_before_action:
@@ -795,14 +863,17 @@ market_world_level:
   finish_logic:
     safe_finish:
       requires:
+        - trace_exists
         - support_checked
-        - exit_checked_or_explicitly_residualized
+        - exit_checked
+        - no_blocking_exit_or_support_residue
         - trace_explains_decision
     partial_finish:
       requires:
         - one_major_relation_checked
         - remaining_unknowns_named
         - no_full_safety_claim
+        - trace_supports_later_reentry
     false_finish:
       triggered_by:
         - enter_on_signal_strength_alone
@@ -917,13 +988,14 @@ Minimum implementation slice:
 1. Load or define the Golden Signal level object.
 2. Render the visible opening: bright signal, crowd murmur, foggy exit.
 3. Give Pocket Bot one default biased proposal: `enter_bright_signal`.
-4. Provide three to five player actions: `approve_enter`, `check_signal`, `wide_scan`, `check_exit`, `ask_remaining_unknown`.
-5. Implement relation-state updates for each action.
+4. Provide four first-slice player actions: `approve_enter`, `wide_scan`, `check_exit`, `ask_remaining_unknown`.
+5. Implement relation-state updates for each first-slice action.
 6. Add narrator insight lines tied to relation reveals.
 7. Emit trace cards with `world_relation_revealed`, `still_unknown`, and `return_condition`.
 8. Implement false / partial / safe / open finish checks.
 9. Add a locked hindsight card that opens only after finish.
 10. Add one bot repair edge, such as `ask_or_scan_before_bright_enter`.
+11. Add `check_signal`, `check_support`, `check_event`, `check_crowd`, and `check_volatility` only after the first-slice loop is playable.
 
 ## Player-Facing Language Rules
 
