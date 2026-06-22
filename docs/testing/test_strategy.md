@@ -528,6 +528,59 @@ Expected manual checks:
 - Nimiq Pay/local fallback behavior remains unchanged unless the platform
   adapter is intentionally touched.
 
+### PB-014 Market World Runtime Seed
+
+Status: planned. This is the next gameplay-spine slice after the Golden Signal
+proof of concept. It should make `src/game/scenarios/marketWorldLevels.js` the
+active Golden Signal level contract through an adapter-first runtime transition.
+
+Baseline freeze status: implemented in
+`tests/game/goldenSignalPlayableBaseline.test.js`. The test freezes
+`Ask Hidden -> Wide Scan -> Approve -> Trace`, `Support Check -> Approve ->
+Historic Witness -> Trace Archive`, and `Ask Bot -> bounded proposal ->
+Approve` as regression paths before the runtime adapter is introduced.
+
+Expected automated tests:
+
+- market-world adapter initializes the Golden Signal arena from
+  `getGoldenSignalMarketWorldLevel()`,
+- adapter exposes only legal first-slice arena actions: Ask Hidden, Wide Scan,
+  Check Exit, Support Check, and Approve Enter,
+- opening relation state hides support, exit, event, and crowd pressure while
+  making the bright signal visible,
+- `Ask Hidden` exposes support, exit, and crowd/FOMO unknowns without spending
+  Bot Attention,
+- `Wide Scan` prepares a crowd/FOMO inspection and does not spend until
+  `Approve`,
+- approving `Wide Scan` spends Bot Attention, reveals or residualizes the
+  crowd relation, and creates a trace,
+- `Check Exit` prepares an exit-friction inspection and does not spend until
+  `Approve`,
+- approving `Check Exit` spends Bot Attention, reveals or residualizes exit
+  friction, and creates a trace,
+- `Support Check` still follows the verified historic-witness judge path,
+- `Approve Enter` with unchecked support, exit, or crowd pressure creates
+  false or partial finish pressure instead of safe finish,
+- trace cards include world relation revealed, still unknown, residue carried
+  forward, return condition, and any historic witness reference,
+- finish judgment derives safe, partial, false, or open status from relation
+  state,
+- hindsight-only fields remain unavailable before finish,
+- player-facing action labels contain no CRPM jargon,
+- `Ask Bot` remains bounded to legal moves and does not gain live-market,
+  trading, wallet, reward, or persistent-strategy authority.
+
+Expected manual checks:
+
+- phone portrait smoke for `Ask Hidden -> Wide Scan -> Approve -> Trace`,
+- phone portrait smoke for `Support Check -> Approve -> Historic Witness ->
+  Trace Archive`,
+- entering too early creates visible false/partial pressure rather than a vague
+  success,
+- trace/hindsight copy explains remaining unknowns in simple game language,
+- no live market data, exchange action, NIM trade cost, payment, checkout,
+  sign/send, or mainnet prompt appears.
+
 ### PB-012A Desktop/Mobile Browser TestAlbatross Status
 
 Status: postponed until after the Android/Nimiq Pay submission path is stable.

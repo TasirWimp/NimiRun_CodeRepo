@@ -208,9 +208,14 @@ Implemented groundwork from the earlier allowance-control cut:
 
 This work should be retained as supporting infrastructure. It becomes one possible resource-governance mechanic inside the broader resource-judgment game, not the active center of Phase 1.
 
-Next work should focus on submission polish around the Golden Signal loop:
+PB-POLISH has a verified hosted/Nimiq Pay submission path for the current
+Golden Signal proof of concept. The next product-spine work should be
+**PB-014 Market World Runtime Seed**: make the `marketWorldLevels.js` Golden
+Signal arena the live gameplay seed through a layered runtime transition, while
+preserving the verified support-check path as a regression baseline.
 
-- PB-POLISH Submission Vertical Slice.
+PB-POLISH remains the submission/regression lane for final screenshots, demo
+media, and pre-submission checks after PB-014 changes the gameplay surface.
 
 PB-012A Desktop/Mobile Browser TestAlbatross Status is postponed. The hosted
 web app should still remain playable in ordinary desktop/mobile browsers with
@@ -1435,6 +1440,144 @@ Acceptance:
   prediction, or wallet/exchange authority,
 - the slice is ready for PB-POLISH instead of competing with it.
 
+### PB-014 Market World Runtime Seed
+
+Goal:
+
+Turn the current Golden Signal proof of concept into the first real gameplay
+seed for Market Signal Scout by making the market-world level contract drive
+runtime state, player actions, trace records, and finish pressure.
+
+This is a layered transition, not a full scene rewrite. The current verified
+Golden Signal scene remains the playable baseline while the runtime source of
+truth moves from the older `marketSignalScoutScenario.js` shape toward
+`src/game/scenarios/marketWorldLevels.js`.
+
+Player-facing seed loop:
+
+1. Pocket Bot sees the bright signal and wants to enter quickly.
+2. The player can use `Ask Hidden` to name support, exit, and crowd/FOMO
+   unknowns without spending Bot Attention.
+3. `Wide Scan` prepares a crowd/FOMO inspection; Bot Attention is spent only
+   after `Approve`.
+4. `Check Exit` prepares an exit-friction inspection; Bot Attention is spent
+   only after `Approve`.
+5. `Support Check` remains available as the easiest first good judgment path.
+6. `Approve Enter` before enough relations are checked creates false or partial
+   finish pressure rather than automatic success.
+7. Trace cards record the world relation revealed, what remains unknown, and
+   the return condition for later re-entry.
+8. A hindsight card unlocks only after a finish state, never inside proposal
+   context.
+
+Transition plan:
+
+1. Freeze the current playable baseline with regression tests for:
+   `Ask Hidden -> Wide Scan -> Approve -> Trace` and
+   `Support Check -> Approve -> Historic Witness -> Trace`.
+2. Add a market-world runtime adapter that can initialize the Golden Signal
+   arena from `getGoldenSignalMarketWorldLevel()` without changing the Phaser
+   scene first.
+3. Add explicit relation-state runtime for signal-support, signal-exit,
+   signal-event, and signal-crowd links. Each relation should be hidden,
+   visible, revealed, residualized, or resolved.
+4. Move first-slice arena actions into the runtime adapter:
+   `ask_remaining_unknown`, `wide_scan`, `check_exit`, `check_support`, and
+   `approve_enter`.
+5. Keep prepare/approve separation: redirects and scans may update the pending
+   proposal, but only approved moves spend Bot Attention or mutate revealed
+   relation state.
+6. Upgrade trace records to include `worldRelationRevealed`,
+   `stillUnknown`, `residueCarriedForward`, `returnCondition`, and optional
+   historic witness references.
+7. Upgrade finish judgment to derive safe, partial, false, or open finish from
+   relation state instead of from a single node outcome.
+8. Point `PocketBotWorkshop` at the adapter output only after domain tests
+   prove parity with the current Golden Signal path.
+9. Retire duplicated old scenario fields only after the new runtime can supply
+   the same player-facing proposal, map, witness, trace, and finish data.
+
+Implementation status:
+
+- Step 1 baseline freeze is implemented in
+  `tests/game/goldenSignalPlayableBaseline.test.js`. It locks the current
+  `Ask Hidden -> Wide Scan -> Approve -> Trace`, `Support Check -> Approve ->
+  Historic Witness -> Trace Archive`, and `Ask Bot -> bounded proposal ->
+  Approve` paths before the adapter work starts.
+- Step 2, the Market World Runtime Adapter, remains the next implementation
+  task.
+
+Expected files:
+
+- `src/domain/marketWorldRuntime.js`
+- `src/game/scenarios/marketWorldLevelAdapter.js`
+- `src/game/scenarios/marketWorldLevels.js`
+- `src/game/scenarios/marketSignalScoutScenario.js`
+- `src/domain/guidanceLoop.js`
+- `src/domain/traces.js`
+- `src/domain/finishJudgment.js`
+- `src/scenes/PocketBotWorkshop.js`
+- `tests/domain/marketWorldRuntime.test.js`
+- `tests/game/marketWorldLevelAdapter.test.js`
+- existing Golden Signal scenario, guidance-loop, trace, finish, and UI tests
+
+Test plan:
+
+- market-world adapter loads Golden Signal from `marketWorldLevels.js` and
+  exposes only legal first-slice player actions,
+- opening relation state hides support, exit, event, and crowd pressure while
+  making the bright signal visible,
+- `Ask Hidden` exposes remaining unknowns without spending Bot Attention,
+- `Wide Scan` prepares a crowd/FOMO inspection without spending resources,
+- approving `Wide Scan` spends Bot Attention, reveals or residualizes the
+  crowd relation, and creates a trace,
+- `Check Exit` prepares an exit-friction inspection without spending resources,
+- approving `Check Exit` spends Bot Attention, reveals or residualizes exit
+  friction, and creates a trace,
+- `Support Check` still follows the verified witness-backed judge path,
+- `Approve Enter` with unchecked support/exit/crowd pressure produces false or
+  partial finish pressure rather than safe finish,
+- hindsight-only fields remain unavailable before finish,
+- player-facing labels contain no CRPM jargon,
+- existing LLM `Ask Bot` proposal flow remains bounded to legal moves and does
+  not gain trading, wallet, or market-data authority,
+- `npm run check:no-secrets`, `npm run test`, and `npm run build` pass,
+- browser/manual smoke confirms mobile portrait usability for
+  `Ask Hidden -> Wide Scan -> Approve -> Trace` and
+  `Support Check -> Approve -> Historic Witness -> Trace`.
+
+Acceptance:
+
+- `marketWorldLevels.js` becomes the active level contract for the Golden
+  Signal gameplay seed, not only supporting design material,
+- the first minute tells a clearer story: the bot is tempted, the player reveals
+  hidden forces, attention is spent deliberately, and traces make residue
+  recoverable,
+- the current hosted/Nimiq Pay judge path remains recoverable as a regression
+  path,
+- no live market data, investment advice, trading execution, wallet authority,
+  mainnet value, or persistent trading strategy is introduced,
+- the code has a reversible cut: if the full scene refactor needs more time,
+  the adapter can keep feeding the existing scene.
+
+Residue / risks:
+
+- relation-state runtime adds more state complexity than the current node-only
+  scene,
+- UI density can increase if every relation is surfaced at once,
+- scenario writing becomes a real content-production task, not only a code task,
+- old scenario shape and new market-world shape may overlap temporarily,
+- finish judgment can become confusing if safe/partial/false/open are not
+  explained through trace and hindsight cards.
+
+Controls:
+
+- keep the first seed to one arena and five actions,
+- keep CRPM vocabulary private to docs and tests,
+- keep player copy simple: signal, support, exit, crowd, hidden, trace, finish,
+- preserve the verified proof-of-concept path until PB-014 passes tests and
+  browser checks.
+
 ### PB-POLISH Submission Vertical Slice
 
 Goal:
@@ -1600,21 +1743,22 @@ Implemented groundwork:
 
 Revised next sequence:
 
-16. PB-POLISH Submission Vertical Slice.
-17. PB-MARKET Early Access And Community Feedback.
-18. PB-012A Desktop/Mobile Browser TestAlbatross Status, postponed until after
+16. PB-014 Market World Runtime Seed.
+17. PB-POLISH Submission Vertical Slice regression and final media pass.
+18. PB-MARKET Early Access And Community Feedback.
+19. PB-012A Desktop/Mobile Browser TestAlbatross Status, postponed until after
     the Android/Nimiq Pay submission path is stable.
 
 This order keeps CRPM/resource-judgment mechanics as the spine, keeps
-Golden Signal as the playable core, and leaves polish/submission work as a
-focused vertical-slice pass rather than a product pivot.
+Golden Signal as the playable core, and moves immersion work through a
+testable market-world runtime seed before broader polish or marketing.
 
 ## Next Commit Recommendation
 
 The next implementation commit should be:
 
 ```text
-feat: polish golden signal submission slice
+feat: add market world runtime seed
 ```
 
 ## Risks And Controls
@@ -1643,6 +1787,8 @@ feat: polish golden signal submission slice
   **Control:** trace cards and final run state must distinguish safe finish, partial finish, false finish, and open voyage.
 - **Risk:** The game teaches route choice but not navigation discipline.
   **Control:** proposals, map nodes, guidance controls, session lessons, and trace cards must preserve cut price, residue, and re-entry information in player-facing language.
+- **Risk:** The market-world refactor breaks the verified submission path.
+  **Control:** make PB-014 an adapter-first transition, keep Support Check as a regression path, and do not retire old scenario fields until the new runtime passes domain, build, and browser checks.
 
 ## Out Of Scope For Phase 1
 

@@ -670,13 +670,23 @@ The first milestone is complete when:
 
 Recommended next task:
 
-1. PB-MARKET: capture screenshots or a short demo only when the project owner
-   is ready to prepare final submission media.
-2. PB-MARKET: record external tester feedback when entering the public
+1. PB-014: add the Market World Runtime Seed as an adapter-first transition
+   from the current Golden Signal proof of concept to
+   `src/game/scenarios/marketWorldLevels.js` as the live level contract.
+2. PB-014: keep the first seed small: Ask Hidden, Wide Scan, Check Exit,
+   Support Check, and Approve Enter, with Bot Attention spent only after
+   approval.
+3. PB-014: preserve the verified Support Check -> Approve -> Historic Witness
+   -> Trace path as a regression baseline while relation-state runtime, trace
+   residue, and finish pressure move to the market-world model.
+4. PB-POLISH: rerun hosted/Nimiq Pay regression checks and capture screenshots
+   or a short demo only when the project owner is ready to prepare final
+   submission media.
+5. PB-MARKET: record external tester feedback when entering the public
    competition-feedback cycle.
-3. Repeat the Nimiq Pay Testnet emulator check before final submission if
-   PB-012, PB-013, or polish work changes the platform adapter.
-4. PB-012A: add desktop/mobile browser TestAlbatross status later, after the
+6. Repeat the Nimiq Pay Testnet emulator check before final submission if
+   PB-012, PB-013, PB-014, or polish work changes the platform adapter.
+7. PB-012A: add desktop/mobile browser TestAlbatross status later, after the
    Android/Nimiq Pay submission path is stable.
 
 Run `npm run test`, `npm run build`, and browser/manual scene checks for source

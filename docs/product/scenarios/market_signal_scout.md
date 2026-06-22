@@ -1,6 +1,6 @@
 # Market Signal Scout Scenario
 
-Status: selected Phase 1 scenario; PB-013 Golden Signal foundation and Arena Spine Layered V1 implemented.
+Status: selected Phase 1 scenario; PB-013 Golden Signal foundation and Arena Spine Layered V1 implemented. PB-014 is planned as the transition from proof-of-concept Golden Signal gameplay to `marketWorldLevels.js` as the live market-world runtime seed.
 Role: first playable scenario script for the invariant Pocket Bot stage.
 
 Supporting refinement docs:
@@ -1456,4 +1456,49 @@ This scenario does not implement:
 10. Bot proposes safer route, exit check, or partial finish.
 11. Hindsight card reveals what happened next.
 12. Final status shows safe / partial / false / open.
+```
+
+## PB-014 Runtime Transition Seed
+
+The older Golden Signal vertical slice proved the loop, but it is still too
+node-centered to carry the intended market-world immersion. PB-014 should make
+the first arena feel like a live pressure field: the bot is tempted by a bright
+signal, the player reveals hidden relations, and the run outcome depends on
+which uncertainties were named, inspected, or left as residue.
+
+Seed loop:
+
+```text
+1. Pocket Bot sees the bright signal and wants to enter quickly.
+2. Player asks what is hidden.
+3. The arena names support, exit, and crowd/FOMO unknowns without spending Bot Attention.
+4. Player chooses Wide Scan.
+5. Bot prepares a crowd/FOMO inspection; no resource is spent yet.
+6. Player approves.
+7. Bot Attention is spent, crowd pressure is revealed or residualized, and a trace is created.
+8. Player can Check Exit or Support Check before entering.
+9. Entering too early creates false or partial finish pressure.
+10. Trace and hindsight cards explain what remained unknown and how to re-enter wiser.
+```
+
+Implementation stance:
+
+- use `src/game/scenarios/marketWorldLevels.js` as the level contract,
+- keep the current Golden Signal scene as the rendering baseline until the
+  runtime adapter is tested,
+- model relations explicitly: signal-support, signal-exit, signal-event, and
+  signal-crowd,
+- keep action preparation separate from approval so resource spend stays under
+  player control,
+- keep `Support Check -> Approve -> Historic Witness -> Trace` as a regression
+  path,
+- keep player language simple: signal, support, exit, crowd, hidden, trace,
+  finish,
+- keep CRPM and market-world design terms inside docs/tests, not first-contact
+  UI.
+
+The intended player lesson is not "find the winning market signal." It is:
+
+```text
+A bright signal can be real and still be unsafe if exit, support, or crowd pressure stays hidden.
 ```

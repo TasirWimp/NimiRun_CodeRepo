@@ -309,8 +309,14 @@ PB-001 through PB-013 are implemented as a playable local/browser slice, and the
 PB-012 Nimiq Pay Testnet Mini App path was verified on Android emulator on June
 7, 2026. PB-013 added the Golden Signal Market Signal Scout foundation with a
 small transformed Binance BTCUSDT static fixture, license evidence metadata,
-accepted attributed headline witnesses, and scene wiring. The next code slice
-should be **PB-POLISH Submission Vertical Slice** for the Android/Nimiq Pay
-competition path.
+accepted attributed headline witnesses, and scene wiring. PB-POLISH verified a
+hosted/Nimiq Pay submission path for that proof of concept.
+
+The next product-spine code slice should be **PB-014 Market World Runtime
+Seed**. It should make `src/game/scenarios/marketWorldLevels.js` the active
+Golden Signal level contract through an adapter-first transition, while keeping
+the verified Support Check path as a regression baseline. PB-POLISH remains the
+submission/regression lane for final screenshots, demo media, and pre-submit
+checks after gameplay changes.
 **PB-012A Desktop/Mobile Browser TestAlbatross Status** is postponed until after
 the Android/Nimiq Pay submission path is stable.
