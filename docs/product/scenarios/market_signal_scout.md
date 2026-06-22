@@ -3,6 +3,16 @@
 Status: selected Phase 1 scenario; PB-013 Golden Signal foundation implemented.
 Role: first playable scenario script for the invariant Pocket Bot stage.
 
+Supporting refinement docs:
+
+- `docs/product/market_world_model.md` defines a richer market-arena contract
+  for future scene/domain wiring.
+- `docs/product/pocket_bot_arena_narrator_role_cut.md` defines the narrator and
+  former signal-bot role cut behind future copy and trace-backed repair.
+
+These docs do not replace the current verified Golden Signal playable loop
+until a dedicated implementation slice wires them into the scene.
+
 ## Core Cut
 
 This scenario is not a generic crypto trading simulator.

@@ -96,6 +96,7 @@ describe('market witness ledger', () => {
       ...getVisibleMarketWitnessIds('level_02_golden_signal', 'check_support'),
       ...getVisibleMarketWitnessIds('level_02_golden_signal', 'check_event'),
       ...getVisibleMarketWitnessIds('level_02_golden_signal', 'check_exit'),
+      ...getVisibleMarketWitnessIds('level_02_golden_signal', 'check_crowd'),
       ...getVisibleMarketWitnessIds('level_02_golden_signal', 'check_fomo'),
       ...getVisibleMarketWitnessIds('level_02_golden_signal', 'ask_remaining_unknown'),
     ];

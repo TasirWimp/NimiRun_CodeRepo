@@ -4,7 +4,7 @@ This folder keeps project documentation grouped by purpose. Avoid placing new Ma
 
 ## Current Structure
 
-- `product/` - product requirements, roadmap, Phase 0 handoff, product scope, user-facing behavior, MVP acceptance criteria, art bible, source attribution, competition scorecard, reward boundaries, witness governance, and candidate scenario scripts.
+- `product/` - product requirements, roadmap, Phase 0 handoff, product scope, user-facing behavior, MVP acceptance criteria, art bible, source attribution, competition scorecard, reward boundaries, witness governance, market-world and narrator role-cut design notes, and candidate scenario scripts.
 - `process/` - development workflow, agent workflow, coding conventions.
 - `planning/` - milestone plans, feature breakdowns, implementation plans.
 - `testing/` - test strategy, test plans, acceptance checklists.

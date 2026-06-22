@@ -50,6 +50,7 @@ Primary targets:
 - Nimiq Pocket / allowance math,
 - Context Capacity slots,
 - run session / scenario contract validation,
+- Market Signal Scout market-world contract validation before scene wiring,
 - move transition gate classification,
 - run carrier updates,
 - lossy map reveal state,

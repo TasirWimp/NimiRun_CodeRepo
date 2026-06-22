@@ -68,6 +68,13 @@ The repository currently contains:
 
 The revised resource-judgment gameplay now has the first playable guidance loop with trace-card review, session-only lesson application, and an explicit low-stakes Nimiq pocket status surface. The Nimiq Pay Testnet Mini App path was verified on an Android emulator on June 7, 2026. Direct desktop/mobile browser TestAlbatross support is postponed; the current submission path now moves to final Android/Nimiq Pay polish.
 
+The market-world model and arena narrator role cut are supporting design and
+implementation references for the next Market Signal Scout refinement. They do
+not replace the current verified playable path yet; the submission-critical
+loop remains the Golden Signal Support Check -> Approve -> Historic Witness ->
+Trace Archive path until a dedicated scene refactor wires the new arena
+contract into gameplay.
+
 ## Documentation
 
 - Product requirements: `docs/product/requirements.md`
@@ -79,6 +86,8 @@ The revised resource-judgment gameplay now has the first playable guidance loop 
 - Source attribution register: `docs/product/source_attribution.md`
 - Market Signal Scout scenario: `docs/product/scenarios/market_signal_scout.md`
 - Market witness governance: `docs/product/scenarios/market_witness_governance.md`
+- Market world model: `docs/product/market_world_model.md`
+- Pocket Bot arena narrator role cut: `docs/product/pocket_bot_arena_narrator_role_cut.md`
 - Reward mode boundary: `docs/product/reward_mode_boundary.md`
 - Development workflow: `docs/process/development_workflow.md`
 - Documentation structure guide: `docs/README.md`

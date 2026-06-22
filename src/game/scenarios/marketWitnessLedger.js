@@ -269,6 +269,7 @@ export const marketWitnessLedger = Object.freeze({
           "btc_futures_gate_cme_2017_12_01_event_pressure"
         ]),
         check_exit: Object.freeze(["btc_futures_gate_cftc_2017_12_01_risk_context"]),
+        check_crowd: Object.freeze(["btc_futures_gate_cme_2017_12_01_event_pressure"]),
         check_fomo: Object.freeze(["btc_futures_gate_cme_2017_12_01_event_pressure"]),
         ask_remaining_unknown: Object.freeze(["btc_futures_gate_cme_2017_12_01_event_pressure"])
       }),

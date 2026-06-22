@@ -4,6 +4,11 @@ Status: interpretive product design note for Phase 1 and later Market Signal Sco
 
 Role: define the player, former trading bot, LLM narrator, deterministic game engine, relational market arena, crowd pressure, trace cards, and bot-upgrade layer without forcing player-facing CRPM vocabulary.
 
+Current integration status: supporting design discipline only. This note should
+shape future Market Signal Scout refinement, narrator copy, and trace-backed bot
+repair rules, but it does not replace the current verified playable Golden
+Signal loop or authorize CRPM terminology in normal player UI.
+
 Source status:
 
 - Source-supported NimiRun anchors: `docs/product/requirements.md`, `docs/product/art_bible.md`, `docs/product/scenarios/market_signal_scout.md`, `docs/product/scenarios/market_witness_governance.md`, `docs/product/reward_mode_boundary.md`.

@@ -199,7 +199,10 @@ Implemented groundwork from the earlier allowance-control cut:
 - PB-013 Market Signal Scout Golden Signal foundation is implemented with a
   transformed Binance BTCUSDT fixture evidence packet, accepted historic
   headline witnesses, a Golden Signal scenario contract, and Pocket Bot
-  Workshop scene wiring.
+  Workshop scene wiring. The pulled market-world model, arena narrator role cut,
+  and `src/game/scenarios/marketWorldLevels.js` are retained as supporting
+  design/contract material for the next refinement; they do not replace the
+  current verified playable scene path yet.
 
 This work should be retained as supporting infrastructure. It becomes one possible resource-governance mechanic inside the broader resource-judgment game, not the active center of Phase 1.
 
@@ -1484,6 +1487,11 @@ Nimiq Pay local Mini App smoke checks on June 8, 2026.
   Nimiq Pay WebViews so the game does not collapse into a tiny desktop strip,
 - document hosted Vercel usage for normal browser and Nimiq Pay
   emulator/device checks.
+- keep `docs/product/market_world_model.md`,
+  `docs/product/pocket_bot_arena_narrator_role_cut.md`, and
+  `src/game/scenarios/marketWorldLevels.js` as supporting contract material
+  until a dedicated scene refactor wires relation-state actions into the
+  playable loop; do not silently replace the verified Support Check judge path.
 
 PB-POLISH-002 Hosted Vercel/Nimiq Pay submission verification:
 

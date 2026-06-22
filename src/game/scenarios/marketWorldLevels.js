@@ -1,5 +1,6 @@
 import { getBtcusdtWitnessWindowById } from './data/marketSignalScoutBtcusdtWindows.js';
 import { getVisibleMarketWitnessIds, marketWitnessBoundary } from './marketWitnessLedger.js';
+import { FINISH_STATUSES } from '../../domain/finishJudgment.js';
 
 export const MARKET_WORLD_RELATION_STATUS = Object.freeze({
   HIDDEN: 'hidden',
@@ -27,10 +28,10 @@ export const MARKET_WORLD_ACTIONS = Object.freeze({
 });
 
 export const MARKET_WORLD_FINISH_STATUS = Object.freeze({
-  SAFE: 'safe_finish',
-  PARTIAL: 'partial_finish',
-  FALSE: 'false_finish',
-  OPEN: 'open_finish',
+  SAFE: FINISH_STATUSES.SAFE,
+  PARTIAL: FINISH_STATUSES.PARTIAL,
+  FALSE: FINISH_STATUSES.FALSE,
+  OPEN: FINISH_STATUSES.OPEN,
 });
 
 const GOLDEN_SIGNAL_LEVEL_ID = 'level_02_golden_signal';
@@ -133,7 +134,7 @@ export const MARKET_WORLD_LEVELS = Object.freeze({
           MARKET_WORLD_ACTIONS.CHECK_CROWD,
           MARKET_WORLD_ACTIONS.WIDE_SCAN,
         ]),
-        sourceWitnessIds: getGoldenSignalWitnessIds('check_fomo'),
+        sourceWitnessIds: getGoldenSignalWitnessIds(MARKET_WORLD_ACTIONS.CHECK_CROWD),
       }),
     }),
 
@@ -392,6 +393,15 @@ export function validateMarketWorldLevel(level) {
 
   if (level.hindsightCard?.withheldFromProposalEngine !== true) {
     errors.push(`${level.id} must withhold hindsight from the proposal engine.`);
+  }
+
+  const validFinishStatuses = new Set(Object.values(FINISH_STATUSES));
+  for (const [finishKey, finishRule] of Object.entries(level.finishRules ?? {})) {
+    if (!validFinishStatuses.has(finishRule?.status)) {
+      errors.push(
+        `${level.id} finish rule ${finishKey} uses non-domain finish status: ${finishRule?.status}`
+      );
+    }
   }
 
   const firstSlice = level.actions?.firstSlice ?? [];

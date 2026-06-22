@@ -4,6 +4,12 @@ Status: implementation-base design note for Market Signal Scout.
 
 Role: define how historical Bitcoin price windows, market-event witnesses, Pocket Bot's price-analysis toolbox, narrator insight, player action, trace cards, and finish judgment compose into an immersive relational market arena.
 
+Current integration status: supporting contract only. The current playable
+submission path remains `src/game/scenarios/marketSignalScoutScenario.js` and
+the Golden Signal Support Check -> Approve -> Historic Witness -> Trace
+Archive loop until a dedicated scene/domain refactor wires this market-world
+model into gameplay.
+
 Source status:
 
 - Source-supported NimiRun anchors: `docs/product/scenarios/market_signal_scout.md`, `docs/product/scenarios/market_witness_governance.md`, `src/game/scenarios/marketWitnessLedger.js`, `src/game/scenarios/data/marketSignalScoutBtcusdtWindows.js`, `docs/product/reward_mode_boundary.md`, and `docs/product/pocket_bot_arena_narrator_role_cut.md`.
