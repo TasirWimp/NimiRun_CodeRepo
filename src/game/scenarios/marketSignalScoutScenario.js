@@ -4,11 +4,145 @@ import {
   NODE_VISIBILITY,
   PATH_VISIBILITY,
 } from '../resourceMapScenario.js';
+import {
+  MARKET_WORLD_ACTIONS,
+  getGoldenSignalMarketWorldLevel,
+} from './marketWorldLevels.js';
 import { getVisibleMarketWitnessIds } from './marketWitnessLedger.js';
 import { getBtcusdtWitnessWindowById } from './data/marketSignalScoutBtcusdtWindows.js';
 
 const LEVEL_ID = 'level_02_golden_signal';
 const GOLDEN_SIGNAL_WINDOW_ID = 'btc_binance_btcusdt_2017_12_golden_signal';
+const GOLDEN_SIGNAL_ARENA = getGoldenSignalMarketWorldLevel();
+
+const MARKET_SIGNAL_ARENA_SPINE = Object.freeze({
+  sourceLevelId: GOLDEN_SIGNAL_ARENA.id,
+  openingHabit: 'Pocket Bot sees a bright signal and wants to enter.',
+  firstSlice: Object.freeze([
+    MARKET_WORLD_ACTIONS.ASK_REMAINING_UNKNOWN,
+    MARKET_WORLD_ACTIONS.WIDE_SCAN,
+    MARKET_WORLD_ACTIONS.CHECK_EXIT,
+    MARKET_WORLD_ACTIONS.CHECK_SUPPORT,
+    MARKET_WORLD_ACTIONS.APPROVE_ENTER,
+  ]),
+  actions: Object.freeze({
+    [MARKET_WORLD_ACTIONS.ASK_REMAINING_UNKNOWN]: Object.freeze({
+      id: MARKET_WORLD_ACTIONS.ASK_REMAINING_UNKNOWN,
+      label: 'Ask Hidden',
+      behavior: 'show_unknowns',
+      panelTitle: 'Ask Hidden',
+      narratorInsight: GOLDEN_SIGNAL_ARENA.narratorLines.askRemainingUnknown,
+      reveals: Object.freeze([
+        'support depth still unknown',
+        'exit friction still unknown',
+        'FOMO pressure still unknown',
+      ]),
+      resourcePolicy: 'no_spend_until_approve',
+    }),
+    [MARKET_WORLD_ACTIONS.WIDE_SCAN]: Object.freeze({
+      id: MARKET_WORLD_ACTIONS.WIDE_SCAN,
+      label: 'Wide Scan',
+      behavior: 'prepare_move',
+      moveType: 'inspect',
+      targetNodeId: 'fomo-pressure',
+      panelTitle: 'Wide Scan Prepared',
+      reason:
+        'Wide Scan checks the crowd pressure around the bright signal before Pocket Bot commits.',
+      narratorInsight: GOLDEN_SIGNAL_ARENA.narratorLines.wideScan,
+      consideredAlternatives: Object.freeze([
+        Object.freeze({
+          move: 'act:bright-signal',
+          whyNotSelected: 'Entering now leaves crowd pressure and exit friction unseen.',
+        }),
+      ]),
+      cutPrice: Object.freeze({
+        reveals: Object.freeze(['FOMO pressure', 'crowd pressure']),
+        suppresses: Object.freeze(['entering on signal brightness alone']),
+        leavesResidue: Object.freeze([
+          'support depth still unknown',
+          'exit friction still unknown',
+        ]),
+      }),
+      stopCondition: 'Stop after the wide scan reveal; do not call the route safe yet.',
+    }),
+    [MARKET_WORLD_ACTIONS.CHECK_EXIT]: Object.freeze({
+      id: MARKET_WORLD_ACTIONS.CHECK_EXIT,
+      label: 'Check Exit',
+      behavior: 'prepare_move',
+      moveType: 'inspect',
+      targetNodeId: 'exit-friction',
+      panelTitle: 'Check Exit Prepared',
+      reason:
+        'Check Exit tests whether the bright route has a way back before Pocket Bot treats it as safe.',
+      narratorInsight: GOLDEN_SIGNAL_ARENA.narratorLines.checkExit,
+      consideredAlternatives: Object.freeze([
+        Object.freeze({
+          move: 'act:bright-signal',
+          whyNotSelected: 'A path forward is not enough while the exit is foggy.',
+        }),
+      ]),
+      cutPrice: Object.freeze({
+        reveals: Object.freeze(['exit friction']),
+        suppresses: Object.freeze(['profit-looking safe-finish claim']),
+        leavesResidue: Object.freeze(['FOMO pressure still unknown']),
+      }),
+      stopCondition: 'Stop after checking exit friction; carry remaining residue forward.',
+    }),
+    [MARKET_WORLD_ACTIONS.CHECK_SUPPORT]: Object.freeze({
+      id: MARKET_WORLD_ACTIONS.CHECK_SUPPORT,
+      label: 'Support Check',
+      behavior: 'prepare_move',
+      moveType: 'inspect',
+      targetNodeId: 'support-check',
+      panelTitle: 'Support Check Prepared',
+      reason:
+        'Support Check asks whether the bright signal has enough backing before Pocket Bot acts.',
+      narratorInsight: 'The glow needs a foundation before it can guide the route.',
+      consideredAlternatives: Object.freeze([
+        Object.freeze({
+          move: 'act:bright-signal',
+          whyNotSelected: 'Acting now leaves support depth unresolved.',
+        }),
+      ]),
+      cutPrice: Object.freeze({
+        reveals: Object.freeze(['support clue', 'Futures Gate headline witness']),
+        suppresses: Object.freeze(['signal-strength-only shortcut']),
+        leavesResidue: Object.freeze([
+          'exit friction still unknown',
+          'FOMO pressure still unknown',
+        ]),
+      }),
+      stopCondition: 'Stop after support is inspected; trace the remaining unknowns.',
+    }),
+    [MARKET_WORLD_ACTIONS.APPROVE_ENTER]: Object.freeze({
+      id: MARKET_WORLD_ACTIONS.APPROVE_ENTER,
+      label: 'Approve Enter',
+      behavior: 'prepare_move',
+      moveType: 'act',
+      targetNodeId: 'bright-signal',
+      panelTitle: 'Enter Signal Prepared',
+      reason:
+        'Pocket Bot can enter the bright signal, but the trace will keep unresolved support, exit, and crowd residue visible.',
+      narratorInsight: GOLDEN_SIGNAL_ARENA.narratorLines.approveEnter,
+      consideredAlternatives: Object.freeze([
+        Object.freeze({
+          move: 'inspect:support-check',
+          whyNotSelected: 'Support Check is safer when the player wants to reduce residue first.',
+        }),
+      ]),
+      cutPrice: Object.freeze({
+        reveals: Object.freeze(['quick signal result']),
+        suppresses: Object.freeze(['support check', 'exit check', 'wide scan']),
+        leavesResidue: Object.freeze([
+          'support depth still unknown',
+          'exit friction still unknown',
+          'FOMO pressure still unknown',
+        ]),
+      }),
+      stopCondition: 'Stop after entering; false or partial finish pressure may remain.',
+    }),
+  }),
+});
 
 const MARKET_SIGNAL_SCOUT_SCENARIO = Object.freeze({
   id: 'market-signal-scout-golden-signal',
@@ -24,6 +158,7 @@ const MARKET_SIGNAL_SCOUT_SCENARIO = Object.freeze({
     visibleWitnessIds: getVisibleMarketWitnessIds(LEVEL_ID),
     featuredWitnessIds: ['btc_futures_gate_cboe_2017_12_04'],
   }),
+  arenaSpine: MARKET_SIGNAL_ARENA_SPINE,
   viewport: {
     width: 640,
     height: 420,

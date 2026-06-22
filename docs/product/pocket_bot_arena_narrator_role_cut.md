@@ -4,10 +4,10 @@ Status: interpretive product design note for Phase 1 and later Market Signal Sco
 
 Role: define the player, former trading bot, LLM narrator, deterministic game engine, relational market arena, crowd pressure, trace cards, and bot-upgrade layer without forcing player-facing CRPM vocabulary.
 
-Current integration status: supporting design discipline only. This note should
-shape future Market Signal Scout refinement, narrator copy, and trace-backed bot
-repair rules, but it does not replace the current verified playable Golden
-Signal loop or authorize CRPM terminology in normal player UI.
+Current integration status: layered V1 design discipline. This note shapes the
+live Arena Spine V1 narrator copy and trace-backed bot repair direction, but it
+does not replace the current verified playable Golden Signal loop or authorize
+CRPM terminology in normal player UI.
 
 Source status:
 

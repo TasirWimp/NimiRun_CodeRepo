@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import {
+  applyArenaAction,
   approvePendingProposal,
   createGuidanceLoopState,
   createPendingProposal,
@@ -12,7 +13,10 @@ import {
   showWhyThisRoute,
 } from '../../src/domain/guidanceLoop.js';
 import { createLossyMapState } from '../../src/domain/lossyMap.js';
+import { createPocketBotState } from '../../src/game/pocketBotState.js';
 import { createResourceMapScenario } from '../../src/game/resourceMapScenario.js';
+import { createMarketSignalScoutScenario } from '../../src/game/scenarios/marketSignalScoutScenario.js';
+import { MARKET_WORLD_ACTIONS } from '../../src/game/scenarios/marketWorldLevels.js';
 
 function createState(overrides = {}) {
   const scenario = createResourceMapScenario();
@@ -38,6 +42,10 @@ function createState(overrides = {}) {
         },
       }),
   });
+}
+
+function createMarketState() {
+  return createPocketBotState(createMarketSignalScoutScenario());
 }
 
 describe('guidance loop domain rules', () => {
@@ -265,5 +273,104 @@ describe('guidance loop domain rules', () => {
     expect(result.state.mapState.resources.botAttention.current).toBe(10);
     expect(result.state.guidanceTrace).toHaveLength(0);
     expect(result.state.guidancePanel.title).toBe('Move blocked');
+  });
+
+  it('ask-hidden exposes market residue without spending Bot Attention', () => {
+    const state = createMarketState();
+    const nextState = applyArenaAction(state, MARKET_WORLD_ACTIONS.ASK_REMAINING_UNKNOWN);
+
+    expect(nextState.mapState.resources.botAttention.current).toBe(10);
+    expect(nextState.pendingProposal).toMatchObject({
+      moveType: 'act',
+      targetNodeId: 'bright-signal',
+    });
+    expect(nextState.guidancePanel.title).toBe('Ask Hidden');
+    expect(nextState.guidancePanel.lines.join(' ')).toContain('support depth still unknown');
+    expect(nextState.guidancePanel.lines.join(' ')).toContain('exit friction still unknown');
+    expect(nextState.guidancePanel.lines.join(' ')).toContain('FOMO pressure still unknown');
+    expect(nextState.guidanceTrace.at(-1)).toMatchObject({
+      action: 'arena-action',
+      arenaActionId: MARKET_WORLD_ACTIONS.ASK_REMAINING_UNKNOWN,
+    });
+  });
+
+  it('wide-scan prepares a FOMO/crowd inspect move and spends only after approve', () => {
+    const prepared = applyArenaAction(createMarketState(), MARKET_WORLD_ACTIONS.WIDE_SCAN);
+
+    expect(prepared.mapState.resources.botAttention.current).toBe(10);
+    expect(prepared.pendingProposal).toMatchObject({
+      moveType: 'inspect',
+      targetNodeId: 'fomo-pressure',
+      resourceCost: {
+        botAttention: 1,
+        userGuidance: 1,
+      },
+    });
+    expect(prepared.guidancePanel.lines.join(' ')).toContain('Approve controls Bot Attention spending');
+
+    const accepted = approvePendingProposal(prepared);
+
+    expect(accepted.applied).toBe(true);
+    expect(accepted.state.mapState.resources.botAttention.current).toBe(9);
+    expect(accepted.state.mapState.revealedEvidence).toContain('fomo-pressure-named');
+    expect(accepted.state.traceCards.at(-1)).toMatchObject({
+      acceptedMove: {
+        moveType: 'inspect',
+        targetNodeId: 'fomo-pressure',
+      },
+      resourceSpend: {
+        botAttention: 1,
+      },
+    });
+  });
+
+  it('check-exit prepares an exit inspect move and approval reveals exit evidence', () => {
+    const prepared = applyArenaAction(createMarketState(), MARKET_WORLD_ACTIONS.CHECK_EXIT);
+
+    expect(prepared.mapState.resources.botAttention.current).toBe(10);
+    expect(prepared.pendingProposal).toMatchObject({
+      moveType: 'inspect',
+      targetNodeId: 'exit-friction',
+      resourceCost: {
+        botAttention: 2,
+        userGuidance: 1,
+      },
+    });
+
+    const accepted = approvePendingProposal(prepared);
+
+    expect(accepted.applied).toBe(true);
+    expect(accepted.state.mapState.resources.botAttention.current).toBe(8);
+    expect(accepted.state.mapState.revealedEvidence).toContain('exit-friction-inspected');
+    expect(accepted.state.traceCards.at(-1).residueCarriedForward).toContain(
+      'FOMO pressure still unknown'
+    );
+  });
+
+  it('support-check remains an arena action for the witness-backed judge path', () => {
+    const prepared = applyArenaAction(createMarketState(), MARKET_WORLD_ACTIONS.CHECK_SUPPORT);
+    const accepted = approvePendingProposal(prepared);
+
+    expect(prepared.pendingProposal).toMatchObject({
+      moveType: 'inspect',
+      targetNodeId: 'support-check',
+    });
+    expect(accepted.applied).toBe(true);
+    expect(accepted.state.mapState.revealedEvidence).toContain('signal-support-inspected');
+    expect(accepted.state.traceCards.at(-1)).toMatchObject({
+      acceptedMove: {
+        moveType: 'inspect',
+        targetNodeId: 'support-check',
+      },
+    });
+  });
+
+  it('rejects unknown arena actions without spending resources', () => {
+    const state = createMarketState();
+    const nextState = applyArenaAction(state, 'missing-action');
+
+    expect(nextState.mapState.resources.botAttention.current).toBe(10);
+    expect(nextState.pendingProposal).toEqual(state.pendingProposal);
+    expect(nextState.guidancePanel.title).toBe('Arena action unavailable');
   });
 });

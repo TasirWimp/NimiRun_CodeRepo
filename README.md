@@ -58,7 +58,7 @@ The repository currently contains:
 - PB-006A run-session runtime for transition gates, run carriers, residue, and finish judgment,
 - PB-007 LLM route-proposal bridge with schema validation, run-carrier prompt shaping, browser relay client, Vite dev relay middleware, mock fallback, and full-scenario unsafe-authority relay regression coverage,
 - PB-008 lossy-map domain rules for hidden-pressure reveal, inspect/skip/act behavior, false-landfall traps, safe-finish judgment, and prompt serialization,
-- PB-009 user-bot guidance loop with deterministic proposal approval, node-click redirect, why/unknowns/inspect-first/partial controls, and HUD/map updates,
+- PB-009 user-bot guidance loop with deterministic proposal approval, node-click redirect, why/ask-hidden/wide-scan/check-exit/support/inspect-first/partial controls, and HUD/map updates,
 - PB-010 session lesson application with trace-derived lessons, next-proposal rewrite, bounded prompt/relay pass-through, and no persistence beyond the active run,
 - PB-011 trace cards for accepted moves, receipt-backed money-like events, residue/re-entry context, latest-trace inspection, and landfall status labels,
 - PB-012 Nimiq testnet pocket surface with local fallback, emulator-verified Nimiq Pay NIM status check, pocket-status trace cards, and no sign/send/payment authority,
@@ -68,12 +68,11 @@ The repository currently contains:
 
 The revised resource-judgment gameplay now has the first playable guidance loop with trace-card review, session-only lesson application, and an explicit low-stakes Nimiq pocket status surface. The Nimiq Pay Testnet Mini App path was verified on an Android emulator on June 7, 2026. Direct desktop/mobile browser TestAlbatross support is postponed; the current submission path now moves to final Android/Nimiq Pay polish.
 
-The market-world model and arena narrator role cut are supporting design and
-implementation references for the next Market Signal Scout refinement. They do
-not replace the current verified playable path yet; the submission-critical
-loop remains the Golden Signal Support Check -> Approve -> Historic Witness ->
-Trace Archive path until a dedicated scene refactor wires the new arena
-contract into gameplay.
+The market-world model and arena narrator role cut now inform a layered Arena
+Spine V1 in the live Golden Signal scene: Ask Hidden, Wide Scan, Check Exit,
+Support Check, and approve-gated Bot Attention spending. The verified Support
+Check -> Approve -> Historic Witness -> Trace Archive path remains intact; the
+full `marketWorldLevels.js` scene refactor remains future work.
 
 ## Documentation
 

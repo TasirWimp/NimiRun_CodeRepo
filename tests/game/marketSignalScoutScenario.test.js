@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { FINISH_STATUSES } from '../../src/domain/finishJudgment.js';
+import { MOVE_TYPES } from '../../src/domain/resourceRules.js';
 import {
   approvePendingProposal,
   redirectPendingProposal,
@@ -22,6 +23,7 @@ import {
   validateBtcusdtWitnessWindowEvidence,
 } from '../../src/game/scenarios/data/marketSignalScoutBtcusdtWindows.js';
 import { createMarketSignalScoutScenario } from '../../src/game/scenarios/marketSignalScoutScenario.js';
+import { MARKET_WORLD_ACTIONS } from '../../src/game/scenarios/marketWorldLevels.js';
 
 function createScenarioState() {
   return createLossyMapState(createMarketSignalScoutScenario());
@@ -114,6 +116,48 @@ describe('Market Signal Scout Golden Signal scenario', () => {
     expect(unknowns.guidancePanel.lines.join(' ')).toContain('support depth still unknown');
     expect(unknowns.guidancePanel.lines.join(' ')).toContain('exit friction still unknown');
     expect(unknowns.guidancePanel.lines.join(' ')).toContain('FOMO pressure still unknown');
+  });
+
+  it('exposes the layered arena spine with player-facing first-slice actions', () => {
+    const scenario = createMarketSignalScoutScenario();
+    const actions = scenario.arenaSpine.actions;
+
+    expect(scenario.arenaSpine).toMatchObject({
+      sourceLevelId: 'level_02_golden_signal',
+      openingHabit: 'Pocket Bot sees a bright signal and wants to enter.',
+    });
+    expect(scenario.arenaSpine.firstSlice).toEqual([
+      MARKET_WORLD_ACTIONS.ASK_REMAINING_UNKNOWN,
+      MARKET_WORLD_ACTIONS.WIDE_SCAN,
+      MARKET_WORLD_ACTIONS.CHECK_EXIT,
+      MARKET_WORLD_ACTIONS.CHECK_SUPPORT,
+      MARKET_WORLD_ACTIONS.APPROVE_ENTER,
+    ]);
+
+    for (const actionId of scenario.arenaSpine.firstSlice) {
+      const action = actions[actionId];
+
+      expect(action.label).toMatch(/^[A-Z][A-Za-z ]+$/);
+      expect(action.label).not.toMatch(/CRPM|relational|source-ocean|residue/i);
+    }
+  });
+
+  it('maps arena prepare actions only to existing nodes and legal move types', () => {
+    const scenario = createMarketSignalScoutScenario();
+    const nodeIds = new Set(scenario.nodes.map((node) => node.id));
+    const legalMoveTypes = new Set(Object.values(MOVE_TYPES));
+
+    for (const action of Object.values(scenario.arenaSpine.actions)) {
+      if (action.behavior !== 'prepare_move') {
+        continue;
+      }
+
+      const node = getNodeById(scenario, action.targetNodeId);
+
+      expect(nodeIds.has(action.targetNodeId)).toBe(true);
+      expect(legalMoveTypes.has(action.moveType)).toBe(true);
+      expect(node.possibleMoves[action.moveType]).toBeTruthy();
+    }
   });
 
   it('lets the player redirect to inspect support and records a trace', () => {

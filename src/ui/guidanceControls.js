@@ -1,3 +1,34 @@
+export function layoutGuidanceButtons(buttons = [], {
+  x = 0,
+  y = 0,
+  maxWidth = Number.POSITIVE_INFINITY,
+  gap = 8,
+  rowGap = 24,
+} = {}) {
+  let offsetX = 0;
+  let rowY = y;
+
+  return buttons.map((button) => {
+    const width = button.width || 72;
+
+    if (offsetX > 0 && offsetX + width > maxWidth) {
+      offsetX = 0;
+      rowY += rowGap;
+    }
+
+    const positioned = {
+      ...button,
+      x: x + offsetX,
+      y: rowY,
+      width,
+    };
+
+    offsetX += width + gap;
+
+    return positioned;
+  });
+}
+
 export function createGuidanceButton(scene, {
   x,
   y,

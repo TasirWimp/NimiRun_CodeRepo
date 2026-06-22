@@ -10,6 +10,7 @@ import {
   createPocketTraceCard,
 } from '../domain/traces.js';
 import {
+  applyArenaAction,
   approvePendingProposal,
   markPartialResult,
   redirectPendingProposal,
@@ -32,13 +33,17 @@ import {
   getPathEndpoints,
 } from '../game/resourceMapScenario.js';
 import { createMarketSignalScoutScenario } from '../game/scenarios/marketSignalScoutScenario.js';
+import { MARKET_WORLD_ACTIONS } from '../game/scenarios/marketWorldLevels.js';
 import { requestRouteProposal } from '../llm/routeProposalClient.js';
 import {
   createNimiqPocketStatus,
   getMiniAppEnvironment,
   requestNimiqPocketStatus,
 } from '../platform/nimiqMiniApp.js';
-import { createGuidanceButton } from '../ui/guidanceControls.js';
+import {
+  createGuidanceButton,
+  layoutGuidanceButtons,
+} from '../ui/guidanceControls.js';
 import { createNimiqPocketDisplay } from '../ui/resourceMeters.js';
 import {
   createTracePanelContent,
@@ -738,45 +743,78 @@ export default class PocketBotWorkshop extends Phaser.Scene {
       ...createTextStyle({ fontSize: isMobile ? '10px' : '13px', color: '#f3e4c2' }),
       wordWrap: { width: proposal.width - 40 },
     });
-    this.proposalCostText = this.add.text(x, y + (isMobile ? 91 : 88), '', {
+    this.proposalCostText = this.add.text(x, y + (isMobile ? 84 : 88), '', {
       ...createTextStyle({ fontSize: isMobile ? '10px' : '13px', color: '#48a8ff' }),
     });
-    this.proposalCheckText = this.add.text(x, y + (isMobile ? 106 : 104), '', {
+    this.proposalCheckText = this.add.text(x, y + (isMobile ? 99 : 104), '', {
       ...createTextStyle({ fontSize: isMobile ? '10px' : '13px', color: '#80c84d' }),
     });
 
-    this.drawGuidanceControls(x, y + (isMobile ? 122 : 122));
+    this.drawGuidanceControls(x, y + (isMobile ? 114 : 122));
     this.updateProposalPanel();
   }
 
   drawGuidanceControls(x, y) {
     const isMobile = this.layout.isMobile;
     const buttons = [
-      ['Approve', () => this.handleApproveProposal(), isMobile ? 70 : 76],
-      ['Why', () => this.handleWhyRoute(), isMobile ? 52 : 58],
-      ['Unknowns', () => this.handleRemainingUnknowns(), isMobile ? 72 : 78],
-      ['Inspect 1st', () => this.handleInspectFirst(), isMobile ? 78 : 82],
-      ['Partial', () => this.handleMarkPartial(), isMobile ? 62 : 66],
+      {
+        label: 'Approve',
+        onClick: () => this.handleApproveProposal(),
+        width: isMobile ? 66 : 72,
+      },
+      {
+        label: 'Ask Hidden',
+        onClick: () => this.handleArenaAction(MARKET_WORLD_ACTIONS.ASK_REMAINING_UNKNOWN),
+        width: isMobile ? 78 : 80,
+      },
+      {
+        label: 'Wide Scan',
+        onClick: () => this.handleArenaAction(MARKET_WORLD_ACTIONS.WIDE_SCAN),
+        width: isMobile ? 74 : 78,
+      },
+      {
+        label: 'Check Exit',
+        onClick: () => this.handleArenaAction(MARKET_WORLD_ACTIONS.CHECK_EXIT),
+        width: isMobile ? 72 : 78,
+      },
+      {
+        label: 'Support',
+        onClick: () => this.handleArenaAction(MARKET_WORLD_ACTIONS.CHECK_SUPPORT),
+        width: isMobile ? 64 : 68,
+      },
+      {
+        label: 'Why',
+        onClick: () => this.handleWhyRoute(),
+        width: isMobile ? 48 : 54,
+      },
+      {
+        label: 'Inspect 1st',
+        onClick: () => this.handleInspectFirst(),
+        width: isMobile ? 76 : 80,
+      },
+      {
+        label: 'Partial',
+        onClick: () => this.handleMarkPartial(),
+        width: isMobile ? 60 : 64,
+      },
     ];
-    let offsetX = 0;
-    let rowY = y;
     const maxWidth = this.layout.proposal.width - 36;
+    const positionedButtons = layoutGuidanceButtons(buttons, {
+      x,
+      y,
+      maxWidth,
+      rowGap: isMobile ? 22 : 24,
+    });
 
-    for (const [label, onClick, width] of buttons) {
-      if (isMobile && offsetX > 0 && offsetX + width > maxWidth) {
-        offsetX = 0;
-        rowY += 26;
-      }
-
+    for (const button of positionedButtons) {
       createGuidanceButton(this, {
-        x: x + offsetX,
-        y: rowY,
-        width,
-        height: isMobile ? 22 : 22,
-        label,
-        onClick,
+        x: button.x,
+        y: button.y,
+        width: button.width,
+        height: isMobile ? 20 : 22,
+        label: button.label,
+        onClick: button.onClick,
       });
-      offsetX += width + 8;
     }
   }
 
@@ -1088,6 +1126,30 @@ export default class PocketBotWorkshop extends Phaser.Scene {
     this.guidanceState = showRemainingUnknowns(this.guidanceState);
     this.renderGuidancePanel();
     this.setStatus('Remaining unknowns exposed.');
+  }
+
+  handleArenaAction(actionId) {
+    const action = this.mapScenario.arenaSpine?.actions?.[actionId];
+
+    this.guidanceState = applyArenaAction(this.guidanceState, actionId);
+
+    if (action?.targetNodeId) {
+      this.selectNode(action.targetNodeId, { redirectProposal: false });
+    }
+
+    this.updateProposalPanel();
+    this.renderGuidancePanel();
+
+    if (action?.behavior === 'show_unknowns') {
+      this.setStatus('Hidden assumptions exposed before spending attention.');
+      return;
+    }
+
+    this.setStatus(
+      action
+        ? `${action.label} prepared. Approve controls Bot Attention spending.`
+        : 'Arena action could not be prepared.'
+    );
   }
 
   handleInspectFirst() {

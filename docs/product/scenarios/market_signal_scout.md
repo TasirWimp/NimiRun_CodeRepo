@@ -1,17 +1,20 @@
 # Market Signal Scout Scenario
 
-Status: selected Phase 1 scenario; PB-013 Golden Signal foundation implemented.
+Status: selected Phase 1 scenario; PB-013 Golden Signal foundation and Arena Spine Layered V1 implemented.
 Role: first playable scenario script for the invariant Pocket Bot stage.
 
 Supporting refinement docs:
 
 - `docs/product/market_world_model.md` defines a richer market-arena contract
-  for future scene/domain wiring.
+  that now informs the layered `arenaSpine` metadata in the live Golden Signal
+  scenario.
 - `docs/product/pocket_bot_arena_narrator_role_cut.md` defines the narrator and
   former signal-bot role cut behind future copy and trace-backed repair.
 
-These docs do not replace the current verified Golden Signal playable loop
-until a dedicated implementation slice wires them into the scene.
+These docs do not replace the current verified Golden Signal playable loop.
+The live scene now layers Ask Hidden, Wide Scan, Check Exit, and Support Check
+over the existing node map; the full `marketWorldLevels.js` scene refactor
+remains future work.
 
 ## Core Cut
 

@@ -50,7 +50,8 @@ Primary targets:
 - Nimiq Pocket / allowance math,
 - Context Capacity slots,
 - run session / scenario contract validation,
-- Market Signal Scout market-world contract validation before scene wiring,
+- Market Signal Scout market-world contract validation and layered arena-spine
+  action mapping,
 - move transition gate classification,
 - run carrier updates,
 - lossy map reveal state,
@@ -634,8 +635,10 @@ Golden Signal polish must verify:
 - selecting or inspecting Support Check / Futures Gate can reveal a witness card
   with source headline/title, mechanics connector, source provider, and an
   explicit "not trading advice" boundary,
-- the 60-second path remains usable on a phone-sized viewport:
-  Unknowns -> Support Check -> Approve -> trace/witness reveal,
+- the arena-spine path remains usable on a phone-sized viewport:
+  Ask Hidden -> Wide Scan -> Approve -> trace/witness reveal,
+- the original judge path remains usable:
+  Support Check -> Approve -> trace/witness reveal,
 - high-density Nimiq Pay WebViews are classified as phone portrait surfaces
   rather than desktop canvases,
 - trace archive remains reachable after the witness card is shown,

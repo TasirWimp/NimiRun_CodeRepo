@@ -4,11 +4,11 @@ Status: implementation-base design note for Market Signal Scout.
 
 Role: define how historical Bitcoin price windows, market-event witnesses, Pocket Bot's price-analysis toolbox, narrator insight, player action, trace cards, and finish judgment compose into an immersive relational market arena.
 
-Current integration status: supporting contract only. The current playable
-submission path remains `src/game/scenarios/marketSignalScoutScenario.js` and
-the Golden Signal Support Check -> Approve -> Historic Witness -> Trace
-Archive loop until a dedicated scene/domain refactor wires this market-world
-model into gameplay.
+Current integration status: layered V1. The current playable submission path
+remains `src/game/scenarios/marketSignalScoutScenario.js`, now with
+`arenaSpine` metadata for Ask Hidden, Wide Scan, Check Exit, Support Check, and
+approve-gated Bot Attention spending. A dedicated scene/domain refactor can
+later make `src/game/scenarios/marketWorldLevels.js` the live source of truth.
 
 Source status:
 

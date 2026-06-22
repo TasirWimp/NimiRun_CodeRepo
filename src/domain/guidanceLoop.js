@@ -457,18 +457,36 @@ export function redirectPendingProposal(state, {
   targetNodeId,
   reason = null,
   action = 'redirect',
+  consideredAlternatives = null,
+  cutPrice = null,
+  stopCondition = null,
+  guidance = {},
 } = {}) {
   const nextMoveType = moveType || state.pendingProposal.moveType;
   const nextTargetNodeId = targetNodeId || state.pendingProposal.targetNodeId;
   const resourceCost = getMoveCostFromScenario(state.mapState, nextMoveType, nextTargetNodeId);
-  const nextProposal = createPendingProposal({
+  const proposalOptions = {
     ...state.pendingProposal,
     id: `proposal-${nextMoveType}-${nextTargetNodeId}`,
     moveType: nextMoveType,
     targetNodeId: nextTargetNodeId,
     reason: reason || `User redirected the bot toward ${nextTargetNodeId}.`,
     resourceCost,
-  });
+  };
+
+  if (consideredAlternatives != null) {
+    proposalOptions.consideredAlternatives = consideredAlternatives;
+  }
+
+  if (cutPrice != null) {
+    proposalOptions.cutPrice = cutPrice;
+  }
+
+  if (stopCondition != null) {
+    proposalOptions.stopCondition = stopCondition;
+  }
+
+  const nextProposal = createPendingProposal(proposalOptions);
 
   return {
     ...state,
@@ -482,7 +500,113 @@ export function redirectPendingProposal(state, {
       moveType: nextProposal.moveType,
       targetNodeId: nextProposal.targetNodeId,
       reason: nextProposal.reason,
+      ...guidance,
     }),
+  };
+}
+
+function createArenaActionBlockedState(state, actionId, message) {
+  return {
+    ...state,
+    guidancePanel: createGuidancePanel('Arena action unavailable', [
+      `${actionId || 'arena action'} could not be prepared.`,
+      message,
+    ]),
+  };
+}
+
+function getArenaAction(state, actionId) {
+  return state.mapState.scenario?.arenaSpine?.actions?.[actionId] || null;
+}
+
+function createArenaActionLines(action, extraLines = []) {
+  return [
+    action.narratorInsight,
+    ...extraLines,
+  ].filter(Boolean);
+}
+
+export function applyArenaAction(state, actionId) {
+  const action = getArenaAction(state, actionId);
+
+  if (!action) {
+    return createArenaActionBlockedState(
+      state,
+      actionId,
+      'This scenario does not define that arena action.'
+    );
+  }
+
+  if (action.behavior === 'show_unknowns') {
+    return {
+      ...state,
+      guidancePanel: createGuidancePanel(action.panelTitle || action.label || 'Ask Hidden', [
+        ...createArenaActionLines(action),
+        ...compactGuidanceLines([
+          ...normalizeList(action.reveals),
+          ...state.pendingProposal.cutPrice.leavesResidue,
+          ...state.mapState.residue,
+          ...state.mapState.remainingUnknowns,
+        ]),
+      ]),
+      guidanceTrace: appendGuidanceTrace(state, {
+        action: 'arena-action',
+        arenaActionId: action.id || actionId,
+        label: action.label || actionId,
+        resourcePolicy: action.resourcePolicy || 'no_spend_until_approve',
+      }),
+    };
+  }
+
+  if (action.behavior !== 'prepare_move') {
+    return createArenaActionBlockedState(
+      state,
+      actionId,
+      `Unsupported arena action behavior: ${action.behavior || 'missing'}.`
+    );
+  }
+
+  const node = getNodeById(state.mapState, action.targetNodeId);
+
+  if (!node) {
+    return createArenaActionBlockedState(
+      state,
+      actionId,
+      `Unknown arena target node: ${action.targetNodeId}.`
+    );
+  }
+
+  if (!node.possibleMoves?.[action.moveType]) {
+    return createArenaActionBlockedState(
+      state,
+      actionId,
+      `${action.moveType} is not available for ${node.label}.`
+    );
+  }
+
+  const nextState = redirectPendingProposal(state, {
+    moveType: action.moveType,
+    targetNodeId: action.targetNodeId,
+    reason: action.reason,
+    action: 'arena-action',
+    consideredAlternatives: action.consideredAlternatives,
+    cutPrice: action.cutPrice,
+    stopCondition: action.stopCondition,
+    guidance: {
+      arenaActionId: action.id || actionId,
+      label: action.label || actionId,
+      resourcePolicy: action.resourcePolicy || 'no_spend_until_approve',
+    },
+  });
+
+  return {
+    ...nextState,
+    guidancePanel: createGuidancePanel(action.panelTitle || `${action.label} Prepared`, [
+      ...createArenaActionLines(action, [
+        `${action.moveType} -> ${node.label}`,
+        'Approve controls Bot Attention spending.',
+      ]),
+    ]),
   };
 }
 

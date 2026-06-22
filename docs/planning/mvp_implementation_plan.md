@@ -201,8 +201,10 @@ Implemented groundwork from the earlier allowance-control cut:
   headline witnesses, a Golden Signal scenario contract, and Pocket Bot
   Workshop scene wiring. The pulled market-world model, arena narrator role cut,
   and `src/game/scenarios/marketWorldLevels.js` are retained as supporting
-  design/contract material for the next refinement; they do not replace the
-  current verified playable scene path yet.
+  design/contract material. The live Golden Signal scene now includes a
+  layered Arena Spine V1 with Ask Hidden, Wide Scan, Check Exit, Support Check,
+  and approve-gated spending; the full `marketWorldLevels.js` refactor remains
+  future work.
 
 This work should be retained as supporting infrastructure. It becomes one possible resource-governance mechanic inside the broader resource-judgment game, not the active center of Phase 1.
 
@@ -1480,18 +1482,18 @@ Nimiq Pay local Mini App smoke checks on June 8, 2026.
   witness-bearing node is selected or inspected,
 - preserve trace cards as the archive while letting the witness card be the
   immediate post-inspection reveal for Support Check / Futures Gate surfaces,
-- keep the first useful route legible: the bot wants the bright signal, the
-  player can reveal unknowns, redirect to Support Check, approve inspection,
-  and carry trace residue forward,
+- keep the first useful route legible: the bot wants the bright signal; the
+  player can Ask Hidden, Wide Scan, Check Exit, redirect to Support Check,
+  approve inspection, and carry trace residue forward,
 - use a phone-portrait layout for narrow browser viewports and high-density
   Nimiq Pay WebViews so the game does not collapse into a tiny desktop strip,
 - document hosted Vercel usage for normal browser and Nimiq Pay
   emulator/device checks.
 - keep `docs/product/market_world_model.md`,
   `docs/product/pocket_bot_arena_narrator_role_cut.md`, and
-  `src/game/scenarios/marketWorldLevels.js` as supporting contract material
-  until a dedicated scene refactor wires relation-state actions into the
-  playable loop; do not silently replace the verified Support Check judge path.
+  `src/game/scenarios/marketWorldLevels.js` as supporting contract material;
+  the scene uses a layered arena-spine metadata slice and does not silently
+  replace the verified Support Check judge path.
 
 PB-POLISH-002 Hosted Vercel/Nimiq Pay submission verification:
 

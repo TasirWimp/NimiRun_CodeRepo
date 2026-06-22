@@ -34,6 +34,20 @@ describe('witness panel formatting', () => {
     expect(summary).not.toMatch(/buy|sell|trade now/i);
   });
 
+  it('can render the Wide Scan crowd-pressure witness', () => {
+    const panel = createWitnessPanelContent([
+      'btc_futures_gate_cme_2017_12_01_event_pressure',
+    ]);
+
+    expect(panel).toMatchObject({
+      title: 'Historic Witness',
+      lines: expect.arrayContaining([
+        'Title: CME Group Self-Certifies Bitcoin Futures to Launch Dec. 18',
+        'Not: trading advice',
+      ]),
+    });
+  });
+
   it('returns null when there is no known witness', () => {
     expect(selectFeaturedWitness(['missing'])).toBeNull();
     expect(createWitnessPanelContent(['missing'])).toBeNull();
