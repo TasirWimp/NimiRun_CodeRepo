@@ -200,11 +200,12 @@ Implemented groundwork from the earlier allowance-control cut:
   transformed Binance BTCUSDT fixture evidence packet, accepted historic
   headline witnesses, a Golden Signal scenario contract, and Pocket Bot
   Workshop scene wiring. The pulled market-world model, arena narrator role cut,
-  and `src/game/scenarios/marketWorldLevels.js` are retained as supporting
-  design/contract material. The live Golden Signal scene now includes a
-  layered Arena Spine V1 with Ask Hidden, Wide Scan, Check Exit, Support Check,
-  and approve-gated spending; the full `marketWorldLevels.js` refactor remains
-  future work.
+  and `src/game/scenarios/marketWorldLevels.js` started as supporting
+  design/contract material. PB-014 now adds
+  `src/game/scenarios/marketWorldLevelAdapter.js`, so the live Golden Signal
+  scenario gets its arena spine and initial proposal seed from the market-world
+  level while preserving Ask Hidden, Wide Scan, Check Exit, Support Check, and
+  approve-gated spending. Relation-state mutation remains future work.
 
 This work should be retained as supporting infrastructure. It becomes one possible resource-governance mechanic inside the broader resource-judgment game, not the active center of Phase 1.
 
@@ -1504,8 +1505,14 @@ Implementation status:
   `Ask Hidden -> Wide Scan -> Approve -> Trace`, `Support Check -> Approve ->
   Historic Witness -> Trace Archive`, and `Ask Bot -> bounded proposal ->
   Approve` paths before the adapter work starts.
-- Step 2, the Market World Runtime Adapter, remains the next implementation
-  task.
+- Step 2, the Market World Runtime Adapter, is implemented in
+  `src/game/scenarios/marketWorldLevelAdapter.js` with coverage in
+  `tests/game/marketWorldLevelAdapter.test.js`. It adapts
+  `getGoldenSignalMarketWorldLevel()` into `arenaSpine`, `relationStates`,
+  `proposalPreview`, and a hindsight-free `proposalContext`, and the live
+  Golden Signal scenario now consumes that adapter output.
+- Step 3, explicit relation-state runtime mutation, remains the next
+  implementation task.
 
 Expected files:
 
@@ -1633,10 +1640,11 @@ Nimiq Pay local Mini App smoke checks on June 8, 2026.
 - document hosted Vercel usage for normal browser and Nimiq Pay
   emulator/device checks.
 - keep `docs/product/market_world_model.md`,
-  `docs/product/pocket_bot_arena_narrator_role_cut.md`, and
-  `src/game/scenarios/marketWorldLevels.js` as supporting contract material;
-  the scene uses a layered arena-spine metadata slice and does not silently
-  replace the verified Support Check judge path.
+  `docs/product/pocket_bot_arena_narrator_role_cut.md`,
+  `src/game/scenarios/marketWorldLevels.js`, and
+  `src/game/scenarios/marketWorldLevelAdapter.js` as the market-world contract
+  and adapter layer; the scene must not silently replace the verified Support
+  Check judge path.
 
 PB-POLISH-002 Hosted Vercel/Nimiq Pay submission verification:
 

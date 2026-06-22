@@ -538,7 +538,14 @@ Baseline freeze status: implemented in
 `tests/game/goldenSignalPlayableBaseline.test.js`. The test freezes
 `Ask Hidden -> Wide Scan -> Approve -> Trace`, `Support Check -> Approve ->
 Historic Witness -> Trace Archive`, and `Ask Bot -> bounded proposal ->
-Approve` as regression paths before the runtime adapter is introduced.
+Approve` as regression paths before relation-state mutation is introduced.
+
+Adapter status: implemented in `src/game/scenarios/marketWorldLevelAdapter.js`
+with coverage in `tests/game/marketWorldLevelAdapter.test.js`. The adapter
+initializes Golden Signal from `getGoldenSignalMarketWorldLevel()`, exposes the
+current first-slice arena actions, preserves the Support Check regression path,
+and keeps hindsight/terminal reveal data out of proposal context. The next
+PB-014 test slice should cover actual relation-state mutation.
 
 Expected automated tests:
 
