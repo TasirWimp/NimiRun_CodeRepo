@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import {
+  createMarketWorldFinishJudgment,
   MARKET_WORLD_RUNTIME_RELATION_STATUS,
   approveMarketWorldAction,
   createMarketWorldRuntimeState,
@@ -8,6 +9,7 @@ import {
   prepareMarketWorldAction,
   serializeMarketWorldRuntimeForProposalContext,
 } from '../../src/domain/marketWorldRuntime.js';
+import { FINISH_STATUSES } from '../../src/domain/finishJudgment.js';
 import { createGoldenSignalMarketWorldRuntimeSeed } from '../../src/game/scenarios/marketWorldLevelAdapter.js';
 import { MARKET_WORLD_ACTIONS } from '../../src/game/scenarios/marketWorldLevels.js';
 
@@ -150,6 +152,121 @@ describe('market world runtime relation state', () => {
         partialFinishAvailable: false,
         safeFinishPossible: false,
       },
+    });
+  });
+
+  it('classifies direct enter as false finish when protected relations were hidden before entry', () => {
+    const start = createRuntime();
+    const action = getAction(MARKET_WORLD_ACTIONS.APPROVE_ENTER);
+    const approved = approveMarketWorldAction(start, action);
+    const judgment = createMarketWorldFinishJudgment({
+      previousRuntimeState: start,
+      runtimeState: approved.runtimeState,
+      action,
+      mapState: {
+        contract: {
+          protectedOutcomes: [
+            {
+              requiredEvidence: [
+                'signal-support-inspected',
+                'exit-friction-inspected',
+                'fomo-pressure-named',
+              ],
+            },
+          ],
+        },
+      },
+    });
+
+    expect(judgment).toMatchObject({
+      status: FINISH_STATUSES.FALSE,
+      source: 'market-world-relations',
+      missingEvidence: [
+        'signal-support-inspected',
+        'exit-friction-inspected',
+        'fomo-pressure-named',
+      ],
+      unresolvedRelations: [
+        'signal_to_support',
+        'signal_to_exit',
+        'signal_to_crowd',
+      ],
+    });
+    expect(judgment.note).toContain('False finish');
+  });
+
+  it('classifies enter as partial finish when residue was named or one major relation was checked', () => {
+    const asked = nameMarketWorldUnknowns(
+      createRuntime(),
+      getAction(MARKET_WORLD_ACTIONS.ASK_REMAINING_UNKNOWN)
+    );
+    const action = getAction(MARKET_WORLD_ACTIONS.APPROVE_ENTER);
+    const approved = approveMarketWorldAction(asked.runtimeState, action);
+    const judgment = createMarketWorldFinishJudgment({
+      previousRuntimeState: asked.runtimeState,
+      runtimeState: approved.runtimeState,
+      action,
+    });
+
+    expect(judgment).toMatchObject({
+      status: FINISH_STATUSES.PARTIAL,
+      source: 'market-world-relations',
+      missingEvidence: [
+        'signal-support-inspected',
+        'exit-friction-inspected',
+        'fomo-pressure-named',
+      ],
+    });
+    expect(judgment.note).toContain('Partial finish');
+  });
+
+  it('classifies enter as safe finish when support, exit, and crowd were checked first', () => {
+    const support = approveMarketWorldAction(
+      createRuntime(),
+      getAction(MARKET_WORLD_ACTIONS.CHECK_SUPPORT)
+    );
+    const exit = approveMarketWorldAction(
+      support.runtimeState,
+      getAction(MARKET_WORLD_ACTIONS.CHECK_EXIT)
+    );
+    const wide = approveMarketWorldAction(
+      exit.runtimeState,
+      getAction(MARKET_WORLD_ACTIONS.WIDE_SCAN)
+    );
+    const action = getAction(MARKET_WORLD_ACTIONS.APPROVE_ENTER);
+    const approved = approveMarketWorldAction(wide.runtimeState, action);
+    const judgment = createMarketWorldFinishJudgment({
+      previousRuntimeState: wide.runtimeState,
+      runtimeState: approved.runtimeState,
+      action,
+    });
+
+    expect(judgment).toMatchObject({
+      status: FINISH_STATUSES.SAFE,
+      source: 'market-world-relations',
+      missingEvidence: [],
+      unresolvedRelations: [],
+      checkedRelations: [
+        'signal_to_support',
+        'signal_to_exit',
+        'signal_to_crowd',
+      ],
+    });
+  });
+
+  it('keeps non-finish relation moves open', () => {
+    const action = getAction(MARKET_WORLD_ACTIONS.WIDE_SCAN);
+    const approved = approveMarketWorldAction(createRuntime(), action);
+    const judgment = createMarketWorldFinishJudgment({
+      previousRuntimeState: createRuntime(),
+      runtimeState: approved.runtimeState,
+      action,
+    });
+
+    expect(judgment).toMatchObject({
+      status: FINISH_STATUSES.OPEN,
+      source: 'market-world-relations',
+      goalReached: false,
     });
   });
 

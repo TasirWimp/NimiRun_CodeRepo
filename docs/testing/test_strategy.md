@@ -554,8 +554,17 @@ unknowns without spending Bot Attention; Wide Scan, Check Exit, Support Check,
 and Approve Enter mutate signal-crowd, signal-exit, signal-support, and
 signal-event relation state on approval. Route-proposal context includes the
 current relation-state snapshot and still excludes hindsight/terminal reveal
-fields. The next PB-014 test slice should cover relation-derived finish
-judgment and any player-facing relation-state display.
+fields.
+
+Relation-derived finish judgment status: implemented in
+`src/domain/marketWorldRuntime.js` with guidance-loop coverage in
+`tests/domain/guidanceLoop.test.js`. Direct bright-signal entry becomes a
+relation-derived false finish when support, exit, and crowd pressure were
+hidden; entry after named residue or partial checks becomes partial finish;
+entry after support, exit, and crowd are checked becomes safe finish; and
+non-finish scout moves remain open-run. The next PB-014 test slice should cover
+player-facing finish-state display, finish-card/hindsight-card unlock behavior,
+and trace rendering for relation-derived finish packets.
 
 Expected automated tests:
 

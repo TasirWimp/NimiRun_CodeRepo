@@ -1,6 +1,6 @@
 # Market Signal Scout Scenario
 
-Status: selected Phase 1 scenario; PB-013 Golden Signal foundation and Arena Spine Layered V1 implemented. PB-014 is in progress: the baseline freeze, `marketWorldLevels.js` runtime adapter, and relation-state mutation are implemented; relation-derived finish judgment is next.
+Status: selected Phase 1 scenario; PB-013 Golden Signal foundation and Arena Spine Layered V1 implemented. PB-014 is in progress: the baseline freeze, `marketWorldLevels.js` runtime adapter, relation-state mutation, and relation-derived finish judgment are implemented. Player-facing finish-state presentation and hindsight-card handling are next.
 Role: first playable scenario script for the invariant Pocket Bot stage.
 
 Supporting refinement docs:

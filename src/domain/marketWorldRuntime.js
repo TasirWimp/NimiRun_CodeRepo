@@ -1,3 +1,5 @@
+import { createFinishJudgment } from './finishJudgment.js';
+
 export const MARKET_WORLD_RUNTIME_RELATION_STATUS = Object.freeze({
   HIDDEN: 'hidden',
   VISIBLE: 'visible',
@@ -7,6 +9,30 @@ export const MARKET_WORLD_RUNTIME_RELATION_STATUS = Object.freeze({
 });
 
 const RELATION_ID_PREFIX = 'signal_to_';
+const PROTECTED_FINISH_RELATION_IDS = Object.freeze([
+  'signal_to_support',
+  'signal_to_exit',
+  'signal_to_crowd',
+]);
+const RELATION_EVIDENCE_IDS = Object.freeze({
+  signal_to_support: 'signal-support-inspected',
+  signal_to_exit: 'exit-friction-inspected',
+  signal_to_crowd: 'fomo-pressure-named',
+});
+const DEFAULT_RELATION_PROTECTED_OUTCOMES = Object.freeze([
+  Object.freeze({
+    id: 'market-world-safe-finish-requires-protected-relations',
+    requiredEvidence: Object.freeze([
+      RELATION_EVIDENCE_IDS.signal_to_support,
+      RELATION_EVIDENCE_IDS.signal_to_exit,
+      RELATION_EVIDENCE_IDS.signal_to_crowd,
+    ]),
+  }),
+]);
+const FINISH_LOOKING_TARGET_NODE_IDS = Object.freeze([
+  'bright-signal',
+  'safe-gate',
+]);
 
 function clone(value) {
   return value == null ? value : JSON.parse(JSON.stringify(value));
@@ -96,6 +122,77 @@ function getRelationStatusSummary(relationStates = {}) {
       relation.status,
     ])
   );
+}
+
+function isRelationChecked(relation) {
+  return (
+    relation?.status === MARKET_WORLD_RUNTIME_RELATION_STATUS.REVEALED ||
+    relation?.status === MARKET_WORLD_RUNTIME_RELATION_STATUS.RESOLVED
+  );
+}
+
+function isRelationNamed(relation) {
+  return (
+    isRelationChecked(relation) ||
+    relation?.status === MARKET_WORLD_RUNTIME_RELATION_STATUS.RESIDUALIZED
+  );
+}
+
+function getProtectedOutcomes(mapState) {
+  return normalizeList(mapState?.contract?.protectedOutcomes).length
+    ? mapState.contract.protectedOutcomes
+    : clone(DEFAULT_RELATION_PROTECTED_OUTCOMES);
+}
+
+function getRelationEvidence(relationStates = {}) {
+  return PROTECTED_FINISH_RELATION_IDS
+    .filter((relationId) => isRelationChecked(relationStates[relationId]))
+    .map((relationId) => RELATION_EVIDENCE_IDS[relationId])
+    .filter(Boolean);
+}
+
+function getUnresolvedRelationIds(relationStates = {}) {
+  return PROTECTED_FINISH_RELATION_IDS.filter(
+    (relationId) => !isRelationChecked(relationStates[relationId])
+  );
+}
+
+function getRelationResidue(relationStates = {}, relationIds = []) {
+  return unique(
+    relationIds.map((relationId) =>
+      relationStates[relationId]?.stillUnknown ||
+        relationStates[relationId]?.playerFacingHint ||
+        relationId
+    )
+  );
+}
+
+function isFinishClaimAction(action, mapState) {
+  const normalizedAction = normalizeAction(action);
+
+  if (!normalizedAction || normalizedAction.moveType !== 'act') {
+    return false;
+  }
+
+  return (
+    normalizedAction.id === 'approve_enter' ||
+    FINISH_LOOKING_TARGET_NODE_IDS.includes(normalizedAction.targetNodeId) ||
+    normalizedAction.targetNodeId === mapState?.goalNodeId
+  );
+}
+
+function withMarketWorldJudgmentMetadata(judgment, {
+  relationStates,
+  checkedRelationIds,
+  unresolvedRelationIds,
+} = {}) {
+  return {
+    ...judgment,
+    source: 'market-world-relations',
+    relationStatuses: getRelationStatusSummary(relationStates),
+    checkedRelations: checkedRelationIds,
+    unresolvedRelations: unresolvedRelationIds,
+  };
 }
 
 function createTransition({
@@ -356,6 +453,115 @@ export function approveMarketWorldAction(runtimeState, action) {
     },
     transition,
   };
+}
+
+export function createMarketWorldFinishJudgment({
+  previousRuntimeState = null,
+  runtimeState = null,
+  action = null,
+  mapState = null,
+} = {}) {
+  if (!runtimeState) {
+    return null;
+  }
+
+  const currentRelationStates = normalizeRelationStates(runtimeState.relationStates);
+  const judgmentRelationStates = normalizeRelationStates(
+    previousRuntimeState?.relationStates || runtimeState.relationStates
+  );
+  const protectedOutcomes = getProtectedOutcomes(mapState);
+  const finishClaimed = isFinishClaimAction(action, mapState);
+  const checkedRelationIds = PROTECTED_FINISH_RELATION_IDS.filter((relationId) =>
+    isRelationChecked(judgmentRelationStates[relationId])
+  );
+  const namedRelationIds = PROTECTED_FINISH_RELATION_IDS.filter((relationId) =>
+    isRelationNamed(judgmentRelationStates[relationId])
+  );
+  const unresolvedRelationIds = getUnresolvedRelationIds(judgmentRelationStates);
+  const evidence = getRelationEvidence(judgmentRelationStates);
+  const residue = getRelationResidue(judgmentRelationStates, unresolvedRelationIds);
+
+  if (!finishClaimed) {
+    return withMarketWorldJudgmentMetadata(
+      createFinishJudgment({
+        goalReached: false,
+        declaredComplete: false,
+        protectedOutcomes,
+        evidence: getRelationEvidence(currentRelationStates),
+        residue: [],
+        remainingUnknowns: getRelationResidue(
+          currentRelationStates,
+          getUnresolvedRelationIds(currentRelationStates)
+        ),
+        note: 'Run remains open because no finish action has been approved.',
+      }),
+      {
+        relationStates: currentRelationStates,
+        checkedRelationIds: PROTECTED_FINISH_RELATION_IDS.filter((relationId) =>
+          isRelationChecked(currentRelationStates[relationId])
+        ),
+        unresolvedRelationIds: getUnresolvedRelationIds(currentRelationStates),
+      }
+    );
+  }
+
+  if (unresolvedRelationIds.length === 0) {
+    return withMarketWorldJudgmentMetadata(
+      createFinishJudgment({
+        goalReached: true,
+        declaredComplete: true,
+        protectedOutcomes,
+        evidence,
+        residue: [],
+        remainingUnknowns: [],
+        note:
+          'Safe finish: support, exit, and crowd pressure were checked before entering.',
+      }),
+      {
+        relationStates: judgmentRelationStates,
+        checkedRelationIds,
+        unresolvedRelationIds,
+      }
+    );
+  }
+
+  if (checkedRelationIds.length > 0 || namedRelationIds.length > 0) {
+    return withMarketWorldJudgmentMetadata(
+      createFinishJudgment({
+        goalReached: true,
+        declaredComplete: false,
+        protectedOutcomes,
+        evidence,
+        residue,
+        remainingUnknowns: residue,
+        note:
+          'Partial finish: useful progress was made, but protected market relations still carry residue.',
+      }),
+      {
+        relationStates: judgmentRelationStates,
+        checkedRelationIds,
+        unresolvedRelationIds,
+      }
+    );
+  }
+
+  return withMarketWorldJudgmentMetadata(
+    createFinishJudgment({
+      goalReached: true,
+      declaredComplete: true,
+      protectedOutcomes,
+      evidence,
+      residue,
+      remainingUnknowns: residue,
+      note:
+        'False finish: the bright signal was entered before support, exit, or crowd pressure was checked.',
+    }),
+    {
+      relationStates: judgmentRelationStates,
+      checkedRelationIds,
+      unresolvedRelationIds,
+    }
+  );
 }
 
 export function serializeMarketWorldRuntimeForProposalContext(runtimeState) {

@@ -13,6 +13,7 @@ import {
   showWhyThisRoute,
 } from '../../src/domain/guidanceLoop.js';
 import { createLossyMapState } from '../../src/domain/lossyMap.js';
+import { FINISH_STATUSES } from '../../src/domain/finishJudgment.js';
 import { MARKET_WORLD_RUNTIME_RELATION_STATUS } from '../../src/domain/marketWorldRuntime.js';
 import { createPocketBotState } from '../../src/game/pocketBotState.js';
 import { createResourceMapScenario } from '../../src/game/resourceMapScenario.js';
@@ -406,6 +407,67 @@ describe('guidance loop domain rules', () => {
     expect(accepted.state.marketWorldRuntime.relationStates.signal_to_support.status).toBe(
       MARKET_WORLD_RUNTIME_RELATION_STATUS.REVEALED
     );
+  });
+
+  it('classifies direct bright-signal entry as a relation-derived false finish', () => {
+    const accepted = approvePendingProposal(createMarketState());
+
+    expect(accepted.applied).toBe(true);
+    expect(accepted.state.mapState.finishJudgment).toMatchObject({
+      status: FINISH_STATUSES.FALSE,
+      source: 'market-world-relations',
+      unresolvedRelations: [
+        'signal_to_support',
+        'signal_to_exit',
+        'signal_to_crowd',
+      ],
+    });
+    expect(accepted.state.traceCards.at(-1)).toMatchObject({
+      landfallStatus: FINISH_STATUSES.FALSE,
+      acceptedMove: {
+        moveType: 'act',
+        targetNodeId: 'bright-signal',
+      },
+    });
+  });
+
+  it('classifies enter after named residue as partial finish instead of safe finish', () => {
+    const asked = applyArenaAction(
+      createMarketState(),
+      MARKET_WORLD_ACTIONS.ASK_REMAINING_UNKNOWN
+    );
+    const prepared = applyArenaAction(asked, MARKET_WORLD_ACTIONS.APPROVE_ENTER);
+    const accepted = approvePendingProposal(prepared);
+
+    expect(accepted.applied).toBe(true);
+    expect(accepted.state.mapState.finishJudgment).toMatchObject({
+      status: FINISH_STATUSES.PARTIAL,
+      source: 'market-world-relations',
+    });
+    expect(accepted.state.traceCards.at(-1).landfallStatus).toBe(FINISH_STATUSES.PARTIAL);
+  });
+
+  it('classifies enter as safe only after support, exit, and crowd relations are checked', () => {
+    const support = approvePendingProposal(
+      applyArenaAction(createMarketState(), MARKET_WORLD_ACTIONS.CHECK_SUPPORT)
+    ).state;
+    const exit = approvePendingProposal(
+      applyArenaAction(support, MARKET_WORLD_ACTIONS.CHECK_EXIT)
+    ).state;
+    const crowd = approvePendingProposal(
+      applyArenaAction(exit, MARKET_WORLD_ACTIONS.WIDE_SCAN)
+    ).state;
+    const entered = approvePendingProposal(
+      applyArenaAction(crowd, MARKET_WORLD_ACTIONS.APPROVE_ENTER)
+    );
+
+    expect(entered.applied).toBe(true);
+    expect(entered.state.mapState.finishJudgment).toMatchObject({
+      status: FINISH_STATUSES.SAFE,
+      source: 'market-world-relations',
+      unresolvedRelations: [],
+    });
+    expect(entered.state.traceCards.at(-1).landfallStatus).toBe(FINISH_STATUSES.SAFE);
   });
 
   it('rejects unknown arena actions without spending resources', () => {

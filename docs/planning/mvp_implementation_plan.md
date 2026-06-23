@@ -205,15 +205,17 @@ Implemented groundwork from the earlier allowance-control cut:
   `src/game/scenarios/marketWorldLevelAdapter.js`, so the live Golden Signal
   scenario gets its arena spine and initial proposal seed from the market-world
   level while preserving Ask Hidden, Wide Scan, Check Exit, Support Check, and
-  approve-gated spending. Relation-state mutation remains future work.
+  approve-gated spending. PB-014 relation-state mutation and relation-derived
+  finish judgment are now implemented in the domain runtime.
 
 This work should be retained as supporting infrastructure. It becomes one possible resource-governance mechanic inside the broader resource-judgment game, not the active center of Phase 1.
 
 PB-POLISH has a verified hosted/Nimiq Pay submission path for the current
-Golden Signal proof of concept. The next product-spine work should be
-**PB-014 Market World Runtime Seed**: make the `marketWorldLevels.js` Golden
-Signal arena the live gameplay seed through a layered runtime transition, while
-preserving the verified support-check path as a regression baseline.
+Golden Signal proof of concept. The current product-spine work remains
+**PB-014 Market World Runtime Seed**; its next step is player-facing finish
+state and hindsight-card presentation around the relation-derived finish
+packet, while preserving the verified Support Check path as a regression
+baseline.
 
 PB-POLISH remains the submission/regression lane for final screenshots, demo
 media, and pre-submission checks after PB-014 changes the gameplay surface.
@@ -1522,8 +1524,17 @@ Implementation status:
   `worldRelationRevealed`, residualized relations, still-unknown relation
   labels, and a return condition. Player-facing trace rendering can be refined
   later.
-- Step 7, relation-derived finish judgment, remains the next implementation
-  task.
+- Step 7, relation-derived finish judgment, is implemented in
+  `src/domain/marketWorldRuntime.js` and wired through
+  `src/domain/guidanceLoop.js`. Direct bright-signal entry now becomes a
+  relation-derived false finish when support, exit, and crowd pressure were
+  hidden; entry after named residue or partial checks becomes partial finish;
+  and entry after support, exit, and crowd are checked becomes safe finish.
+  Non-finish scout moves remain open-run.
+- The next PB-014 substep is player-facing finish-state presentation: make the
+  relation-derived finish packet visible in trace/finish cards, unlock the
+  hindsight card only after finish, and keep Support Check as the regression
+  path.
 
 Expected files:
 

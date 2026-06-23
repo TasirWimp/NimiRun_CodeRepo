@@ -1,6 +1,7 @@
 import { createFinishJudgment } from './finishJudgment.js';
 import {
   approveMarketWorldAction,
+  createMarketWorldFinishJudgment,
   createMarketWorldRuntimeState,
   findMarketWorldActionForAcceptedMove,
   nameMarketWorldUnknowns,
@@ -435,17 +436,33 @@ export function approvePendingProposal(state) {
     state.marketWorldRuntime,
     marketWorldAction
   );
+  const marketWorldFinishJudgment = createMarketWorldFinishJudgment({
+    previousRuntimeState: state.marketWorldRuntime,
+    runtimeState: marketWorldApproval.runtimeState,
+    action: marketWorldAction,
+    mapState: result.state,
+  });
+  const judgedMapResult = marketWorldFinishJudgment
+    ? {
+        ...result,
+        finishJudgment: marketWorldFinishJudgment,
+        state: {
+          ...result.state,
+          finishJudgment: marketWorldFinishJudgment,
+        },
+      }
+    : result;
   const traceCard = createMoveTraceCard({
     sequence: state.traceCards.length + 1,
     proposal: state.pendingProposal,
-    mapResult: result,
+    mapResult: judgedMapResult,
     guidanceEntries: getPendingGuidanceEntries(state),
     worldTransition: marketWorldApproval.transition,
   });
   const lessonResult = promoteSessionLessonFromTrace(
     {
       ...state,
-      mapState: result.state,
+      mapState: judgedMapResult.state,
       marketWorldRuntime: marketWorldApproval.runtimeState,
     },
     traceCard
@@ -453,10 +470,10 @@ export function approvePendingProposal(state) {
 
   return {
     applied: true,
-    result,
+    result: judgedMapResult,
     state: {
       ...state,
-      mapState: result.state,
+      mapState: judgedMapResult.state,
       marketWorldRuntime: marketWorldApproval.runtimeState,
       pendingProposal: lessonResult.pendingProposal,
       guidancePanel: createGuidancePanel('Move accepted', [
@@ -468,7 +485,7 @@ export function approvePendingProposal(state) {
         moveType: state.pendingProposal.moveType,
         targetNodeId: state.pendingProposal.targetNodeId,
         resourceCost: state.pendingProposal.resourceCost,
-        finishStatus: result.state.finishJudgment?.status,
+        finishStatus: judgedMapResult.state.finishJudgment?.status,
         marketWorldTransition: marketWorldApproval.transition,
       }),
       traceCards: appendTraceCard(state.traceCards, lessonResult.traceCard),
