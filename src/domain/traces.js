@@ -191,6 +191,9 @@ export function createTraceCard({
   stillUnknown = [],
   returnCondition = null,
   finishPressureDelta = null,
+  finishCheckedRelations = [],
+  finishUnresolvedRelations = [],
+  sourceWitnessIds = [],
   createdAt = null,
 } = {}) {
   const proposalSnapshot = normalizeProposal(proposal);
@@ -224,6 +227,9 @@ export function createTraceCard({
     stillUnknown: unique(stillUnknown),
     returnCondition,
     finishPressureDelta: clone(finishPressureDelta),
+    finishCheckedRelations: unique(finishCheckedRelations),
+    finishUnresolvedRelations: unique(finishUnresolvedRelations),
+    sourceWitnessIds: unique(sourceWitnessIds),
     sessionLesson: null,
     receipt: clone(receipt),
   };
@@ -247,6 +253,9 @@ export function createMoveTraceCard({
   }
 
   const latestMapTrace = getLatestMapTrace(mapResult);
+  const targetNode = mapResult?.state?.scenario?.nodes?.find(
+    (node) => node.id === proposal.targetNodeId
+  ) || null;
   const revealed = unique([
     ...(mapResult?.reveal?.summary ? [mapResult.reveal.summary] : []),
     ...normalizeList(mapResult?.reveal?.evidence),
@@ -276,6 +285,7 @@ export function createMoveTraceCard({
     acceptedMove: {
       moveType: proposal.moveType,
       targetNodeId: proposal.targetNodeId,
+      label: targetNode?.label,
     },
     resourceSpend: mapResult?.cost || proposal.resourceCost,
     userGuidance: guidance,
@@ -291,6 +301,10 @@ export function createMoveTraceCard({
     stillUnknown: worldTransition?.stillUnknown,
     returnCondition: worldTransition?.returnCondition,
     finishPressureDelta: worldTransition?.finishPressureDelta,
+    finishCheckedRelations: mapResult?.state?.finishJudgment?.checkedRelations,
+    finishUnresolvedRelations:
+      mapResult?.state?.finishJudgment?.unresolvedRelations,
+    sourceWitnessIds: targetNode?.witnessIds,
     createdAt,
   });
 }
@@ -563,6 +577,9 @@ export function serializeTraceCardsForProposalContext(traceCards = [], { limit =
       world_relations_residualized: normalizeList(card.worldRelationsResidualized),
       still_unknown: normalizeList(card.stillUnknown),
       return_condition: card.returnCondition || null,
+      finish_checked_relations: normalizeList(card.finishCheckedRelations),
+      finish_unresolved_relations: normalizeList(card.finishUnresolvedRelations),
+      source_witness_ids: normalizeList(card.sourceWitnessIds),
       reentry_note: card.reentryNote || null,
       lesson_candidate: card.lessonCandidate
         ? {

@@ -143,7 +143,10 @@ describe('Golden Signal playable baseline regression', () => {
     expect(traceCard.revealed).toContain('fomo-pressure-named');
     expect(traceCard.residueCarriedForward).toContain('safe finish conditions unknown');
     expect(tracePanel.title).toBe('Trace 1: Open run');
-    expect(tracePanel.lines.join(' ')).toContain('Move: inspect -> fomo-pressure');
+    expect(tracePanel.lines.join(' ')).toContain('Move: inspect -> FOMO Pressure');
+    expect(tracePanel.lines.join(' ')).toContain('Checked: FOMO pressure');
+    expect(tracePanel.lines.join(' ')).toContain('Still hidden: support depth still unknown, exit friction still unknown');
+    expect(tracePanel.lines.join(' ')).not.toMatch(/signal_to_|source ocean|cut|landfall|re-entry/i);
     expectNoWalletOrTradingAuthority(state);
   });
 
@@ -202,7 +205,10 @@ describe('Golden Signal playable baseline regression', () => {
     expect(traceCard.residueCarriedForward).toContain('exit friction still unknown');
     expect(traceCard.residueCarriedForward).toContain('FOMO pressure still unknown');
     expect(tracePanel.title).toBe('Trace 1: Open run');
-    expect(tracePanel.lines.join(' ')).toContain('Move: inspect -> support-check');
+    expect(tracePanel.lines.join(' ')).toContain('Move: inspect -> Support Check');
+    expect(tracePanel.lines.join(' ')).toContain('Checked: Support depth');
+    expect(tracePanel.lines.join(' ')).toContain('Witness: 2 historic sources');
+    expect(tracePanel.lines.join(' ')).not.toMatch(/signal_to_|source ocean|cut|landfall|re-entry/i);
     expectNoWalletOrTradingAuthority(state);
   });
 
@@ -273,8 +279,8 @@ describe('Golden Signal playable baseline regression', () => {
     expect(finishPanel).toMatchObject({
       title: 'False finish',
       lines: expect.arrayContaining([
-        'Move: act -> bright-signal',
-        'Checked: none',
+        'Move: act -> Bright Signal',
+        'Checked: none | Still hidden: support depth still unknown, exit friction still unknown, +2 more',
         'Not: trading advice',
       ]),
     });

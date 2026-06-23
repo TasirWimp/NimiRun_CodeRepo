@@ -1536,8 +1536,14 @@ Implementation status:
   now show a safe/partial/false finish card, keep open scout moves on the
   existing witness/trace path, and unlock the market-world hindsight card only
   after a finish state.
-- The next PB-014 substep is browser/manual polish for finish-card readability
-  on phone portrait plus any small copy/layout fixes found there.
+- The PB-014 phone-readability polish slice is implemented in
+  `src/ui/tracePanel.js`, `src/domain/traces.js`, and related tests. Trace
+  Archive cards now translate market-world relation IDs into player-facing
+  terms, show checked relation, still-hidden residue, return condition, and
+  historic witness count, and finish cards use relation-derived checked /
+  unresolved sets so safe, partial, and false finishes remain readable on phone
+  portrait. Hosted/Nimiq Pay screenshots and final media checks remain in the
+  PB-POLISH lane.
 
 Expected files:
 

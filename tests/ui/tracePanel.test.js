@@ -78,12 +78,85 @@ describe('trace panel formatting', () => {
     expect(panel).toMatchObject({
       title: 'False finish',
       lines: expect.arrayContaining([
-        'Move: act -> bright-signal',
-        'Checked: none',
+        'Move: act -> Bright Signal',
+        'Checked: none | Still hidden: support depth still unknown, exit friction still unknown, +1 more',
         'Not: trading advice',
       ]),
     });
     expect(panel.lines.join(' ')).toContain('Hindsight: The bright signal belonged');
     expect(panel.lines.join(' ')).toContain('support depth still unknown');
+  });
+
+  it('renders market-world trace details with player-facing relation language', () => {
+    const panel = createTracePanelContent({
+      sequence: 1,
+      landfallStatus: 'open-run',
+      acceptedMove: {
+        moveType: 'inspect',
+        targetNodeId: 'fomo-pressure',
+        label: 'FOMO Pressure',
+      },
+      resourceSpend: {
+        botAttention: 1,
+        userGuidance: 1,
+      },
+      revealed: ['fomo-pressure-named'],
+      suppressedOrNotChecked: ['entering on signal brightness alone'],
+      residueCarriedForward: [
+        'safe finish conditions unknown',
+        'support depth still unknown',
+        'exit friction still unknown',
+      ],
+      worldRelationRevealed: ['signal_to_crowd'],
+      worldRelationsResidualized: ['signal_to_support', 'signal_to_exit'],
+      stillUnknown: [
+        'event pressure may be overread',
+        'exit friction still unknown',
+        'support depth still unknown',
+      ],
+      returnCondition: 'Stop after the wide scan reveal; do not call the route safe yet.',
+      sourceWitnessIds: ['btc_fomo_pressure_example'],
+      reentryNote: 'Run remains open because no finish action has been approved.',
+    });
+
+    expect(panel).toMatchObject({
+      title: 'Trace 1: Open run',
+      lines: [
+        'Move: inspect -> FOMO Pressure | Cost: 1 Bot Attention, 1 User Guidance',
+        'Checked: FOMO pressure | Witness: 1 historic source',
+        'Still hidden: support depth still unknown, exit friction still unknown, +1 more',
+        'Residue: support depth still unknown, exit friction still unknown, +1 more',
+        'Return: Stop after the wide scan reveal; do not call the route safe yet.',
+      ],
+    });
+    expect(panel.lines.join(' ')).not.toMatch(/signal_to_|source ocean|cut|landfall|re-entry/i);
+  });
+
+  it('renders safe finish cards from finish-judgment relation evidence', () => {
+    const panel = createFinishPanelContent({
+      sequence: 4,
+      landfallStatus: 'safe-finish',
+      acceptedMove: {
+        moveType: 'act',
+        targetNodeId: 'bright-signal',
+      },
+      finishCheckedRelations: [
+        'signal_to_support',
+        'signal_to_exit',
+        'signal_to_crowd',
+      ],
+      stillUnknown: [],
+      residueCarriedForward: [],
+      reentryNote: 'Safe finish: support, exit, and crowd pressure were checked before entering.',
+    });
+
+    expect(panel).toMatchObject({
+      title: 'Safe finish',
+      lines: expect.arrayContaining([
+        'Move: act -> Bright Signal',
+        'Checked: Support depth, Exit friction, +1 more | Still hidden: none',
+        'Not: trading advice',
+      ]),
+    });
   });
 });

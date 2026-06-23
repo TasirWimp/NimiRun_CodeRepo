@@ -139,6 +139,36 @@ describe('trace cards', () => {
     ]);
   });
 
+  it('serializes market-world relation and witness fields into proposal context', () => {
+    const traceCard = createTraceCard({
+      sequence: 1,
+      acceptedMove: {
+        moveType: 'inspect',
+        targetNodeId: 'support-check',
+      },
+      worldRelationRevealed: ['signal_to_support'],
+      worldRelationsResidualized: ['signal_to_exit'],
+      stillUnknown: ['exit friction still unknown'],
+      returnCondition: 'Stop after support is inspected.',
+      finishCheckedRelations: ['signal_to_support'],
+      finishUnresolvedRelations: ['signal_to_exit', 'signal_to_crowd'],
+      sourceWitnessIds: ['btc_futures_gate_cboe_2017_12_04'],
+    });
+    const promptContext = serializeTraceCardsForProposalContext([traceCard]);
+
+    expect(promptContext).toEqual([
+      expect.objectContaining({
+        world_relation_revealed: ['signal_to_support'],
+        world_relations_residualized: ['signal_to_exit'],
+        still_unknown: ['exit friction still unknown'],
+        return_condition: 'Stop after support is inspected.',
+        finish_checked_relations: ['signal_to_support'],
+        finish_unresolved_relations: ['signal_to_exit', 'signal_to_crowd'],
+        source_witness_ids: ['btc_futures_gate_cboe_2017_12_04'],
+      }),
+    ]);
+  });
+
   it('keeps trace history order stable and exposes the latest trace', () => {
     const first = createTraceCard({
       sequence: 1,

@@ -670,17 +670,17 @@ The first milestone is complete when:
 
 Recommended next task:
 
-1. PB-014: run browser/manual finish-card readability checks on phone portrait
-   and fix any copy/layout issues found there.
+1. PB-POLISH: rerun local and hosted phone-portrait regression checks after
+   the PB-014 trace/finish readability polish, then capture screenshots or a
+   short demo only when preparing final submission media.
 2. PB-014: keep the first seed small: Ask Hidden, Wide Scan, Check Exit,
    Support Check, and Approve Enter, with Bot Attention spent only after
    approval.
 3. PB-014: preserve the verified Support Check -> Approve -> Historic Witness
    -> Trace path as a regression baseline while relation-state runtime, trace
    residue, and finish pressure move to the market-world model.
-4. PB-POLISH: rerun hosted/Nimiq Pay regression checks and capture screenshots
-   or a short demo only when the project owner is ready to prepare final
-   submission media.
+4. PB-014: repeat browser/manual finish-card readability checks whenever trace
+   or finish UI copy changes again.
 5. PB-MARKET: record external tester feedback when entering the public
    competition-feedback cycle.
 6. Repeat the Nimiq Pay Testnet emulator check before final submission if

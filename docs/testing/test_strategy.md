@@ -570,8 +570,17 @@ Finish-card display status: implemented in `src/ui/tracePanel.js` and
 `tests/game/goldenSignalPlayableBaseline.test.js`. Open traces do not unlock a
 finish card; false/partial/safe finish traces can render a player-facing finish
 card; and the market-world hindsight card is available only after finish. The
-next PB-014 test slice should cover browser/manual finish-card readability on
-phone portrait and any copy/layout fixes found there.
+PB-014 phone-readability polish slice is also covered: trace cards translate
+relation IDs into player-facing labels, show checked relation, still-hidden
+residue, return condition, and witness count, serialize the same relation
+metadata into proposal context, and keep finish-card copy compact enough for
+phone portrait. Hosted/Nimiq Pay screenshot and final-media regression checks
+remain part of PB-POLISH.
+
+June 23, 2026 local browser smoke after the trace/finish polish used a
+390x844 phone canvas and completed `Approve`, `Support -> Approve`, and
+`Ask Hidden -> Wide Scan -> Approve` without console warnings or errors. This
+was a local interaction smoke, not a hosted/Nimiq Pay media capture.
 
 Expected automated tests:
 
