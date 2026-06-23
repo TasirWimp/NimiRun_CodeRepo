@@ -4,6 +4,7 @@ import {
   applyRouteProposalResult,
   createRouteProposalRuntimeInput,
 } from '../../src/game/routeProposalRuntime.js';
+import { MARKET_WORLD_RUNTIME_RELATION_STATUS } from '../../src/domain/marketWorldRuntime.js';
 import { createPocketBotState } from '../../src/game/pocketBotState.js';
 import { createMarketSignalScoutScenario } from '../../src/game/scenarios/marketSignalScoutScenario.js';
 
@@ -64,6 +65,23 @@ describe('route proposal runtime', () => {
       ])
     );
     expect(input.carrier.residue).toContain('support depth still unknown');
+    expect(input.marketWorld).toMatchObject({
+      source_level_id: 'level_02_golden_signal',
+      relation_statuses: {
+        signal_to_support: MARKET_WORLD_RUNTIME_RELATION_STATUS.HIDDEN,
+        signal_to_exit: MARKET_WORLD_RUNTIME_RELATION_STATUS.HIDDEN,
+        signal_to_event: MARKET_WORLD_RUNTIME_RELATION_STATUS.HIDDEN,
+        signal_to_crowd: MARKET_WORLD_RUNTIME_RELATION_STATUS.VISIBLE,
+      },
+      still_unknown: expect.arrayContaining([
+        'support depth still unknown',
+        'exit friction still unknown',
+        'FOMO pressure still unknown',
+      ]),
+    });
+    expect(JSON.stringify(input.marketWorld)).not.toMatch(
+      /hindsight|terminal|patternOutcome|landfallRisk/i
+    );
   });
 
   it('normalizes relay proposal costs against scenario runtime costs', () => {

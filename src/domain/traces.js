@@ -186,6 +186,11 @@ export function createTraceCard({
   landfallStatus = FINISH_STATUSES.OPEN,
   outcome = null,
   receipt = null,
+  worldRelationRevealed = [],
+  worldRelationsResidualized = [],
+  stillUnknown = [],
+  returnCondition = null,
+  finishPressureDelta = null,
   createdAt = null,
 } = {}) {
   const proposalSnapshot = normalizeProposal(proposal);
@@ -214,6 +219,11 @@ export function createTraceCard({
     }),
     landfallStatus: normalizedLandfallStatus,
     outcome: outcome || normalizedLandfallStatus,
+    worldRelationRevealed: unique(worldRelationRevealed),
+    worldRelationsResidualized: unique(worldRelationsResidualized),
+    stillUnknown: unique(stillUnknown),
+    returnCondition,
+    finishPressureDelta: clone(finishPressureDelta),
     sessionLesson: null,
     receipt: clone(receipt),
   };
@@ -228,6 +238,7 @@ export function createMoveTraceCard({
   proposal,
   mapResult,
   guidanceEntries = [],
+  worldTransition = null,
   id = null,
   createdAt = null,
 } = {}) {
@@ -275,6 +286,11 @@ export function createMoveTraceCard({
     reentryNote: mapResult?.state?.finishJudgment?.note,
     landfallStatus,
     outcome: latestMapTrace.classification || landfallStatus,
+    worldRelationRevealed: worldTransition?.worldRelationRevealed,
+    worldRelationsResidualized: worldTransition?.worldRelationsResidualized,
+    stillUnknown: worldTransition?.stillUnknown,
+    returnCondition: worldTransition?.returnCondition,
+    finishPressureDelta: worldTransition?.finishPressureDelta,
     createdAt,
   });
 }
@@ -543,6 +559,10 @@ export function serializeTraceCardsForProposalContext(traceCards = [], { limit =
       landfall_status: normalizeLandfallStatus(card.landfallStatus),
       revealed: normalizeList(card.revealed),
       residue: normalizeList(card.residueCarriedForward),
+      world_relation_revealed: normalizeList(card.worldRelationRevealed),
+      world_relations_residualized: normalizeList(card.worldRelationsResidualized),
+      still_unknown: normalizeList(card.stillUnknown),
+      return_condition: card.returnCondition || null,
       reentry_note: card.reentryNote || null,
       lesson_candidate: card.lessonCandidate
         ? {

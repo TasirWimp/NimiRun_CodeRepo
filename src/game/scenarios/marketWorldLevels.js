@@ -7,6 +7,7 @@ export const MARKET_WORLD_RELATION_STATUS = Object.freeze({
   VISIBLE: 'visible',
   REVEALED: 'revealed',
   RESIDUALIZED: 'residualized',
+  RESOLVED: 'resolved',
 });
 
 export const MARKET_WORLD_RELATION_SEVERITY = Object.freeze({

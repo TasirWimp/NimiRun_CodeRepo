@@ -544,8 +544,18 @@ Adapter status: implemented in `src/game/scenarios/marketWorldLevelAdapter.js`
 with coverage in `tests/game/marketWorldLevelAdapter.test.js`. The adapter
 initializes Golden Signal from `getGoldenSignalMarketWorldLevel()`, exposes the
 current first-slice arena actions, preserves the Support Check regression path,
-and keeps hindsight/terminal reveal data out of proposal context. The next
-PB-014 test slice should cover actual relation-state mutation.
+and keeps hindsight/terminal reveal data out of proposal context.
+
+Relation-state mutation status: implemented in
+`src/domain/marketWorldRuntime.js` with coverage in
+`tests/domain/marketWorldRuntime.test.js`, `tests/domain/guidanceLoop.test.js`,
+and `tests/game/routeProposalRuntime.test.js`. Ask Hidden residualizes named
+unknowns without spending Bot Attention; Wide Scan, Check Exit, Support Check,
+and Approve Enter mutate signal-crowd, signal-exit, signal-support, and
+signal-event relation state on approval. Route-proposal context includes the
+current relation-state snapshot and still excludes hindsight/terminal reveal
+fields. The next PB-014 test slice should cover relation-derived finish
+judgment and any player-facing relation-state display.
 
 Expected automated tests:
 

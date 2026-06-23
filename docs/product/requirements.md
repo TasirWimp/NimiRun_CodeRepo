@@ -670,9 +670,9 @@ The first milestone is complete when:
 
 Recommended next task:
 
-1. PB-014: continue from the implemented Market World Runtime Adapter into
-   explicit relation-state runtime mutation for signal-support, signal-exit,
-   signal-event, and signal-crowd.
+1. PB-014: continue from implemented relation-state mutation into
+   relation-derived finish judgment for safe, partial, false, and open run
+   outcomes.
 2. PB-014: keep the first seed small: Ask Hidden, Wide Scan, Check Exit,
    Support Check, and Approve Enter, with Bot Attention spent only after
    approval.

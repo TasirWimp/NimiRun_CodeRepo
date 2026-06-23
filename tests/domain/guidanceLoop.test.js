@@ -13,6 +13,7 @@ import {
   showWhyThisRoute,
 } from '../../src/domain/guidanceLoop.js';
 import { createLossyMapState } from '../../src/domain/lossyMap.js';
+import { MARKET_WORLD_RUNTIME_RELATION_STATUS } from '../../src/domain/marketWorldRuntime.js';
 import { createPocketBotState } from '../../src/game/pocketBotState.js';
 import { createResourceMapScenario } from '../../src/game/resourceMapScenario.js';
 import { createMarketSignalScoutScenario } from '../../src/game/scenarios/marketSignalScoutScenario.js';
@@ -292,6 +293,20 @@ describe('guidance loop domain rules', () => {
       action: 'arena-action',
       arenaActionId: MARKET_WORLD_ACTIONS.ASK_REMAINING_UNKNOWN,
     });
+    expect(nextState.marketWorldRuntime.relationStates.signal_to_support.status).toBe(
+      MARKET_WORLD_RUNTIME_RELATION_STATUS.RESIDUALIZED
+    );
+    expect(nextState.marketWorldRuntime.relationStates.signal_to_exit.status).toBe(
+      MARKET_WORLD_RUNTIME_RELATION_STATUS.RESIDUALIZED
+    );
+    expect(nextState.marketWorldRuntime.lastTransition).toMatchObject({
+      phase: 'unknowns-named',
+      worldRelationsResidualized: [
+        'signal_to_support',
+        'signal_to_exit',
+        'signal_to_event',
+      ],
+    });
   });
 
   it('wide-scan prepares a FOMO/crowd inspect move and spends only after approve', () => {
@@ -307,6 +322,14 @@ describe('guidance loop domain rules', () => {
       },
     });
     expect(prepared.guidancePanel.lines.join(' ')).toContain('Approve controls Bot Attention spending');
+    expect(prepared.marketWorldRuntime.pendingArenaAction).toMatchObject({
+      id: MARKET_WORLD_ACTIONS.WIDE_SCAN,
+      moveType: 'inspect',
+      targetNodeId: 'fomo-pressure',
+    });
+    expect(prepared.marketWorldRuntime.relationStates.signal_to_crowd.status).toBe(
+      MARKET_WORLD_RUNTIME_RELATION_STATUS.VISIBLE
+    );
 
     const accepted = approvePendingProposal(prepared);
 
@@ -321,7 +344,16 @@ describe('guidance loop domain rules', () => {
       resourceSpend: {
         botAttention: 1,
       },
+      worldRelationRevealed: ['signal_to_crowd'],
+      worldRelationsResidualized: ['signal_to_exit', 'signal_to_support'],
     });
+    expect(accepted.state.marketWorldRuntime.pendingArenaAction).toBeNull();
+    expect(accepted.state.marketWorldRuntime.relationStates.signal_to_crowd.status).toBe(
+      MARKET_WORLD_RUNTIME_RELATION_STATUS.REVEALED
+    );
+    expect(accepted.state.marketWorldRuntime.relationStates.signal_to_exit.status).toBe(
+      MARKET_WORLD_RUNTIME_RELATION_STATUS.RESIDUALIZED
+    );
   });
 
   it('check-exit prepares an exit inspect move and approval reveals exit evidence', () => {
@@ -345,6 +377,13 @@ describe('guidance loop domain rules', () => {
     expect(accepted.state.traceCards.at(-1).residueCarriedForward).toContain(
       'FOMO pressure still unknown'
     );
+    expect(accepted.state.traceCards.at(-1)).toMatchObject({
+      worldRelationRevealed: ['signal_to_exit'],
+      worldRelationsResidualized: ['signal_to_support', 'signal_to_event'],
+    });
+    expect(accepted.state.marketWorldRuntime.relationStates.signal_to_exit.status).toBe(
+      MARKET_WORLD_RUNTIME_RELATION_STATUS.REVEALED
+    );
   });
 
   it('support-check remains an arena action for the witness-backed judge path', () => {
@@ -362,7 +401,11 @@ describe('guidance loop domain rules', () => {
         moveType: 'inspect',
         targetNodeId: 'support-check',
       },
+      worldRelationRevealed: ['signal_to_support'],
     });
+    expect(accepted.state.marketWorldRuntime.relationStates.signal_to_support.status).toBe(
+      MARKET_WORLD_RUNTIME_RELATION_STATUS.REVEALED
+    );
   });
 
   it('rejects unknown arena actions without spending resources', () => {

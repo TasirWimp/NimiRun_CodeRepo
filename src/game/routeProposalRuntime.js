@@ -1,5 +1,6 @@
 import { createPendingProposal } from '../domain/guidanceLoop.js';
 import { getLossyMapNodeView } from '../domain/lossyMap.js';
+import { serializeMarketWorldRuntimeForProposalContext } from '../domain/marketWorldRuntime.js';
 import { createRunCarrier } from '../domain/runCarrier.js';
 import { getMoveResourceCost, MOVE_TYPES } from '../domain/resourceRules.js';
 
@@ -115,6 +116,9 @@ export function createRouteProposalRuntimeInput(guidanceState, { sessionId = nul
     visibleNodes: getVisibleNodes(mapState),
     traceCards: guidanceState.traceCards,
     sessionLesson: guidanceState.sessionLesson,
+    marketWorld: serializeMarketWorldRuntimeForProposalContext(
+      guidanceState.marketWorldRuntime
+    ),
   };
 }
 

@@ -313,12 +313,14 @@ accepted attributed headline witnesses, and scene wiring. PB-POLISH verified a
 hosted/Nimiq Pay submission path for that proof of concept.
 
 The current product-spine code slice is **PB-014 Market World Runtime Seed**.
-The baseline freeze and adapter step are implemented: the Golden Signal
-scenario now gets its arena spine and initial proposal seed from
-`src/game/scenarios/marketWorldLevelAdapter.js`, which adapts
-`src/game/scenarios/marketWorldLevels.js`. The next PB-014 substep is explicit
-relation-state mutation while keeping the verified Support Check path as a
-regression baseline. PB-POLISH remains the submission/regression lane for final
-screenshots, demo media, and pre-submit checks after gameplay changes.
+The baseline freeze, adapter step, and relation-state mutation step are
+implemented: the Golden Signal scenario gets its arena spine and initial
+proposal seed from `src/game/scenarios/marketWorldLevelAdapter.js`, and
+`src/domain/marketWorldRuntime.js` mutates signal-support, signal-exit,
+signal-event, and signal-crowd state as arena actions are named, prepared, and
+approved. The next PB-014 substep is relation-derived finish judgment while
+keeping the verified Support Check path as a regression baseline. PB-POLISH
+remains the submission/regression lane for final screenshots, demo media, and
+pre-submit checks after gameplay changes.
 **PB-012A Desktop/Mobile Browser TestAlbatross Status** is postponed until after
 the Android/Nimiq Pay submission path is stable.

@@ -1,5 +1,12 @@
 import { createFinishJudgment } from './finishJudgment.js';
 import {
+  approveMarketWorldAction,
+  createMarketWorldRuntimeState,
+  findMarketWorldActionForAcceptedMove,
+  nameMarketWorldUnknowns,
+  prepareMarketWorldAction,
+} from './marketWorldRuntime.js';
+import {
   actOnLossyMapNode,
   inspectLossyMapNode,
   skipLossyMapNode,
@@ -20,7 +27,7 @@ import {
 } from './traces.js';
 
 function clone(value) {
-  return JSON.parse(JSON.stringify(value));
+  return value == null ? value : JSON.parse(JSON.stringify(value));
 }
 
 function normalizeList(value) {
@@ -142,6 +149,7 @@ export function createGuidanceLoopState({
   traceCards = [],
   sessionLesson = null,
   partialResults = [],
+  marketWorldRuntime = undefined,
 } = {}) {
   if (!mapState?.scenario) {
     throw new TypeError('Guidance loop requires a lossy map state.');
@@ -159,6 +167,10 @@ export function createGuidanceLoopState({
     traceCards: traceCards.map(clone),
     sessionLesson: clone(sessionLesson),
     partialResults: normalizeList(partialResults),
+    marketWorldRuntime:
+      marketWorldRuntime === undefined
+        ? createMarketWorldRuntimeState(mapState.scenario?.marketWorldRuntime)
+        : clone(marketWorldRuntime),
   };
 }
 
@@ -414,16 +426,27 @@ export function approvePendingProposal(state) {
     };
   }
 
+  const marketWorldAction = findMarketWorldActionForAcceptedMove(
+    state.marketWorldRuntime,
+    state.mapState.scenario,
+    state.pendingProposal
+  );
+  const marketWorldApproval = approveMarketWorldAction(
+    state.marketWorldRuntime,
+    marketWorldAction
+  );
   const traceCard = createMoveTraceCard({
     sequence: state.traceCards.length + 1,
     proposal: state.pendingProposal,
     mapResult: result,
     guidanceEntries: getPendingGuidanceEntries(state),
+    worldTransition: marketWorldApproval.transition,
   });
   const lessonResult = promoteSessionLessonFromTrace(
     {
       ...state,
       mapState: result.state,
+      marketWorldRuntime: marketWorldApproval.runtimeState,
     },
     traceCard
   );
@@ -434,6 +457,7 @@ export function approvePendingProposal(state) {
     state: {
       ...state,
       mapState: result.state,
+      marketWorldRuntime: marketWorldApproval.runtimeState,
       pendingProposal: lessonResult.pendingProposal,
       guidancePanel: createGuidancePanel('Move accepted', [
         `${state.pendingProposal.moveType} -> ${state.pendingProposal.targetNodeId}`,
@@ -445,6 +469,7 @@ export function approvePendingProposal(state) {
         targetNodeId: state.pendingProposal.targetNodeId,
         resourceCost: state.pendingProposal.resourceCost,
         finishStatus: result.state.finishJudgment?.status,
+        marketWorldTransition: marketWorldApproval.transition,
       }),
       traceCards: appendTraceCard(state.traceCards, lessonResult.traceCard),
       sessionLesson: lessonResult.sessionLesson,
@@ -538,8 +563,11 @@ export function applyArenaAction(state, actionId) {
   }
 
   if (action.behavior === 'show_unknowns') {
+    const marketWorldNaming = nameMarketWorldUnknowns(state.marketWorldRuntime, action);
+
     return {
       ...state,
+      marketWorldRuntime: marketWorldNaming.runtimeState,
       guidancePanel: createGuidancePanel(action.panelTitle || action.label || 'Ask Hidden', [
         ...createArenaActionLines(action),
         ...compactGuidanceLines([
@@ -554,6 +582,7 @@ export function applyArenaAction(state, actionId) {
         arenaActionId: action.id || actionId,
         label: action.label || actionId,
         resourcePolicy: action.resourcePolicy || 'no_spend_until_approve',
+        marketWorldTransition: marketWorldNaming.transition,
       }),
     };
   }
@@ -584,7 +613,11 @@ export function applyArenaAction(state, actionId) {
     );
   }
 
-  const nextState = redirectPendingProposal(state, {
+  const marketWorldPreparation = prepareMarketWorldAction(state.marketWorldRuntime, action);
+  const nextState = redirectPendingProposal({
+    ...state,
+    marketWorldRuntime: marketWorldPreparation.runtimeState,
+  }, {
     moveType: action.moveType,
     targetNodeId: action.targetNodeId,
     reason: action.reason,
@@ -596,6 +629,7 @@ export function applyArenaAction(state, actionId) {
       arenaActionId: action.id || actionId,
       label: action.label || actionId,
       resourcePolicy: action.resourcePolicy || 'no_spend_until_approve',
+      marketWorldTransition: marketWorldPreparation.transition,
     },
   });
 

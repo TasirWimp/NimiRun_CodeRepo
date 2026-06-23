@@ -1511,8 +1511,19 @@ Implementation status:
   `getGoldenSignalMarketWorldLevel()` into `arenaSpine`, `relationStates`,
   `proposalPreview`, and a hindsight-free `proposalContext`, and the live
   Golden Signal scenario now consumes that adapter output.
-- Step 3, explicit relation-state runtime mutation, remains the next
-  implementation task.
+- Step 3, explicit relation-state runtime mutation, is implemented in
+  `src/domain/marketWorldRuntime.js` with coverage in
+  `tests/domain/marketWorldRuntime.test.js` and guidance-loop integration
+  checks. Ask Hidden now residualizes named unknowns, prepared arena actions
+  store pending relation context without spending resources, and approved arena
+  moves reveal or residualize signal-support, signal-exit, signal-event, and
+  signal-crowd relations.
+- Step 6 has a first non-UI metadata hook: move trace cards can now carry
+  `worldRelationRevealed`, residualized relations, still-unknown relation
+  labels, and a return condition. Player-facing trace rendering can be refined
+  later.
+- Step 7, relation-derived finish judgment, remains the next implementation
+  task.
 
 Expected files:
 
