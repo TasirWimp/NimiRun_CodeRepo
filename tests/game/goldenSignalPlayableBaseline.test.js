@@ -14,6 +14,7 @@ import { getNodeById } from '../../src/game/resourceMapScenario.js';
 import { createMarketSignalScoutScenario } from '../../src/game/scenarios/marketSignalScoutScenario.js';
 import { MARKET_WORLD_ACTIONS } from '../../src/game/scenarios/marketWorldLevels.js';
 import {
+  createFinishPanelContent,
   createTracePanelContent,
   formatTraceArchiveLabel,
 } from '../../src/ui/tracePanel.js';
@@ -256,6 +257,29 @@ describe('Golden Signal playable baseline regression', () => {
       },
       landfallStatus: 'open-run',
     });
+    expectNoWalletOrTradingAuthority(state);
+  });
+
+  it('renders direct bright-signal entry as a false finish card with hindsight', () => {
+    const accepted = approvePendingProposal(createGoldenSignalState());
+    const state = accepted.state;
+    const traceCard = state.traceCards.at(-1);
+    const finishPanel = createFinishPanelContent(traceCard, {
+      hindsightCard: state.mapState.scenario.marketWorldRuntime.hindsightCard,
+    });
+
+    expect(accepted.applied).toBe(true);
+    expect(formatTraceArchiveLabel(state.traceCards)).toBe('1 trace card(s) | False finish');
+    expect(finishPanel).toMatchObject({
+      title: 'False finish',
+      lines: expect.arrayContaining([
+        'Move: act -> bright-signal',
+        'Checked: none',
+        'Not: trading advice',
+      ]),
+    });
+    expect(finishPanel.lines.join(' ')).toContain('Hindsight: The bright signal belonged');
+    expect(finishPanel.lines.join(' ')).toContain('support depth still unknown');
     expectNoWalletOrTradingAuthority(state);
   });
 });

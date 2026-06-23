@@ -46,6 +46,7 @@ import {
 } from '../ui/guidanceControls.js';
 import { createNimiqPocketDisplay } from '../ui/resourceMeters.js';
 import {
+  createFinishPanelContent,
   createTracePanelContent,
   formatTraceArchiveLabel,
 } from '../ui/tracePanel.js';
@@ -1072,6 +1073,22 @@ export default class PocketBotWorkshop extends Phaser.Scene {
     this.setStatus(traceCard ? 'Latest trace card shown.' : 'No trace card recorded yet.');
   }
 
+  renderFinishCardIfAvailable() {
+    const traceCard = this.guidanceState.traceCards.at(-1);
+    const panel = createFinishPanelContent(traceCard, {
+      hindsightCard: this.mapScenario.marketWorldRuntime?.hindsightCard,
+    });
+
+    if (!panel) {
+      return false;
+    }
+
+    this.detailTitle.setText(panel.title);
+    this.detailBody.setText(panel.lines.join('\n'));
+    this.setStatus(`${panel.title} recorded. Hindsight card unlocked.`);
+    return true;
+  }
+
   renderWitnessCardForNode(nodeId) {
     const node = getNodeById(this.mapScenario, nodeId);
     const panel = createWitnessPanelContent(node?.witnessIds);
@@ -1096,11 +1113,16 @@ export default class PocketBotWorkshop extends Phaser.Scene {
 
     if (result.applied) {
       this.selectNode(targetNodeId, { redirectProposal: false });
-      const witnessShown = result.state.mapState.inspectedNodeIds.includes(targetNodeId) &&
+      const finishShown = this.renderFinishCardIfAvailable();
+      const witnessShown = !finishShown &&
+        result.state.mapState.inspectedNodeIds.includes(targetNodeId) &&
         this.renderWitnessCardForNode(targetNodeId);
 
-      if (!witnessShown) {
+      if (!finishShown && !witnessShown) {
         this.renderLatestTraceCard();
+      }
+      if (finishShown) {
+        return;
       }
       const lessonApplied =
         this.guidanceState.sessionLesson?.appliedToProposalId === this.guidanceState.pendingProposal.id;

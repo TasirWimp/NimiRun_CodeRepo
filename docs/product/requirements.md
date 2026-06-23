@@ -670,8 +670,8 @@ The first milestone is complete when:
 
 Recommended next task:
 
-1. PB-014: continue from implemented relation-derived finish judgment into
-   player-facing finish-state presentation and finish/hindsight card handling.
+1. PB-014: run browser/manual finish-card readability checks on phone portrait
+   and fix any copy/layout issues found there.
 2. PB-014: keep the first seed small: Ask Hidden, Wide Scan, Check Exit,
    Support Check, and Approve Enter, with Bot Attention spent only after
    approval.

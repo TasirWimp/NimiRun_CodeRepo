@@ -1531,10 +1531,13 @@ Implementation status:
   hidden; entry after named residue or partial checks becomes partial finish;
   and entry after support, exit, and crowd are checked becomes safe finish.
   Non-finish scout moves remain open-run.
-- The next PB-014 substep is player-facing finish-state presentation: make the
-  relation-derived finish packet visible in trace/finish cards, unlock the
-  hindsight card only after finish, and keep Support Check as the regression
-  path.
+- Player-facing finish-state presentation is implemented through
+  `src/ui/tracePanel.js` and `src/scenes/PocketBotWorkshop.js`. Finish actions
+  now show a safe/partial/false finish card, keep open scout moves on the
+  existing witness/trace path, and unlock the market-world hindsight card only
+  after a finish state.
+- The next PB-014 substep is browser/manual polish for finish-card readability
+  on phone portrait plus any small copy/layout fixes found there.
 
 Expected files:
 

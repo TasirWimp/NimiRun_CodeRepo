@@ -1,3 +1,5 @@
+import { FINISH_STATUSES } from '../domain/finishJudgment.js';
+
 function normalizeList(value) {
   return Array.isArray(value) ? value.filter(Boolean) : [];
 }
@@ -15,7 +17,7 @@ function formatList(items, fallback = 'none', limit = 1) {
   return remaining > 0 ? `${visible}, +${remaining} more` : visible;
 }
 
-function formatLandfallStatus(status) {
+export function formatLandfallStatus(status) {
   const labels = {
     'open-run': 'Open run',
     'partial-finish': 'Partial finish',
@@ -43,6 +45,20 @@ export function formatTraceArchiveLabel(traceCards = []) {
   }
 
   return `${cards.length} trace card(s) | ${formatLandfallStatus(latest.landfallStatus)}`;
+}
+
+function isFinishStatus(status) {
+  return [
+    FINISH_STATUSES.SAFE,
+    FINISH_STATUSES.PARTIAL,
+    FINISH_STATUSES.FALSE,
+  ].includes(status);
+}
+
+function createMoveLine(traceCard) {
+  return `Move: ${traceCard.acceptedMove.moveType} -> ${
+    traceCard.acceptedMove.label || traceCard.acceptedMove.targetNodeId
+  }`;
 }
 
 export function createTracePanelContent(traceCard) {
@@ -94,6 +110,42 @@ export function createTracePanelContent(traceCard) {
       middleLine,
       `Residue: ${formatList(traceCard.residueCarriedForward)}`,
       `Re-entry: ${reentryNote}`,
+    ],
+  };
+}
+
+export function createFinishPanelContent(traceCard, {
+  hindsightCard = null,
+} = {}) {
+  if (!traceCard || !isFinishStatus(traceCard.landfallStatus)) {
+    return null;
+  }
+
+  const statusLabel = formatLandfallStatus(traceCard.landfallStatus);
+  const stillUnknown = normalizeList(traceCard.stillUnknown).length
+    ? traceCard.stillUnknown
+    : traceCard.residueCarriedForward;
+  const checkedRelations = [
+    ...normalizeList(traceCard.worldRelationRevealed),
+    ...normalizeList(traceCard.revealed),
+  ];
+  const hindsightUnlocked =
+    hindsightCard &&
+    hindsightCard.lockedUntilFinish === true &&
+    hindsightCard.withheldFromProposalEngine === true;
+  const hindsightLine = hindsightUnlocked
+    ? `Hindsight: ${formatText(hindsightCard.playerFacingSummary || hindsightCard.patternOutcome, 86)}`
+    : 'Hindsight: locked until a finish is recorded.';
+
+  return {
+    title: statusLabel,
+    lines: [
+      formatText(traceCard.reentryNote, 94) || `${statusLabel} recorded.`,
+      createMoveLine(traceCard),
+      `Checked: ${formatList(checkedRelations, 'none', 2)}`,
+      `Still hidden: ${formatList(stillUnknown, 'none', 2)}`,
+      hindsightLine,
+      'Not: trading advice',
     ],
   };
 }

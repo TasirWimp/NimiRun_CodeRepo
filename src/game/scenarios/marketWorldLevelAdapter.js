@@ -322,6 +322,25 @@ function createProposalContext(level, relationStates, arenaSpine) {
   };
 }
 
+function createHindsightCard(level) {
+  const card = level.hindsightCard;
+
+  if (!card) {
+    return null;
+  }
+
+  return {
+    lockedUntilFinish: card.lockedUntilFinish === true,
+    withheldFromProposalEngine: card.withheldFromProposalEngine === true,
+    sourceWindowId: card.sourceWindowId || null,
+    sourceWitnessIds: normalizeList(card.sourceWitnessIds),
+    playerFacingSummary: card.playerFacingSummary || null,
+    patternOutcome: card.patternOutcome || null,
+    landfallRisk: card.landfallRisk || null,
+    boundary: 'Unlocked only after finish judgment. Not trading advice.',
+  };
+}
+
 function assertLevelCanAdapt(level) {
   const validation = validateMarketWorldLevel(level);
 
@@ -354,6 +373,7 @@ export function createMarketWorldRuntimeSeed(level, {
     arenaSpine,
     proposalPreview: createProposalPreview(level),
     proposalContext: createProposalContext(level, relationStates, arenaSpine),
+    hindsightCard: createHindsightCard(level),
     hindsightLocked: level.hindsightCard?.lockedUntilFinish === true,
     hindsightWithheldFromProposalEngine:
       level.hindsightCard?.withheldFromProposalEngine === true,

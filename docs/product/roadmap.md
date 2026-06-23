@@ -321,9 +321,11 @@ scenario gets its arena spine and initial proposal seed from
 signal-event, and signal-crowd state as arena actions are named, prepared, and
 approved. The runtime now classifies direct bright-signal entry as false finish,
 named/checkpointed entry as partial finish, and checked support/exit/crowd
-entry as safe finish. The next PB-014 substep is player-facing finish-state
-presentation and hindsight-card unlock while keeping the verified Support Check
-path as a regression baseline. PB-POLISH
+entry as safe finish. Player-facing finish-card presentation and post-finish
+hindsight-card unlock are implemented for terminal outcomes while open scout
+moves keep the verified Support Check witness/trace path. The next PB-014
+substep is browser/manual polish for finish-card readability on phone portrait.
+PB-POLISH
 remains the submission/regression lane for final screenshots, demo media, and
 pre-submit checks after gameplay changes.
 **PB-012A Desktop/Mobile Browser TestAlbatross Status** is postponed until after

@@ -36,6 +36,12 @@ describe('Market World level adapter', () => {
         walletAuthority: false,
         persistentStrategyExport: false,
       },
+      hindsightCard: {
+        lockedUntilFinish: true,
+        withheldFromProposalEngine: true,
+        playerFacingSummary:
+          'The bright signal belonged to a larger moment of crowd pressure, event gates, volatility, and reversal risk.',
+      },
       hindsightLocked: true,
       hindsightWithheldFromProposalEngine: true,
     });
@@ -133,6 +139,7 @@ describe('Market World level adapter', () => {
     expect(contextText).not.toContain('patternOutcome');
     expect(contextText).not.toContain('landfallRisk');
     expect(contextText).not.toContain('terminal reveal');
+    expect(seed.hindsightCard.patternOutcome).toBeTruthy();
   });
 
   it('is the active adapter source for the current Golden Signal scenario', () => {

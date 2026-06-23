@@ -562,9 +562,16 @@ Relation-derived finish judgment status: implemented in
 relation-derived false finish when support, exit, and crowd pressure were
 hidden; entry after named residue or partial checks becomes partial finish;
 entry after support, exit, and crowd are checked becomes safe finish; and
-non-finish scout moves remain open-run. The next PB-014 test slice should cover
-player-facing finish-state display, finish-card/hindsight-card unlock behavior,
-and trace rendering for relation-derived finish packets.
+non-finish scout moves remain open-run.
+
+Finish-card display status: implemented in `src/ui/tracePanel.js` and
+`src/scenes/PocketBotWorkshop.js` with coverage in
+`tests/ui/tracePanel.test.js` and
+`tests/game/goldenSignalPlayableBaseline.test.js`. Open traces do not unlock a
+finish card; false/partial/safe finish traces can render a player-facing finish
+card; and the market-world hindsight card is available only after finish. The
+next PB-014 test slice should cover browser/manual finish-card readability on
+phone portrait and any copy/layout fixes found there.
 
 Expected automated tests:
 
