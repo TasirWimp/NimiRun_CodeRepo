@@ -230,7 +230,7 @@ export const MARKET_WORLD_LEVELS = Object.freeze({
         ask_remaining_unknown: Object.freeze({
           playerFacingName: 'Ask What Is Hidden',
           type: 'unknowns_probe',
-          cost: Object.freeze({ botAttention: 1 }),
+          cost: Object.freeze({ botAttention: 0 }),
           reveals: Object.freeze(['still_unknown_categories']),
           residualizes: Object.freeze([
             'signal_to_support',

@@ -335,6 +335,11 @@ navigation_lineage:
 This keeps provenance and competition attribution recoverable without making
 normal player UI carry CRPM vocabulary.
 
+Current runtime status: `navigation_lineage` is a documented next-layer
+contract. It is not yet a required field in `marketWorldLevels.js` or its
+validator. Until it becomes runtime data, the source window, witness ledger,
+relation IDs, trace fields, and this document carry the recoverable lineage.
+
 ### Golden Signal Port Stack
 
 Golden Signal is the first element that should use the full stack.
@@ -398,7 +403,7 @@ golden_signal:
   meaning_port:
     question: "Is brightness enough, or should Pocket Bot inspect the world around the signal first?"
     bot_old_habit: "bright signal means move quickly"
-    player_teaching_goal: "teach Pocket Bot that signal strength is not route safety"
+    bot_repair_pressure: "Pocket Bot may learn that signal strength is not route safety"
 
   runtime_function_port:
     source_contract:

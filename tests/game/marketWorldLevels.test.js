@@ -80,6 +80,12 @@ describe('Market World Golden Signal level contract', () => {
       expect(level.actions.definitions[actionId]).toBeTruthy();
     }
 
+    expect(
+      level.actions.definitions[MARKET_WORLD_ACTIONS.ASK_REMAINING_UNKNOWN].cost
+    ).toMatchObject({
+      botAttention: 0,
+    });
+
     expect(level.actions.laterIteration).toContain(MARKET_WORLD_ACTIONS.CHECK_SUPPORT);
     expect(level.actions.definitions[MARKET_WORLD_ACTIONS.CHECK_SUPPORT]).toBeUndefined();
   });
