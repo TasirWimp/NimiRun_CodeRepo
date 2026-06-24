@@ -13,6 +13,11 @@ later make `src/game/scenarios/marketWorldLevels.js` the live source of truth.
 Source status:
 
 - Source-supported NimiRun anchors: `docs/product/scenarios/market_signal_scout.md`, `docs/product/scenarios/market_witness_governance.md`, `src/game/scenarios/marketWitnessLedger.js`, `src/game/scenarios/data/marketSignalScoutBtcusdtWindows.js`, `docs/product/reward_mode_boundary.md`, and `docs/product/pocket_bot_arena_narrator_role_cut.md`.
+- CRPM conceptual anchors:
+  - `C:\Users\jensb\Desktop\Projects\CRPM\docs\architecture\voyage_graphs\research_notes\CRPM_Voyage_Source_Ocean_Preobject_Field_Model_v0.md`
+  - `C:\Users\jensb\Desktop\Projects\CRPM\docs\architecture\CRPM_Program_Spine_Operational_Navigation_v1.md`
+  - `C:\Users\jensb\Desktop\Projects\CRPM\docs\architecture\CRPM_Navigation_Decoder_Operational_Contract_v0.md`
+  - `C:\Users\jensb\Desktop\Projects\CRPM\docs\architecture\voyage_graphs\research_notes\CRPM_Voyage_Edge_Graph_Recursive_Cut_Transition_Dynamics_Pressure_Test_Godel_Readiness_v0.md`
 - Interpretive claim: this document converts existing Market Signal Scout and narrator-role ideas into a base world model for implementation. It does not authorize live market fetches, investment advice, real trading, exchange execution, wallet authority, or persistent trading strategy export.
 
 ## Core Design Cut
@@ -234,12 +239,140 @@ The runtime remains the authority for legality, Bot Attention spending, relation
 mutation, finish judgment, and trace creation. Visual layers and UI controls
 translate those states back to the player.
 
+### CRPM Voyage Lineage Binding
+
+The port stack intentionally starts at `player perception`. It explains how a
+stable world element becomes playable. It does **not** explain where the element
+came from before it became a stable element.
+
+That upstream provenance belongs to a hidden **navigation lineage** binding.
+
+Use the CRPM voyage-graph ladder as internal design discipline:
+
+```text
+v0 source pressure
+  -> v1 typed edge
+  -> v2 bundle
+  -> v3 playable voyage
+  -> world element port stack
+```
+
+Practical NimiRun reading:
+
+```yaml
+crpm_voyage_ladder_projection:
+  v0_source_pressure:
+    question: "what unresolved pressure exists before a game object is licensed?"
+    nimi_run_example:
+      - historical BTCUSDT window
+      - market-event headline witnesses
+      - bright-signal temptation
+      - unresolved support, exit, crowd, and event pressure
+
+  v1_typed_edge:
+    question: "which local distinction became inspectable?"
+    nimi_run_example:
+      - signal_to_support
+      - signal_to_exit
+      - signal_to_crowd
+      - signal_to_event
+
+  v2_bundle:
+    question: "which elements compose into an arena dynamic?"
+    nimi_run_example:
+      - Golden Signal
+      - Support Well
+      - Exit Bridge
+      - Crowd Pressure
+      - Futures Gate
+      - False Finish Gate
+      - Trace Card
+
+  v3_playable_voyage:
+    question: "which ordered player loop preserves recoverability?"
+    nimi_run_example:
+      - see signal
+      - receive Pocket Bot proposal
+      - ask, scan, check, or approve
+      - spend Bot Attention only through approved moves
+      - reveal or residualize relations
+      - record trace
+      - judge safe, partial, false, or open finish
+
+  port_stack_projection:
+    question: "how does each major element connect to player perception, interaction, runtime, resources, rendering, and memory?"
+```
+
+Design guard:
+
+```text
+Do not add v0 as a normal player-facing port.
+```
+
+v0 source pressure is useful precisely because it is not yet a clean object. The
+player should see the stabilized projection: a signal, bridge, support well,
+crowd field, event gate, or trace. The design/runtime layer should still know
+which source pressure, witness, relation, residue, and reopen condition licensed
+that projection.
+
+Each major market-world element should therefore carry a hidden lineage binding:
+
+```yaml
+navigation_lineage:
+  source_pressure_packet_id: string
+  source_basis:
+    market_window_ids: []
+    witness_ids: []
+    authored_pressure_notes: []
+  v1_relation_edge_ids: []
+  v2_bundle_id: string
+  v3_voyage_id: string
+  protected_family: []
+  residue_to_keep_visible: []
+  reopen_conditions: []
+```
+
+This keeps provenance and competition attribution recoverable without making
+normal player UI carry CRPM vocabulary.
+
 ### Golden Signal Port Stack
 
 Golden Signal is the first element that should use the full stack.
 
 ```yaml
 golden_signal:
+  navigation_lineage:
+    source_pressure_packet_id: "v0_golden_signal_december_2017_pressure"
+    source_basis:
+      market_window_ids:
+        - btc_binance_btcusdt_2017_12_golden_signal
+      witness_ids:
+        - btc_futures_gate_cboe_2017_12_04
+        - btc_futures_gate_cme_2017_12_01_event_pressure
+        - btc_futures_gate_cftc_2017_12_01_risk_context
+      authored_pressure_notes:
+        - "bright signal can be mistaken for route safety"
+        - "headline/event pressure can make urgency feel like evidence"
+        - "exit friction and crowd pressure remain hidden until probed"
+    v1_relation_edge_ids:
+      - signal_to_support
+      - signal_to_exit
+      - signal_to_crowd
+      - signal_to_event
+    v2_bundle_id: "golden_signal_false_finish_pressure_bundle"
+    v3_voyage_id: "golden_signal_first_slice_voyage"
+    protected_family:
+      - "signal strength is not route safety"
+      - "hindsight stays locked until finish"
+      - "unresolved pressure remains trace-visible"
+    residue_to_keep_visible:
+      - support depth still unknown
+      - exit friction still unknown
+      - FOMO pressure still unknown
+      - event pressure may be overread
+    reopen_conditions:
+      - "future bright signal appears while support, exit, or crowd pressure is unknown"
+
   perception_port:
     player_reads:
       - bright tempting glow
