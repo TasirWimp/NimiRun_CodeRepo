@@ -137,6 +137,203 @@ bright signal + loud crowd + foggy exit + old bot habit
   -> high false-finish pressure unless one relation is revealed or residualized
 ```
 
+## World Element Port Stack
+
+Major world elements should be designed through a shared **port stack** before
+they receive final artwork or additional mechanics.
+
+This is the bridge between the visual-first creative direction and the
+implementation contract. A world element is not just a sprite, map node, UI
+button, or domain object. It is a connected stack:
+
+```text
+player perception
+  -> player interaction
+  -> game-world meaning
+  -> runtime function
+  -> resource scarcity
+  -> rendered consequence
+  -> trace / memory
+```
+
+Use this stack for major elements such as Golden Signal, Support Well, Exit
+Bridge, Crowd Pressure, Futures Gate, False Finish Gate, Trace Card, Pocket Bot,
+Bot Attention, and later Nimiq pocket/recharge surfaces.
+
+Do not apply it heavily to every decorative particle or minor UI label. The
+stack is a design contract for elements that carry gameplay meaning.
+
+```yaml
+world_element_port_stack:
+  perception_port:
+    purpose: "what the player sees, hears, feels, or notices before reading a rule"
+    owned_by:
+      - art direction
+      - Phaser rendering
+      - mobile touch layout
+
+  interaction_port:
+    purpose: "what the player can do through touch, button, or world-object selection"
+    owned_by:
+      - PocketBotWorkshop scene input
+      - arena controls
+      - node selection
+
+  meaning_port:
+    purpose: "what the action means inside the fictional arena"
+    owned_by:
+      - market world model
+      - scenario copy
+      - narrator lines
+
+  runtime_function_port:
+    purpose: "the deterministic action id, move type, target node, relation mutation, legality, and finish effect"
+    owned_by:
+      - src/game/scenarios/marketWorldLevels.js
+      - src/game/scenarios/marketWorldLevelAdapter.js
+      - src/domain/marketWorldRuntime.js
+      - src/domain/guidanceLoop.js
+
+  resource_port:
+    purpose: "cost preview, spend timing, and scarcity feedback"
+    owned_by:
+      - Bot Attention rules
+      - context slot rules
+      - Nimiq pocket/recharge boundary
+
+  consequence_render_port:
+    purpose: "the visible result of runtime state after action"
+    owned_by:
+      - Phaser layer state
+      - asset variants
+      - animation and reveal effects
+
+  trace_memory_port:
+    purpose: "what is recorded, remembered, residualized, or carried into later proposals"
+    owned_by:
+      - trace cards
+      - session lessons
+      - finish judgment
+```
+
+Design rule:
+
+```text
+No major rendered world asset should be added unless its interaction, meaning,
+runtime state, resource behavior, rendered consequence, and trace behavior are
+known.
+```
+
+Implementation rule:
+
+```text
+Rendering reads world state. It does not own game authority.
+```
+
+The runtime remains the authority for legality, Bot Attention spending, relation
+mutation, finish judgment, and trace creation. Visual layers and UI controls
+translate those states back to the player.
+
+### Golden Signal Port Stack
+
+Golden Signal is the first element that should use the full stack.
+
+```yaml
+golden_signal:
+  perception_port:
+    player_reads:
+      - bright tempting glow
+      - loud market crowd
+      - foggy exit route
+      - support foundation not yet visible
+      - nearby historical event gate
+
+  interaction_port:
+    player_actions:
+      - Ask Hidden
+      - Wide Scan
+      - Check Exit
+      - Support Check
+      - Approve Enter
+    touch_surfaces:
+      - signal node
+      - crowd/FOMO surface
+      - exit bridge or door
+      - support well or foundation
+      - event gate
+
+  meaning_port:
+    question: "Is brightness enough, or should Pocket Bot inspect the world around the signal first?"
+    bot_old_habit: "bright signal means move quickly"
+    player_teaching_goal: "teach Pocket Bot that signal strength is not route safety"
+
+  runtime_function_port:
+    source_contract:
+      - src/game/scenarios/marketWorldLevels.js
+      - src/game/scenarios/marketWorldLevelAdapter.js
+      - src/domain/marketWorldRuntime.js
+    relations:
+      signal_to_support: "does the signal have foundation?"
+      signal_to_exit: "can the route be left safely?"
+      signal_to_crowd: "is urgency/FOMO amplifying the signal?"
+      signal_to_event: "is historical event pressure making the signal feel urgent?"
+    first_slice_actions:
+      ask_remaining_unknown:
+        behavior: show_unknowns
+        spend_policy: no_spend
+      wide_scan:
+        behavior: prepare inspect -> fomo-pressure
+        spend_policy: approve_gated
+      check_exit:
+        behavior: prepare inspect -> exit-friction
+        spend_policy: approve_gated
+      check_support:
+        behavior: prepare inspect -> support-check
+        spend_policy: approve_gated
+      approve_enter:
+        behavior: prepare/accept act -> bright-signal
+        spend_policy: approve_gated
+
+  resource_port:
+    primary_resource: Bot Attention
+    rule: "show cost before spend; spend only when a prepared move is approved"
+    future_resource_links:
+      - context slots carry clue/residue lessons
+      - Nimiq pocket can later recharge attention without masking scarcity
+
+  consequence_render_port:
+    state_to_render:
+      hidden: "relation stays fogged, dim, or only hinted"
+      visible: "surface can be noticed but is not yet checked"
+      revealed: "fog clears or the surface lights with evidence"
+      residualized: "shadow, ribbon, or trace mark remains visible"
+      resolved: "safe route/gate can become stable"
+
+  trace_memory_port:
+    trace_records:
+      - action taken
+      - Bot Attention cost
+      - relation revealed
+      - residue carried forward
+      - finish pressure changed
+      - lesson candidate
+```
+
+For the next rendering slice, the smallest useful Golden Signal art contract is:
+
+```text
+bright signal glow
+support foundation/well
+exit bridge/door/fog
+crowd/FOMO wind or pressure field
+event gate/headline marker
+trace ribbon/card
+false/safe finish gate state
+```
+
+Each asset should have at least one mapped relation status or action effect
+before it is polished.
+
 ## Historical Window To World Pipeline
 
 Implementation should transform historical material through this pipeline:
@@ -514,7 +711,8 @@ bot_analysis_tools:
 
   ask_remaining_unknown:
     player_facing_name: "Ask What Is Hidden"
-    cost: 1
+    first_slice_cost: 0
+    later_iteration_cost_if_converted_to_approved_analysis: 1
     reveals:
       - still_unknown_categories
     hides:
