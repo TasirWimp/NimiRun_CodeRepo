@@ -212,13 +212,14 @@ This work should be retained as supporting infrastructure. It becomes one possib
 
 PB-POLISH has a verified hosted/Nimiq Pay submission path for the current
 Golden Signal proof of concept. The current product-spine work remains
-**PB-014 Market World Runtime Seed**; its next step is player-facing finish
-state and hindsight-card presentation around the relation-derived finish
-packet, while preserving the verified Support Check path as a regression
-baseline.
+**PB-015 Golden Signal World-Affordance Seed**. PB-014 has implemented the
+market-world runtime seed, relation-state mutation, relation-derived finish
+judgment, player-facing finish / hindsight cards, and phone-readability trace
+polish. PB-015 should now make the Golden Signal arena visually express those
+runtime states through simple render affordances before final artwork polish.
 
 PB-POLISH remains the submission/regression lane for final screenshots, demo
-media, and pre-submission checks after PB-014 changes the gameplay surface.
+media, and pre-submission checks after PB-015 changes the gameplay surface.
 
 PB-012A Desktop/Mobile Browser TestAlbatross Status is postponed. The hosted
 web app should still remain playable in ordinary desktop/mobile browsers with
@@ -1613,8 +1614,125 @@ Controls:
 - keep the first seed to one arena and five actions,
 - keep CRPM vocabulary private to docs and tests,
 - keep player copy simple: signal, support, exit, crowd, hidden, trace, finish,
-- preserve the verified proof-of-concept path until PB-014 passes tests and
-  browser checks.
+- preserve the verified Support Check, Ask Hidden, Wide Scan, Ask Bot, trace,
+  and finish regression paths while PB-015 changes the render surface.
+
+### PB-015 Golden Signal World-Affordance Seed
+
+Goal:
+
+Make Golden Signal feel like a small world rather than a diagram, while keeping
+the current verified gameplay path intact. This slice implements simple
+rendering first and leaves final art polish for later.
+
+Design cut:
+
+PB-015 turns the World Element Port Stack and CRPM Voyage Lineage Binding into a
+minimal implementation path:
+
+```text
+navigation lineage
+  -> relation state
+  -> render/view model
+  -> Phaser overlays and simple affordances
+  -> existing trace / finish feedback
+```
+
+The renderer remains read-only with respect to game authority. It may display
+relation states, pressure, residue, and finish-gate conditions, but it must not
+decide legality, spend Bot Attention, mutate relations, create traces, or judge
+finish state.
+
+Implementation sequence:
+
+1. Add internal `navigationLineage` metadata to the Golden Signal level
+   contract in `src/game/scenarios/marketWorldLevels.js`.
+2. Carry that lineage through `src/game/scenarios/marketWorldLevelAdapter.js`
+   into the runtime seed, but keep it out of normal player UI and LLM proposal
+   context for now.
+3. Add a pure render/view-model helper, likely
+   `src/game/scenarios/marketWorldRenderPlan.js`.
+4. The render plan should read `marketWorldRuntime.relationStates`,
+   `lastTransition`, finish judgment, and selected node state, then return
+   simple world-affordance states:
+   - `golden_signal`: tempting / selected / acted-on,
+   - `support_well`: hidden / hinted / revealed / residualized,
+   - `exit_bridge`: hidden / hinted / revealed / residualized,
+   - `crowd_pressure`: visible / revealed / residualized,
+   - `event_gate`: visible / witnessed,
+   - `trace_memory`: empty / active / residue-carrier,
+   - `finish_gate`: open / false / partial / safe.
+5. Wire the render plan into `PocketBotWorkshop` as lightweight Phaser
+   overlays, tints, rings, fog, labels, or simple asset variants. Do not create
+   final artwork in this slice.
+6. Keep the existing map geometry and controls. The new layer should make the
+   current loop more readable, not introduce free movement or a full RPG map.
+7. Update documentation only after the first render-plan contract and tests are
+   stable.
+
+Player-visible behavior:
+
+- At level start, Golden Signal should look tempting while support and exit
+  still feel uncertain.
+- `Ask Hidden` should outline or hint hidden support, exit, and crowd/FOMO
+  pressure without spending Bot Attention.
+- `Wide Scan` followed by `Approve` should make crowd/FOMO pressure visibly
+  active and leave support/exit residue readable.
+- `Check Exit` followed by `Approve` should change the exit bridge/fog state.
+- `Support Check` followed by `Approve` should light or stabilize the support
+  well/foundation.
+- Early `Approve Enter` should visually produce false or partial finish
+  pressure rather than a generic success state.
+- Safe/partial/false/open finish should be visible in the arena and recoverable
+  from the trace card.
+
+Expected files:
+
+- `src/game/scenarios/marketWorldLevels.js`
+- `src/game/scenarios/marketWorldLevelAdapter.js`
+- `src/game/scenarios/marketWorldRenderPlan.js`
+- `src/scenes/PocketBotWorkshop.js`
+- `tests/game/marketWorldLevelAdapter.test.js`
+- `tests/game/marketWorldRenderPlan.test.js`
+- `tests/game/goldenSignalPlayableBaseline.test.js`
+- `tests/ui/workshopLayout.test.js`
+- `docs/product/market_world_model.md`
+- `docs/testing/test_strategy.md`
+
+Test plan:
+
+- Golden Signal exposes `navigationLineage` with source window, witness IDs,
+  relation IDs, bundle ID, voyage ID, protected family, residue, and reopen
+  conditions.
+- Adapter carries lineage into the runtime seed without adding it to
+  hindsight-free LLM proposal context.
+- Render plan maps opening relation state to tempting signal, hidden/hinted
+  support, hidden/hinted exit, visible crowd pressure, and open finish gate.
+- Render plan maps `Ask Hidden` residualized relations to outlined/hinted
+  hidden surfaces without Bot Attention spend.
+- Render plan maps approved `Wide Scan`, `Check Exit`, and `Support Check`
+  transitions to visible crowd, exit, and support affordance changes.
+- Render plan maps false, partial, safe, and open finish states to distinct
+  player-facing arena states.
+- Existing regression paths still pass:
+  `Ask Hidden -> Wide Scan -> Approve -> Trace`,
+  `Support Check -> Approve -> Historic Witness -> Trace`, and
+  `Ask Bot -> bounded proposal -> Approve`.
+- `npm run test` and `npm run build` pass.
+- Browser/manual smoke confirms no overlap or unreadable text on phone portrait.
+
+Acceptance:
+
+- Golden Signal reads as a small playable world with visible pressure, not just
+  a static node graph.
+- Every new visual state maps to a runtime relation, action, resource, finish,
+  or trace state.
+- No major rendered affordance is decorative-only.
+- The player can infer the basic question from the scene: brightness is
+  tempting, but support, exit, and crowd pressure matter.
+- Rendering reads world state and never owns game authority.
+- No live market data, trading, wallet authority, mainnet value, or persistent
+  strategy behavior is introduced.
 
 ### PB-POLISH Submission Vertical Slice
 
@@ -1783,21 +1901,22 @@ Implemented groundwork:
 Revised next sequence:
 
 16. PB-014 Market World Runtime Seed.
-17. PB-POLISH Submission Vertical Slice regression and final media pass.
-18. PB-MARKET Early Access And Community Feedback.
-19. PB-012A Desktop/Mobile Browser TestAlbatross Status, postponed until after
+17. PB-015 Golden Signal World-Affordance Seed.
+18. PB-POLISH Submission Vertical Slice regression and final media pass.
+19. PB-MARKET Early Access And Community Feedback.
+20. PB-012A Desktop/Mobile Browser TestAlbatross Status, postponed until after
     the Android/Nimiq Pay submission path is stable.
 
 This order keeps CRPM/resource-judgment mechanics as the spine, keeps
 Golden Signal as the playable core, and moves immersion work through a
-testable market-world runtime seed before broader polish or marketing.
+testable runtime-to-render affordance seed before broader polish or marketing.
 
 ## Next Commit Recommendation
 
 The next implementation commit should be:
 
 ```text
-feat: add market world runtime seed
+feat: add golden signal render affordance seed
 ```
 
 ## Risks And Controls
@@ -1828,6 +1947,8 @@ feat: add market world runtime seed
   **Control:** proposals, map nodes, guidance controls, session lessons, and trace cards must preserve cut price, residue, and re-entry information in player-facing language.
 - **Risk:** The market-world refactor breaks the verified submission path.
   **Control:** make PB-014 an adapter-first transition, keep Support Check as a regression path, and do not retire old scenario fields until the new runtime passes domain, build, and browser checks.
+- **Risk:** The visual-affordance layer becomes a second game engine.
+  **Control:** PB-015 renderer state must be derived from market-world runtime, trace, and finish state only; runtime and guidance-loop code remain the authority for cost, legality, mutation, trace, and finish judgment.
 
 ## Out Of Scope For Phase 1
 

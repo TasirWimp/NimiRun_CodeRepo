@@ -312,20 +312,22 @@ small transformed Binance BTCUSDT static fixture, license evidence metadata,
 accepted attributed headline witnesses, and scene wiring. PB-POLISH verified a
 hosted/Nimiq Pay submission path for that proof of concept.
 
-The current product-spine code slice is **PB-014 Market World Runtime Seed**.
-The baseline freeze, adapter step, relation-state mutation step, and
-relation-derived finish judgment step are implemented: the Golden Signal
-scenario gets its arena spine and initial proposal seed from
+PB-014 Market World Runtime Seed is implemented: the Golden Signal scenario gets
+its arena spine and initial proposal seed from
 `src/game/scenarios/marketWorldLevelAdapter.js`, and
 `src/domain/marketWorldRuntime.js` mutates signal-support, signal-exit,
 signal-event, and signal-crowd state as arena actions are named, prepared, and
 approved. The runtime now classifies direct bright-signal entry as false finish,
-named/checkpointed entry as partial finish, and checked support/exit/crowd
-entry as safe finish. Player-facing finish-card presentation and post-finish
-hindsight-card unlock are implemented for terminal outcomes while open scout
-moves keep the verified Support Check witness/trace path. The next PB-014
-substep is browser/manual polish for finish-card readability on phone portrait.
-PB-POLISH
+named/checkpointed entry as partial finish, and checked support/exit/crowd entry
+as safe finish. Player-facing finish-card presentation, post-finish hindsight
+card unlock, and phone-readable trace/finish cards are implemented while open
+scout moves keep the verified Support Check witness/trace path.
+
+The current product-spine code slice is **PB-015 Golden Signal
+World-Affordance Seed**. It should make the existing market-world runtime states
+visible as simple Golden Signal world affordances before final artwork polish:
+tempting signal, hidden/hinted support, hidden/hinted exit, crowd/FOMO pressure,
+event gate, trace memory, and false/partial/safe/open finish gate. PB-POLISH
 remains the submission/regression lane for final screenshots, demo media, and
 pre-submit checks after gameplay changes.
 **PB-012A Desktop/Mobile Browser TestAlbatross Status** is postponed until after

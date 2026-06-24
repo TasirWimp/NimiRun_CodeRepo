@@ -530,9 +530,10 @@ Expected manual checks:
 
 ### PB-014 Market World Runtime Seed
 
-Status: planned. This is the next gameplay-spine slice after the Golden Signal
-proof of concept. It should make `src/game/scenarios/marketWorldLevels.js` the
-active Golden Signal level contract through an adapter-first runtime transition.
+Status: implemented as the current gameplay-spine runtime layer. This slice
+made `src/game/scenarios/marketWorldLevels.js` the active Golden Signal level
+contract through an adapter-first runtime transition while preserving the
+verified Golden Signal regression paths.
 
 Baseline freeze status: implemented in
 `tests/game/goldenSignalPlayableBaseline.test.js`. The test freezes
@@ -721,6 +722,54 @@ Phase 1 should be considered tested enough for the first milestone when:
 - manual acceptance checks include at least one inspect-first correction and one visible remaining-unknown/residue case,
 - final status can distinguish safe finish, partial finish, false finish, and open run,
 - normal player-facing UI uses the game glossary rather than raw CRPM terms.
+
+### PB-015 Golden Signal World-Affordance Seed
+
+Status: planned. This is the next gameplay-spine slice after PB-014. It should
+make the existing Golden Signal runtime states visible as simple world
+affordances before final art polish.
+
+PB-015 test scope:
+
+- lineage data:
+  - Golden Signal level exposes internal `navigationLineage` with source
+    window, witness IDs, relation IDs, bundle ID, voyage ID, protected family,
+    residue, and reopen conditions,
+  - the adapter carries lineage into the runtime seed,
+  - lineage is not included in normal player UI or hindsight-free LLM proposal
+    context unless a later explicit debug/dev surface requests it.
+
+- render-plan contract:
+  - add pure tests for `marketWorldRenderPlan` outside Phaser,
+  - opening relation state maps to tempting Golden Signal, hidden or hinted
+    support, hidden or hinted exit, visible crowd pressure, visible event gate,
+    empty trace memory, and open finish gate,
+  - `Ask Hidden` residualized relation state maps to hinted/outlined hidden
+    surfaces without Bot Attention spend,
+  - approved `Wide Scan` maps the crowd/FOMO surface to revealed/active,
+  - approved `Check Exit` maps the exit bridge/fog to revealed/active,
+  - approved `Support Check` maps support well/foundation to revealed/stable,
+  - false, partial, safe, and open finish states map to distinct arena states.
+
+- scene integration:
+  - `PocketBotWorkshop` renders the plan through lightweight overlays, tints,
+    rings, fog, labels, or simple asset variants,
+  - the renderer reads state only; guidance-loop and market-world runtime remain
+    the authority for legality, Bot Attention spending, relation mutation,
+    trace creation, and finish judgment,
+  - no final artwork requirement in this slice; simple rendering is enough if
+    state changes are readable.
+
+- regression:
+  - `Ask Hidden -> Wide Scan -> Approve -> Trace` still works,
+  - `Support Check -> Approve -> Historic Witness -> Trace Archive` still
+    works,
+  - `Ask Bot -> bounded proposal -> Approve` still works,
+  - existing Nimiq Pay/local fallback behavior is unchanged,
+  - player-facing labels still avoid CRPM jargon,
+  - `npm run test` and `npm run build` pass,
+  - browser/manual phone-portrait smoke confirms the new overlays do not
+    overlap core controls or trace/witness cards.
 
 ## PB-POLISH-001 Checks
 
