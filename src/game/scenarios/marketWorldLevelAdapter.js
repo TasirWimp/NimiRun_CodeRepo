@@ -369,6 +369,7 @@ export function createMarketWorldRuntimeSeed(level, {
     title: level.title,
     timeWindow: clone(level.timeWindow),
     boundary: clone(level.boundary),
+    navigationLineage: clone(level.navigationLineage),
     relationStates,
     arenaSpine,
     proposalPreview: createProposalPreview(level),

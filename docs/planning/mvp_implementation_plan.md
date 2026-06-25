@@ -1670,6 +1670,16 @@ Implementation sequence:
 7. Update documentation only after the first render-plan contract and tests are
    stable.
 
+Implementation status:
+
+- Steps 1 and 2 are implemented. Golden Signal now declares internal
+  `navigationLineage` metadata in `src/game/scenarios/marketWorldLevels.js`,
+  the market-world validator requires it, and
+  `src/game/scenarios/marketWorldLevelAdapter.js` carries it into the runtime
+  seed while keeping it out of hindsight-free LLM proposal context.
+- Step 3, the pure `marketWorldRenderPlan` helper, is the next PB-015
+  implementation step.
+
 Player-visible behavior:
 
 - At level start, Golden Signal should look tempting while support and exit

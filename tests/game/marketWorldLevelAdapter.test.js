@@ -139,7 +139,34 @@ describe('Market World level adapter', () => {
     expect(contextText).not.toContain('patternOutcome');
     expect(contextText).not.toContain('landfallRisk');
     expect(contextText).not.toContain('terminal reveal');
+    expect(contextText).not.toContain('navigationLineage');
+    expect(contextText).not.toContain('sourcePressurePacketId');
     expect(seed.hindsightCard.patternOutcome).toBeTruthy();
+  });
+
+  it('carries internal navigation lineage into the runtime seed only', () => {
+    const seed = createGoldenSignalMarketWorldRuntimeSeed();
+
+    expect(seed.navigationLineage).toMatchObject({
+      sourcePressurePacketId: 'v0_golden_signal_december_2017_pressure',
+      sourceBasis: {
+        marketWindowIds: ['btc_binance_btcusdt_2017_12_golden_signal'],
+        witnessIds: [
+          'btc_futures_gate_cboe_2017_12_04',
+          'btc_futures_gate_cme_2017_12_01_event_pressure',
+          'btc_futures_gate_cftc_2017_12_01_risk_context',
+        ],
+      },
+      v1RelationEdgeIds: [
+        'signal_to_support',
+        'signal_to_exit',
+        'signal_to_crowd',
+        'signal_to_event',
+      ],
+      v2BundleId: 'golden_signal_false_finish_pressure_bundle',
+      v3VoyageId: 'golden_signal_first_slice_voyage',
+    });
+    expect(seed.proposalContext.navigationLineage).toBeUndefined();
   });
 
   it('is the active adapter source for the current Golden Signal scenario', () => {

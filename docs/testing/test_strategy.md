@@ -725,9 +725,10 @@ Phase 1 should be considered tested enough for the first milestone when:
 
 ### PB-015 Golden Signal World-Affordance Seed
 
-Status: planned. This is the next gameplay-spine slice after PB-014. It should
-make the existing Golden Signal runtime states visible as simple world
-affordances before final art polish.
+Status: in progress. The lineage-data substep is implemented and covered by
+`tests/game/marketWorldLevels.test.js` and
+`tests/game/marketWorldLevelAdapter.test.js`. The next PB-015 step is the pure
+`marketWorldRenderPlan` contract before Phaser scene overlays.
 
 PB-015 test scope:
 

@@ -57,6 +57,44 @@ describe('Market World Golden Signal level contract', () => {
     });
   });
 
+  it('declares the hidden navigation lineage for Golden Signal provenance', () => {
+    const level = getGoldenSignalMarketWorldLevel();
+
+    expect(level.navigationLineage).toMatchObject({
+      sourcePressurePacketId: 'v0_golden_signal_december_2017_pressure',
+      sourceBasis: {
+        marketWindowIds: ['btc_binance_btcusdt_2017_12_golden_signal'],
+        witnessIds: [
+          'btc_futures_gate_cboe_2017_12_04',
+          'btc_futures_gate_cme_2017_12_01_event_pressure',
+          'btc_futures_gate_cftc_2017_12_01_risk_context',
+        ],
+      },
+      v1RelationEdgeIds: [
+        'signal_to_support',
+        'signal_to_exit',
+        'signal_to_crowd',
+        'signal_to_event',
+      ],
+      v2BundleId: 'golden_signal_false_finish_pressure_bundle',
+      v3VoyageId: 'golden_signal_first_slice_voyage',
+      protectedFamily: [
+        'signal strength is not route safety',
+        'hindsight stays locked until finish',
+        'unresolved pressure remains trace-visible',
+      ],
+      residueToKeepVisible: [
+        'support depth still unknown',
+        'exit friction still unknown',
+        'FOMO pressure still unknown',
+        'event pressure may be overread',
+      ],
+      reopenConditions: [
+        'future bright signal appears while support, exit, or crowd pressure is unknown',
+      ],
+    });
+  });
+
   it('uses the domain finish-status vocabulary expected by traces and UI', () => {
     const level = getGoldenSignalMarketWorldLevel();
 

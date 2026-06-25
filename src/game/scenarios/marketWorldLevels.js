@@ -70,6 +70,45 @@ export const MARKET_WORLD_LEVELS = Object.freeze({
       transformed: GOLDEN_SIGNAL_WINDOW.transformed,
     }),
 
+    navigationLineage: Object.freeze({
+      sourcePressurePacketId: 'v0_golden_signal_december_2017_pressure',
+      sourceBasis: Object.freeze({
+        marketWindowIds: Object.freeze([GOLDEN_SIGNAL_WINDOW.id]),
+        witnessIds: Object.freeze([
+          'btc_futures_gate_cboe_2017_12_04',
+          'btc_futures_gate_cme_2017_12_01_event_pressure',
+          'btc_futures_gate_cftc_2017_12_01_risk_context',
+        ]),
+        authoredPressureNotes: Object.freeze([
+          'bright signal can be mistaken for route safety',
+          'headline/event pressure can make urgency feel like evidence',
+          'exit friction and crowd pressure remain hidden until probed',
+        ]),
+      }),
+      v1RelationEdgeIds: Object.freeze([
+        'signal_to_support',
+        'signal_to_exit',
+        'signal_to_crowd',
+        'signal_to_event',
+      ]),
+      v2BundleId: 'golden_signal_false_finish_pressure_bundle',
+      v3VoyageId: 'golden_signal_first_slice_voyage',
+      protectedFamily: Object.freeze([
+        'signal strength is not route safety',
+        'hindsight stays locked until finish',
+        'unresolved pressure remains trace-visible',
+      ]),
+      residueToKeepVisible: Object.freeze([
+        'support depth still unknown',
+        'exit friction still unknown',
+        'FOMO pressure still unknown',
+        'event pressure may be overread',
+      ]),
+      reopenConditions: Object.freeze([
+        'future bright signal appears while support, exit, or crowd pressure is unknown',
+      ]),
+    }),
+
     priceSurface: Object.freeze({
       chartSurface: GOLDEN_SIGNAL_WINDOW.playerVisible.chartSurface,
       chartPoints: GOLDEN_SIGNAL_WINDOW.playerVisible.chartPoints,
@@ -367,6 +406,7 @@ export function validateMarketWorldLevel(level) {
     'finishRules',
     'hindsightCard',
     'repairEdges',
+    'navigationLineage',
   ]) {
     if (level[key] == null) {
       errors.push(`${level.id ?? 'market_world_level'} missing required field: ${key}`);
