@@ -338,8 +338,9 @@ normal player UI carry CRPM vocabulary.
 Current runtime status: `navigationLineage` is implemented as internal
 Golden Signal level metadata in `marketWorldLevels.js`, is required by the
 market-world validator, and is carried into the adapter runtime seed. It remains
-out of normal player UI and out of hindsight-free LLM proposal context. The
-render-plan and Phaser affordance layer are the next implementation step.
+out of normal player UI and out of hindsight-free LLM proposal context. The pure
+render-plan helper is implemented in `marketWorldRenderPlan.js`; the Phaser
+affordance layer is the next implementation step.
 
 ### Golden Signal Port Stack
 

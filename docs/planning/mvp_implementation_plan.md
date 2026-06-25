@@ -1677,8 +1677,14 @@ Implementation status:
   the market-world validator requires it, and
   `src/game/scenarios/marketWorldLevelAdapter.js` carries it into the runtime
   seed while keeping it out of hindsight-free LLM proposal context.
-- Step 3, the pure `marketWorldRenderPlan` helper, is the next PB-015
-  implementation step.
+- Steps 3 and 4 are implemented in
+  `src/game/scenarios/marketWorldRenderPlan.js`, with coverage in
+  `tests/game/marketWorldRenderPlan.test.js`. The pure render plan maps
+  opening state, Ask Hidden residue, approved Wide Scan, approved Check Exit,
+  approved Support Check, trace-memory state, and safe/partial/false/open
+  finish gates without depending on Phaser.
+- Step 5, wiring the render plan into `PocketBotWorkshop` as lightweight Phaser
+  overlays and simple affordances, is the next PB-015 implementation step.
 
 Player-visible behavior:
 

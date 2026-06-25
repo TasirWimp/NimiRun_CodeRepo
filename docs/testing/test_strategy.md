@@ -725,10 +725,11 @@ Phase 1 should be considered tested enough for the first milestone when:
 
 ### PB-015 Golden Signal World-Affordance Seed
 
-Status: in progress. The lineage-data substep is implemented and covered by
-`tests/game/marketWorldLevels.test.js` and
-`tests/game/marketWorldLevelAdapter.test.js`. The next PB-015 step is the pure
-`marketWorldRenderPlan` contract before Phaser scene overlays.
+Status: in progress. The lineage-data and pure render-plan substeps are
+implemented. They are covered by `tests/game/marketWorldLevels.test.js`,
+`tests/game/marketWorldLevelAdapter.test.js`, and
+`tests/game/marketWorldRenderPlan.test.js`. The next PB-015 step is
+`PocketBotWorkshop` scene overlay integration.
 
 PB-015 test scope:
 
