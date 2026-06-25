@@ -1683,8 +1683,12 @@ Implementation status:
   opening state, Ask Hidden residue, approved Wide Scan, approved Check Exit,
   approved Support Check, trace-memory state, and safe/partial/false/open
   finish gates without depending on Phaser.
-- Step 5, wiring the render plan into `PocketBotWorkshop` as lightweight Phaser
-  overlays and simple affordances, is the next PB-015 implementation step.
+- Step 5 is implemented. `src/ui/marketWorldAffordanceOverlay.js` turns the
+  render plan into player-facing overlay descriptors, and
+  `src/scenes/PocketBotWorkshop.js` renders those descriptors as lightweight
+  rings, fog cues, and short labels over the existing map nodes. Coverage lives
+  in `tests/ui/marketWorldAffordanceOverlay.test.js`; final artwork and density
+  tuning remain PB-POLISH work.
 
 Player-visible behavior:
 
@@ -1708,9 +1712,11 @@ Expected files:
 - `src/game/scenarios/marketWorldLevelAdapter.js`
 - `src/game/scenarios/marketWorldRenderPlan.js`
 - `src/scenes/PocketBotWorkshop.js`
+- `src/ui/marketWorldAffordanceOverlay.js`
 - `tests/game/marketWorldLevelAdapter.test.js`
 - `tests/game/marketWorldRenderPlan.test.js`
 - `tests/game/goldenSignalPlayableBaseline.test.js`
+- `tests/ui/marketWorldAffordanceOverlay.test.js`
 - `tests/ui/workshopLayout.test.js`
 - `docs/product/market_world_model.md`
 - `docs/testing/test_strategy.md`
@@ -1730,6 +1736,11 @@ Test plan:
   transitions to visible crowd, exit, and support affordance changes.
 - Render plan maps false, partial, safe, and open finish states to distinct
   player-facing arena states.
+- Overlay descriptors keep those states in player-facing labels and avoid CRPM
+  implementation vocabulary.
+- `PocketBotWorkshop` refreshes overlays from state only after selection,
+  arena-action preparation, approval, trace updates, or bot proposals; it does
+  not own legality, spending, mutation, trace creation, or finish judgment.
 - Existing regression paths still pass:
   `Ask Hidden -> Wide Scan -> Approve -> Trace`,
   `Support Check -> Approve -> Historic Witness -> Trace`, and

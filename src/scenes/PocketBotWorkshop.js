@@ -34,6 +34,7 @@ import {
 } from '../game/resourceMapScenario.js';
 import { createMarketSignalScoutScenario } from '../game/scenarios/marketSignalScoutScenario.js';
 import { MARKET_WORLD_ACTIONS } from '../game/scenarios/marketWorldLevels.js';
+import { createMarketWorldRenderPlan } from '../game/scenarios/marketWorldRenderPlan.js';
 import { requestRouteProposal } from '../llm/routeProposalClient.js';
 import {
   createNimiqPocketStatus,
@@ -44,6 +45,7 @@ import {
   createGuidanceButton,
   layoutGuidanceButtons,
 } from '../ui/guidanceControls.js';
+import { createMarketWorldAffordanceDescriptors } from '../ui/marketWorldAffordanceOverlay.js';
 import { createNimiqPocketDisplay } from '../ui/resourceMeters.js';
 import {
   createFinishPanelContent,
@@ -254,6 +256,7 @@ export default class PocketBotWorkshop extends Phaser.Scene {
     });
     this.nodeMarkers = new Map();
     this.attentionSegments = [];
+    this.marketWorldOverlayElements = [];
 
     this.drawBackground();
     this.drawHeader();
@@ -953,6 +956,100 @@ export default class PocketBotWorkshop extends Phaser.Scene {
     return marker;
   }
 
+  createMarketWorldRenderPlan() {
+    return createMarketWorldRenderPlan({
+      runtimeState: this.guidanceState?.marketWorldRuntime,
+      finishJudgment: this.guidanceState?.mapState?.finishJudgment,
+      selectedNodeId: this.selectedNodeId,
+      traceCards: this.guidanceState?.traceCards || [],
+    });
+  }
+
+  clearMarketWorldAffordanceOverlays() {
+    for (const element of this.marketWorldOverlayElements || []) {
+      element?.destroy();
+    }
+
+    this.marketWorldOverlayElements = [];
+  }
+
+  refreshMarketWorldAffordanceOverlays() {
+    if (!this.mapScenario || !this.layout?.map) {
+      return;
+    }
+
+    this.clearMarketWorldAffordanceOverlays();
+
+    const descriptors = createMarketWorldAffordanceDescriptors(
+      this.createMarketWorldRenderPlan()
+    );
+
+    for (const descriptor of descriptors) {
+      const node = getNodeById(this.mapScenario, descriptor.nodeId);
+
+      if (!node) {
+        continue;
+      }
+
+      this.drawMarketWorldAffordanceOverlay(node, descriptor);
+    }
+  }
+
+  drawMarketWorldAffordanceOverlay(node, descriptor) {
+    const position = this.getNodePosition(node);
+    const baseRadius = node.kind === NODE_KINDS.FALSE_FINISH || node.kind === NODE_KINDS.SAFE_FINISH
+      ? 39
+      : 34;
+    const radius = this.scaleMapValue(baseRadius * descriptor.radiusScale, 18);
+    const labelOffset = this.scaleMapValue(48, this.layout.isMobile ? 24 : 32);
+    const fontSize = this.layout.isMobile ? '8px' : '11px';
+
+    if (descriptor.fogAlpha > 0 && this.textures.exists('fog_residue_overlay_96')) {
+      this.marketWorldOverlayElements.push(
+        this.add
+          .image(position.x, position.y, 'fog_residue_overlay_96')
+          .setDisplaySize(radius * 2.05, radius * 1.22)
+          .setAlpha(descriptor.fogAlpha)
+          .setDepth(5)
+      );
+    }
+
+    const ring = this.add
+      .circle(position.x, position.y, radius, descriptor.fill, descriptor.fillAlpha)
+      .setStrokeStyle(
+        this.scaleMapValue(descriptor.strokeWidth, 1),
+        descriptor.stroke,
+        descriptor.strokeAlpha
+      )
+      .setDepth(6);
+    this.marketWorldOverlayElements.push(ring);
+
+    const label = this.add
+      .text(position.x, position.y - labelOffset, descriptor.label, {
+        ...createTextStyle({
+          fontSize,
+          color: descriptor.textColor,
+          fontStyle: '700',
+          align: 'center',
+        }),
+      })
+      .setOrigin(0.5)
+      .setDepth(8);
+    const labelBackground = this.add
+      .rectangle(
+        label.x,
+        label.y,
+        label.width + this.scaleMapValue(12, 8),
+        label.height + this.scaleMapValue(5, 4),
+        COLORS.background,
+        0.72
+      )
+      .setStrokeStyle(1, descriptor.stroke, 0.46)
+      .setDepth(7);
+
+    this.marketWorldOverlayElements.push(labelBackground, label);
+  }
+
   previewNode(nodeId) {
     const node = getNodeById(this.mapScenario, nodeId);
 
@@ -1007,6 +1104,7 @@ export default class PocketBotWorkshop extends Phaser.Scene {
       remainingUnknowns,
       witnessPanel,
     }).join('\n'));
+    this.refreshMarketWorldAffordanceOverlays();
   }
 
   redirectProposalToNode(node) {
@@ -1047,6 +1145,7 @@ export default class PocketBotWorkshop extends Phaser.Scene {
     this.traceArchiveText?.setText(
       formatTraceArchiveLabel(this.guidanceState.traceCards)
     );
+    this.refreshMarketWorldAffordanceOverlays();
   }
 
   updateNimiqPocketDisplay() {
@@ -1141,12 +1240,14 @@ export default class PocketBotWorkshop extends Phaser.Scene {
   handleWhyRoute() {
     this.guidanceState = showWhyThisRoute(this.guidanceState);
     this.renderGuidancePanel();
+    this.refreshMarketWorldAffordanceOverlays();
     this.setStatus('Route rationale exposed.');
   }
 
   handleRemainingUnknowns() {
     this.guidanceState = showRemainingUnknowns(this.guidanceState);
     this.renderGuidancePanel();
+    this.refreshMarketWorldAffordanceOverlays();
     this.setStatus('Remaining unknowns exposed.');
   }
 
@@ -1161,6 +1262,7 @@ export default class PocketBotWorkshop extends Phaser.Scene {
 
     this.updateProposalPanel();
     this.renderGuidancePanel();
+    this.refreshMarketWorldAffordanceOverlays();
 
     if (action?.behavior === 'show_unknowns') {
       this.setStatus('Hidden assumptions exposed before spending attention.');
@@ -1178,6 +1280,7 @@ export default class PocketBotWorkshop extends Phaser.Scene {
     this.guidanceState = redirectToInspectFirst(this.guidanceState);
     this.updateProposalPanel();
     this.renderGuidancePanel();
+    this.refreshMarketWorldAffordanceOverlays();
     this.setStatus('Proposal changed to inspect first.');
   }
 
@@ -1190,6 +1293,7 @@ export default class PocketBotWorkshop extends Phaser.Scene {
     );
     this.updateHud();
     this.renderLatestTraceCard();
+    this.refreshMarketWorldAffordanceOverlays();
     this.setStatus('Marked as partial progress.');
   }
 
@@ -1215,6 +1319,7 @@ export default class PocketBotWorkshop extends Phaser.Scene {
       this.updateProposalPanel();
       this.selectNode(this.guidanceState.pendingProposal.targetNodeId, { redirectProposal: false });
       this.renderGuidancePanel();
+      this.refreshMarketWorldAffordanceOverlays();
       this.setStatus(
         `Bot proposal updated via ${result.mode}. Approve still controls resource spending.`
       );
@@ -1259,6 +1364,7 @@ export default class PocketBotWorkshop extends Phaser.Scene {
     };
     this.updateHud();
     this.renderLatestTraceCard();
+    this.refreshMarketWorldAffordanceOverlays();
 
     this.setStatus(
       result.status === 'provider-ready'

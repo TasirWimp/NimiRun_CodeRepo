@@ -339,8 +339,12 @@ Current runtime status: `navigationLineage` is implemented as internal
 Golden Signal level metadata in `marketWorldLevels.js`, is required by the
 market-world validator, and is carried into the adapter runtime seed. It remains
 out of normal player UI and out of hindsight-free LLM proposal context. The pure
-render-plan helper is implemented in `marketWorldRenderPlan.js`; the Phaser
-affordance layer is the next implementation step.
+render-plan helper is implemented in `marketWorldRenderPlan.js`. The first
+Phaser affordance layer is also implemented: `marketWorldAffordanceOverlay.js`
+maps render states to player-facing labels and anchors, and
+`PocketBotWorkshop.js` renders them as lightweight rings, fog cues, and short
+labels over the existing Golden Signal map. This is a functional affordance
+seed, not final artwork.
 
 ### Golden Signal Port Stack
 

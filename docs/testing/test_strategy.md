@@ -725,11 +725,14 @@ Phase 1 should be considered tested enough for the first milestone when:
 
 ### PB-015 Golden Signal World-Affordance Seed
 
-Status: in progress. The lineage-data and pure render-plan substeps are
-implemented. They are covered by `tests/game/marketWorldLevels.test.js`,
-`tests/game/marketWorldLevelAdapter.test.js`, and
-`tests/game/marketWorldRenderPlan.test.js`. The next PB-015 step is
-`PocketBotWorkshop` scene overlay integration.
+Status: in progress. The lineage-data, pure render-plan, and first
+`PocketBotWorkshop` overlay-integration substeps are implemented. They are
+covered by `tests/game/marketWorldLevels.test.js`,
+`tests/game/marketWorldLevelAdapter.test.js`,
+`tests/game/marketWorldRenderPlan.test.js`, and
+`tests/ui/marketWorldAffordanceOverlay.test.js`. The remaining PB-015-adjacent
+work is visual density/art tuning and broader manual polish, not runtime
+authority.
 
 PB-015 test scope:
 
@@ -756,6 +759,8 @@ PB-015 test scope:
 - scene integration:
   - `PocketBotWorkshop` renders the plan through lightweight overlays, tints,
     rings, fog, labels, or simple asset variants,
+  - `marketWorldAffordanceOverlay` maps render-plan states to player-facing
+    labels, colors, and node anchors without CRPM implementation terms,
   - the renderer reads state only; guidance-loop and market-world runtime remain
     the authority for legality, Bot Attention spending, relation mutation,
     trace creation, and finish judgment,
@@ -772,6 +777,22 @@ PB-015 test scope:
   - `npm run test` and `npm run build` pass,
   - browser/manual phone-portrait smoke confirms the new overlays do not
     overlap core controls or trace/witness cards.
+
+Verification on June 25, 2026:
+
+- `npm run test -- tests/ui/marketWorldAffordanceOverlay.test.js
+  tests/game/marketWorldRenderPlan.test.js` passed,
+- `npm run test` passed,
+- `npm run build` passed,
+- local phone viewport `390x844` rendered the canvas at full phone size with no
+  console errors,
+- `Ask Hidden -> Wide Scan -> Approve` in phone viewport spent Bot Attention
+  only after approval, showed an active crowd-pressure overlay, and surfaced a
+  trace/witness panel with no console errors,
+- a reload plus `Support -> Approve` phone-viewport smoke kept the canvas live
+  and produced no console errors; final screenshot capture timed out in the
+  browser automation surface, so this path still wants a human visual pass after
+  the next polish deployment.
 
 ## PB-POLISH-001 Checks
 
