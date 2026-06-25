@@ -725,14 +725,14 @@ Phase 1 should be considered tested enough for the first milestone when:
 
 ### PB-015 Golden Signal World-Affordance Seed
 
-Status: in progress. The lineage-data, pure render-plan, and first
-`PocketBotWorkshop` overlay-integration substeps are implemented. They are
-covered by `tests/game/marketWorldLevels.test.js`,
+Status: functional implementation complete. The lineage-data, pure render-plan,
+and first `PocketBotWorkshop` overlay-integration substeps are implemented.
+They are covered by `tests/game/marketWorldLevels.test.js`,
 `tests/game/marketWorldLevelAdapter.test.js`,
 `tests/game/marketWorldRenderPlan.test.js`, and
-`tests/ui/marketWorldAffordanceOverlay.test.js`. The remaining PB-015-adjacent
-work is visual density/art tuning and broader manual polish, not runtime
-authority.
+`tests/ui/marketWorldAffordanceOverlay.test.js`. Remaining work belongs to the
+PB-POLISH lane: visual density/art tuning, hosted/Nimiq Pay regression, and
+final manual submission checks.
 
 PB-015 test scope:
 

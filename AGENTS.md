@@ -84,8 +84,8 @@ Current order:
 13. PB-012 Nimiq Testnet Pocket - implemented for local fallback and explicit Nimiq Pay NIM status checks, with Android emulator Nimiq Pay Testnet verification completed on June 7, 2026.
 14. PB-013 Market Signal Scout Golden Signal foundation - implemented with transformed Binance BTCUSDT fixture evidence, accepted historic headline witnesses, Golden Signal scenario contract, and scene wiring.
 15. PB-014 Market World Runtime Seed - implemented.
-16. PB-015 Golden Signal World-Affordance Seed - next.
-17. PB-POLISH Submission Vertical Slice regression and final media pass.
+16. PB-015 Golden Signal World-Affordance Seed - implemented as a functional runtime-to-render affordance layer; final visual density/art tuning remains PB-POLISH work.
+17. PB-POLISH Submission Vertical Slice regression and final media pass - next active lane.
 18. PB-MARKET Early Access And Community Feedback.
 19. PB-012A Desktop/Mobile Browser TestAlbatross Status - postponed until after the Android/Nimiq Pay submission path is stable.
 

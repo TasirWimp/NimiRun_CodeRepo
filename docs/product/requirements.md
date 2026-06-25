@@ -671,21 +671,19 @@ The first milestone is complete when:
 Recommended next task:
 
 1. PB-POLISH: rerun local and hosted phone-portrait regression checks after
-   the PB-014 trace/finish readability polish, then capture screenshots or a
-   short demo only when preparing final submission media.
-2. PB-014: keep the first seed small: Ask Hidden, Wide Scan, Check Exit,
-   Support Check, and Approve Enter, with Bot Attention spent only after
-   approval.
-3. PB-014: preserve the verified Support Check -> Approve -> Historic Witness
-   -> Trace path as a regression baseline while relation-state runtime, trace
-   residue, and finish pressure move to the market-world model.
-4. PB-014: repeat browser/manual finish-card readability checks whenever trace
-   or finish UI copy changes again.
-5. PB-MARKET: record external tester feedback when entering the public
+   the PB-015 world-affordance overlay change, then capture screenshots or a
+   short demo when preparing final submission media.
+2. PB-POLISH: preserve the verified Support Check -> Approve -> Historic
+   Witness -> Trace path and Ask Hidden -> Wide Scan -> Approve path as
+   regression baselines while tuning phone-portrait readability.
+3. PB-POLISH: repeat browser/manual finish-card readability checks whenever
+   trace, finish, or overlay UI copy changes again.
+4. PB-MARKET: record external tester feedback when entering the public
    competition-feedback cycle.
-6. Repeat the Nimiq Pay Testnet emulator check before final submission if
-   PB-012, PB-013, PB-014, or polish work changes the platform adapter.
-7. PB-012A: add desktop/mobile browser TestAlbatross status later, after the
+5. Repeat the Nimiq Pay Testnet emulator check before final submission if
+   PB-012, PB-013, PB-014, PB-015, or polish work changes the platform adapter
+   or hosted bundle.
+6. PB-012A: add desktop/mobile browser TestAlbatross status later, after the
    Android/Nimiq Pay submission path is stable.
 
 Run `npm run test`, `npm run build`, and browser/manual scene checks for source

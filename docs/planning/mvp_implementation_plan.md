@@ -210,16 +210,14 @@ Implemented groundwork from the earlier allowance-control cut:
 
 This work should be retained as supporting infrastructure. It becomes one possible resource-governance mechanic inside the broader resource-judgment game, not the active center of Phase 1.
 
-PB-POLISH has a verified hosted/Nimiq Pay submission path for the current
-Golden Signal proof of concept. The current product-spine work remains
-**PB-015 Golden Signal World-Affordance Seed**. PB-014 has implemented the
-market-world runtime seed, relation-state mutation, relation-derived finish
-judgment, player-facing finish / hindsight cards, and phone-readability trace
-polish. PB-015 should now make the Golden Signal arena visually express those
-runtime states through simple render affordances before final artwork polish.
-
-PB-POLISH remains the submission/regression lane for final screenshots, demo
-media, and pre-submission checks after PB-015 changes the gameplay surface.
+PB-POLISH has a verified hosted/Nimiq Pay submission path for the earlier
+Golden Signal proof of concept. PB-014 and PB-015 now extend that proof of
+concept with market-world runtime state, relation-derived finish judgment,
+player-facing finish / hindsight cards, phone-readable trace polish, and a
+functional runtime-to-render affordance layer. The current active lane is
+**PB-POLISH**: rerun local, hosted, and Nimiq Pay regressions after the PB-015
+visual-surface change, tune phone-portrait readability, and prepare final
+screenshots/demo media.
 
 PB-012A Desktop/Mobile Browser TestAlbatross Status is postponed. The hosted
 web app should still remain playable in ordinary desktop/mobile browsers with
@@ -1927,9 +1925,11 @@ Implemented groundwork:
 
 Revised next sequence:
 
-16. PB-014 Market World Runtime Seed.
-17. PB-015 Golden Signal World-Affordance Seed.
-18. PB-POLISH Submission Vertical Slice regression and final media pass.
+16. PB-014 Market World Runtime Seed - implemented.
+17. PB-015 Golden Signal World-Affordance Seed - implemented as a functional
+    runtime-to-render affordance layer.
+18. PB-POLISH Submission Vertical Slice regression and final media pass - next
+    active lane.
 19. PB-MARKET Early Access And Community Feedback.
 20. PB-012A Desktop/Mobile Browser TestAlbatross Status, postponed until after
     the Android/Nimiq Pay submission path is stable.
@@ -1940,10 +1940,11 @@ testable runtime-to-render affordance seed before broader polish or marketing.
 
 ## Next Commit Recommendation
 
-The next implementation commit should be:
+The next implementation commit should be a PB-POLISH regression/media pass, for
+example:
 
 ```text
-feat: add golden signal render affordance seed
+test: rerun post-affordance submission checks
 ```
 
 ## Risks And Controls
