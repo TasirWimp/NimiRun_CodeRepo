@@ -965,3 +965,10 @@ npm run check:no-secrets
 npm run test
 npm run build
 ```
+
+Current coverage: the as-of contract foundation is covered in
+`tests/game/marketWorldLevels.test.js` and
+`tests/game/marketWorldLevelAdapter.test.js`. These tests verify Golden Signal
+timing metadata, action-response fields, source gates for unadopted
+GDELT/Wikimedia/Coin Metrics claims, Support Check's Binance fixture basis, and
+adapter carry-through into the runtime seed/proposal context.

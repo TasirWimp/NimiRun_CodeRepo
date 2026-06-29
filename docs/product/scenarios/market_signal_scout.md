@@ -1517,7 +1517,7 @@ golden_signal_time_cut:
   decision_cut_target: "after the 2017-12-16 daily close, before the 2017-12-17 peak / later reversal outcome"
   pre_finish_rule: "actions may reveal only evidence available at or before the decision cut"
   post_finish_rule: "hindsight card may reveal later peak/reversal context after finish"
-  implementation_gap: "runtime fixture needs explicit decisionTime/asOfTime before source-backed action results ship"
+  implementation_status: "runtime fixture declares decisionTime/asOfTime; source-specific GDELT/Wikimedia/Coin Metrics fixtures remain future work"
 ```
 
 Action contract:

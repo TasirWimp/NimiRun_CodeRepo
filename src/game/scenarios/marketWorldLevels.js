@@ -21,6 +21,7 @@ export const MARKET_WORLD_ACTIONS = Object.freeze({
   WIDE_SCAN: 'wide_scan',
   CHECK_EXIT: 'check_exit',
   ASK_REMAINING_UNKNOWN: 'ask_remaining_unknown',
+  ASK_BOT: 'ask_bot',
   CHECK_SIGNAL: 'check_signal',
   CHECK_SUPPORT: 'check_support',
   CHECK_EVENT: 'check_event',
@@ -42,6 +43,28 @@ const GOLDEN_SIGNAL_WINDOW = getBtcusdtWitnessWindowById(
 
 const getGoldenSignalWitnessIds = (action) =>
   Object.freeze(getVisibleMarketWitnessIds(GOLDEN_SIGNAL_LEVEL_ID, action));
+
+const ACTION_RESPONSE_REQUIRED_FIELDS = Object.freeze([
+  'targetLayers',
+  'sourceWitnessBasis',
+  'asOfRule',
+  'prepareVisual',
+  'approveVisual',
+  'revealResult',
+  'doesNotProve',
+  'traceText',
+  'runtimeMutation',
+]);
+
+const SOURCE_FIXTURE_STATUSES = Object.freeze({
+  CURRENT_OR_AUTHORED: 'current_or_authored',
+  ADOPTED_STATIC_FIXTURE: 'adopted_static_fixture',
+  PLANNED_FIXTURE_REQUIRED: 'planned_fixture_required',
+  BLOCKED_UNTIL_REVIEW: 'blocked_until_review',
+  NOT_CONSUMED: 'not_consumed',
+});
+
+const RESTRICTED_CANDIDATE_SOURCE_PATTERN = /\b(gdelt|wikimedia|pageviews|coin metrics)\b/i;
 
 export const MARKET_WORLD_LEVELS = Object.freeze({
   level_02_golden_signal: Object.freeze({
@@ -65,6 +88,14 @@ export const MARKET_WORLD_LEVELS = Object.freeze({
       sourceWindowId: GOLDEN_SIGNAL_WINDOW.id,
       start: GOLDEN_SIGNAL_WINDOW.source.coveredRange.start,
       end: GOLDEN_SIGNAL_WINDOW.source.coveredRange.end,
+      visibleHistoryStart: '2017-12-01',
+      visibleHistoryEnd: '2017-12-16',
+      decisionTime: '2017-12-17T00:00:00Z',
+      asOfTime: '2017-12-17T00:00:00Z',
+      hindsightUnlocksAfterFinish: Object.freeze([
+        '2017-12-17 peak-high information',
+        '2017-12-22 reversal/drawdown information',
+      ]),
       granularity: GOLDEN_SIGNAL_WINDOW.source.interval,
       pair: GOLDEN_SIGNAL_WINDOW.source.pair,
       transformed: GOLDEN_SIGNAL_WINDOW.transformed,
@@ -213,6 +244,233 @@ export const MARKET_WORLD_LEVELS = Object.freeze({
         MARKET_WORLD_ACTIONS.CHECK_CROWD,
         MARKET_WORLD_ACTIONS.CHECK_VOLATILITY,
       ]),
+
+      responses: Object.freeze({
+        [MARKET_WORLD_ACTIONS.ASK_REMAINING_UNKNOWN]: Object.freeze({
+          targetLayers: Object.freeze([
+            'narrator_relation_layer',
+            'trace_memory_layer',
+          ]),
+          sourceWitnessBasis: Object.freeze({
+            status: SOURCE_FIXTURE_STATUSES.NOT_CONSUMED,
+            current: Object.freeze(['authored level relation metadata']),
+            planned: Object.freeze([]),
+            blocked: Object.freeze([]),
+          }),
+          asOfRule:
+            'Names unknown categories at the decision cut; does not reveal market-data answers.',
+          prepareVisual: Object.freeze([
+            'support, exit, crowd, and event silhouettes pulse behind fog',
+            'Golden Signal glow remains visible but incomplete',
+          ]),
+          approveVisual: Object.freeze(['no approval gate required for the Phase 1 no-cost version']),
+          revealResult: Object.freeze([
+            'support hidden',
+            'exit hidden',
+            'crowd/event pressure hidden or only hinted',
+          ]),
+          doesNotProve: Object.freeze([
+            'whether support exists',
+            'whether exit is safe',
+            'whether crowd pressure is harmful',
+          ]),
+          traceText: 'Named the fog. No answer was proven yet.',
+          runtimeMutation: Object.freeze([
+            'residualize named unknowns',
+            'do not spend Bot Attention',
+            'do not reveal hidden relation answers',
+          ]),
+        }),
+
+        [MARKET_WORLD_ACTIONS.WIDE_SCAN]: Object.freeze({
+          targetLayers: Object.freeze([
+            'crowd_psychology_field',
+            'historical_event_weather',
+          ]),
+          sourceWitnessBasis: Object.freeze({
+            status: SOURCE_FIXTURE_STATUSES.PLANNED_FIXTURE_REQUIRED,
+            current: Object.freeze([
+              'authored crowd/event pressure from Golden Signal level',
+              'accepted official headline witness metadata',
+            ]),
+            planned: Object.freeze([
+              'GDELT transformed static media/event metadata',
+              'Wikimedia Pageviews transformed static attention metadata',
+            ]),
+            blocked: Object.freeze([]),
+          }),
+          asOfRule:
+            'May reveal only media/attention pressure available at or before the decision cut.',
+          prepareVisual: Object.freeze([
+            'scan arc widens from signal to crowd/event surfaces',
+            'purple/red crowd lights and event wind remain semi-fogged',
+          ]),
+          approveVisual: Object.freeze([
+            'one Bot Attention pip travels into the scan arc',
+            'crowd/event weather wakes up',
+          ]),
+          revealResult: Object.freeze([
+            'attention or media pressure is amplifying the signal',
+            'support and exit remain unresolved unless separately checked',
+          ]),
+          doesNotProve: Object.freeze([
+            'crowd is correct',
+            'media attention means future price direction',
+            'support depth',
+            'exit safety',
+          ]),
+          traceText: 'Wide Scan found pressure around the signal. Attention is not proof.',
+          runtimeMutation: Object.freeze([
+            'reveal or residualize signal_to_crowd',
+            'carry support/exit residue',
+            'lower false-finish risk but keep safe finish unavailable',
+          ]),
+        }),
+
+        [MARKET_WORLD_ACTIONS.CHECK_EXIT]: Object.freeze({
+          targetLayers: Object.freeze(['execution_exit_world']),
+          sourceWitnessBasis: Object.freeze({
+            status: SOURCE_FIXTURE_STATUSES.BLOCKED_UNTIL_REVIEW,
+            current: Object.freeze([
+              'accepted public risk-context witness metadata',
+              'authored exit-friction pressure',
+            ]),
+            planned: Object.freeze([
+              'Coin Metrics transformed static network/fee/congestion witness',
+              'official exchange/regulatory title/URL metadata for event-specific exit pressure',
+            ]),
+            blocked: Object.freeze([
+              'Coin Metrics remains gated by non-commercial/reward-mode review',
+            ]),
+          }),
+          asOfRule:
+            'May reveal only exit/network/friction evidence knowable at or before the decision cut.',
+          prepareVisual: Object.freeze([
+            'exit bridge or route-back door pulses through fog',
+            'friction marks are hinted, not yet resolved',
+          ]),
+          approveVisual: Object.freeze([
+            'one Bot Attention pip moves into the exit surface',
+            'bridge fog parts and shows friction, queue, fee spark, or route-back risk',
+          ]),
+          revealResult: Object.freeze(['exit path is checked or exit residue is named']),
+          doesNotProve: Object.freeze([
+            'profit can be realized',
+            'network pressure equals exchange liquidity',
+            'future exit conditions',
+          ]),
+          traceText: 'Checked the way back. A bright path forward is not the same as an exit.',
+          runtimeMutation: Object.freeze([
+            'reveal or residualize signal_to_exit',
+            'carry support/event residue',
+            'reduce false-finish risk but do not make finish safe alone',
+          ]),
+        }),
+
+        [MARKET_WORLD_ACTIONS.CHECK_SUPPORT]: Object.freeze({
+          targetLayers: Object.freeze(['price_terrain']),
+          sourceWitnessBasis: Object.freeze({
+            status: SOURCE_FIXTURE_STATUSES.ADOPTED_STATIC_FIXTURE,
+            current: Object.freeze(['Binance Public Data BTCUSDT transformed static fixture']),
+            planned: Object.freeze([]),
+            blocked: Object.freeze([]),
+          }),
+          asOfRule:
+            'May inspect support only from price history visible through the decision cut.',
+          prepareVisual: Object.freeze([
+            'green/stone foundation glows faintly under the Golden Signal',
+            'chart ridge support markers are hinted',
+          ]),
+          approveVisual: Object.freeze([
+            'Bot Attention pip enters the support well',
+            'foundation lights up and witness card may appear',
+          ]),
+          revealResult: Object.freeze([
+            'signal has checked price-shape support or support residue is named',
+          ]),
+          doesNotProve: Object.freeze([
+            'exit safety',
+            'crowd pressure',
+            'future price outcome',
+            'investment advice',
+          ]),
+          traceText:
+            'Checked support from the historic BTCUSDT price shape. Support is not full safety.',
+          runtimeMutation: Object.freeze([
+            'reveal signal_to_support',
+            'preserve exit/crowd/event residue',
+            'enable partial or safer finish path depending on remaining checks',
+          ]),
+        }),
+
+        [MARKET_WORLD_ACTIONS.APPROVE_ENTER]: Object.freeze({
+          targetLayers: Object.freeze(['finish_gate', 'trace_memory_layer']),
+          sourceWitnessBasis: Object.freeze({
+            status: SOURCE_FIXTURE_STATUSES.CURRENT_OR_AUTHORED,
+            current: Object.freeze(['current as-of trace and revealed/residualized relations']),
+            planned: Object.freeze([]),
+            blocked: Object.freeze([]),
+          }),
+          asOfRule:
+            'Commits under the current evidence horizon; cannot inspect future data.',
+          prepareVisual: Object.freeze([
+            'Pocket Bot faces the pending target',
+            'unresolved layers remain visibly attached if unchecked',
+          ]),
+          approveVisual: Object.freeze([
+            'Pocket Bot moves into the target surface',
+            'finish gate receives trace ribbons and residue shadows',
+          ]),
+          revealResult: Object.freeze([
+            'safe, partial, false, or open finish classification',
+            'hindsight card unlocks only after finish',
+          ]),
+          doesNotProve: Object.freeze([
+            'historical profit equals good judgment',
+            'the route was safe if blocking residue remains',
+          ]),
+          traceText:
+            'Committed with this evidence. The trace decides what was known and what remained hidden.',
+          runtimeMutation: Object.freeze([
+            'apply pending move',
+            'spend approved resources',
+            'create trace for accepted move',
+            'derive finish pressure from relation state',
+          ]),
+        }),
+
+        [MARKET_WORLD_ACTIONS.ASK_BOT]: Object.freeze({
+          targetLayers: Object.freeze(['bot_policy_layer']),
+          sourceWitnessBasis: Object.freeze({
+            status: SOURCE_FIXTURE_STATUSES.CURRENT_OR_AUTHORED,
+            current: Object.freeze([
+              'hindsight-free proposal context',
+              'visible relation state',
+              'trace residue and session lessons',
+            ]),
+            planned: Object.freeze([]),
+            blocked: Object.freeze([]),
+          }),
+          asOfRule:
+            'LLM may reason only over current visible/as-of context; it must not receive hidden answers or terminal outcome.',
+          prepareVisual: Object.freeze([
+            'Pocket Bot thinking/proposing state',
+            'no world layer clears yet',
+          ]),
+          approveVisual: Object.freeze(['same as the selected pending action after player approval']),
+          revealResult: Object.freeze(['proposal only']),
+          doesNotProve: Object.freeze([
+            'correct market action',
+            'safe finish',
+            'hidden relation answer',
+          ]),
+          traceText: 'Bot proposed a route. The world changes only if you approve a legal move.',
+          runtimeMutation: Object.freeze([
+            'update pending proposal only',
+            'deterministic rules still decide legality, cost, relation mutation, trace, and finish',
+          ]),
+        }),
+      }),
 
       definitions: Object.freeze({
         approve_enter: Object.freeze({
@@ -385,6 +643,129 @@ export function getGoldenSignalMarketWorldLevel() {
   return getMarketWorldLevelById(GOLDEN_SIGNAL_LEVEL_ID);
 }
 
+function normalizeList(value) {
+  return Array.isArray(value) ? value.filter(Boolean) : [];
+}
+
+function isNonEmptyString(value) {
+  return typeof value === 'string' && value.trim().length > 0;
+}
+
+function validateAsOfTimeWindow(level, errors) {
+  const timeWindow = level.timeWindow ?? {};
+
+  for (const key of [
+    'visibleHistoryStart',
+    'visibleHistoryEnd',
+    'decisionTime',
+    'asOfTime',
+  ]) {
+    if (!isNonEmptyString(timeWindow[key])) {
+      errors.push(`${level.id} timeWindow missing required as-of field: ${key}`);
+    }
+  }
+
+  if (!normalizeList(timeWindow.hindsightUnlocksAfterFinish).length) {
+    errors.push(`${level.id} timeWindow must name hindsight fields locked until finish.`);
+  }
+
+  if (
+    isNonEmptyString(timeWindow.decisionTime) &&
+    isNonEmptyString(timeWindow.asOfTime) &&
+    timeWindow.decisionTime !== timeWindow.asOfTime
+  ) {
+    errors.push(`${level.id} decisionTime and asOfTime must match for Phase 1.`);
+  }
+
+  if (
+    isNonEmptyString(timeWindow.visibleHistoryEnd) &&
+    isNonEmptyString(timeWindow.asOfTime) &&
+    Date.parse(`${timeWindow.visibleHistoryEnd}T23:59:59Z`) > Date.parse(timeWindow.asOfTime)
+  ) {
+    errors.push(`${level.id} visible history cannot extend past asOfTime.`);
+  }
+}
+
+function responseFieldIsPresent(value) {
+  if (Array.isArray(value)) {
+    return value.length > 0;
+  }
+
+  if (value && typeof value === 'object') {
+    return Object.keys(value).length > 0;
+  }
+
+  return isNonEmptyString(value);
+}
+
+function responseCurrentSources(response) {
+  const basis = response?.sourceWitnessBasis ?? {};
+
+  return [
+    ...normalizeList(basis.current),
+    ...normalizeList(basis.adopted),
+  ].join(' ');
+}
+
+function validateActionResponses(level, errors) {
+  const responses = level.actions?.responses ?? {};
+  const requiredActionResponses = [
+    MARKET_WORLD_ACTIONS.ASK_REMAINING_UNKNOWN,
+    MARKET_WORLD_ACTIONS.WIDE_SCAN,
+    MARKET_WORLD_ACTIONS.CHECK_EXIT,
+    MARKET_WORLD_ACTIONS.CHECK_SUPPORT,
+    MARKET_WORLD_ACTIONS.APPROVE_ENTER,
+    MARKET_WORLD_ACTIONS.ASK_BOT,
+  ];
+  const validSourceStatuses = new Set(Object.values(SOURCE_FIXTURE_STATUSES));
+
+  for (const actionId of requiredActionResponses) {
+    const response = responses[actionId];
+
+    if (!response) {
+      errors.push(`${level.id} missing action response contract: ${actionId}`);
+      continue;
+    }
+
+    for (const field of ACTION_RESPONSE_REQUIRED_FIELDS) {
+      if (!responseFieldIsPresent(response[field])) {
+        errors.push(`${level.id} action response ${actionId} missing field: ${field}`);
+      }
+    }
+
+    const sourceStatus = response.sourceWitnessBasis?.status;
+    if (!validSourceStatuses.has(sourceStatus)) {
+      errors.push(`${level.id} action response ${actionId} has invalid source status.`);
+    }
+
+    if (
+      RESTRICTED_CANDIDATE_SOURCE_PATTERN.test(responseCurrentSources(response)) &&
+      sourceStatus !== SOURCE_FIXTURE_STATUSES.ADOPTED_STATIC_FIXTURE
+    ) {
+      errors.push(
+        `${level.id} action response ${actionId} claims unadopted restricted source backing.`
+      );
+    }
+
+    if (
+      [
+        SOURCE_FIXTURE_STATUSES.PLANNED_FIXTURE_REQUIRED,
+        SOURCE_FIXTURE_STATUSES.BLOCKED_UNTIL_REVIEW,
+      ].includes(sourceStatus) &&
+      normalizeList(response.sourceWitnessBasis?.planned).length === 0
+    ) {
+      errors.push(`${level.id} action response ${actionId} lacks planned source gate.`);
+    }
+
+    if (
+      actionId === MARKET_WORLD_ACTIONS.CHECK_SUPPORT &&
+      !responseCurrentSources(response).includes('Binance Public Data BTCUSDT')
+    ) {
+      errors.push(`${level.id} Support Check must stay backed by Binance BTCUSDT.`);
+    }
+  }
+}
+
 export function validateMarketWorldLevel(level) {
   const errors = [];
 
@@ -436,6 +817,8 @@ export function validateMarketWorldLevel(level) {
     errors.push(`${level.id} must withhold hindsight from the proposal engine.`);
   }
 
+  validateAsOfTimeWindow(level, errors);
+
   const validFinishStatuses = new Set(Object.values(FINISH_STATUSES));
   for (const [finishKey, finishRule] of Object.entries(level.finishRules ?? {})) {
     if (!validFinishStatuses.has(finishRule?.status)) {
@@ -460,6 +843,8 @@ export function validateMarketWorldLevel(level) {
   if (!firstSlice.includes(MARKET_WORLD_ACTIONS.CHECK_EXIT)) {
     errors.push(`${level.id} first slice should include Check Exit.`);
   }
+
+  validateActionResponses(level, errors);
 
   return {
     ok: errors.length === 0,

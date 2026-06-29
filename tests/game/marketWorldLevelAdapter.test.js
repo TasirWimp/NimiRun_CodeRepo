@@ -29,6 +29,9 @@ describe('Market World level adapter', () => {
         pair: 'BTCUSDT',
         granularity: '1d',
         transformed: true,
+        visibleHistoryEnd: '2017-12-16',
+        decisionTime: '2017-12-17T00:00:00Z',
+        asOfTime: '2017-12-17T00:00:00Z',
       },
       boundary: {
         liveMarketData: false,
@@ -70,6 +73,14 @@ describe('Market World level adapter', () => {
         'exit friction still unknown',
         'FOMO pressure still unknown',
       ],
+    });
+    expect(seed.actionResponses[MARKET_WORLD_ACTIONS.CHECK_SUPPORT]).toMatchObject({
+      targetLayers: ['price_terrain'],
+      sourceWitnessBasis: {
+        status: 'adopted_static_fixture',
+        current: ['Binance Public Data BTCUSDT transformed static fixture'],
+      },
+      asOfRule: 'May inspect support only from price history visible through the decision cut.',
     });
   });
 
@@ -133,11 +144,18 @@ describe('Market World level adapter', () => {
       liveMarketData: false,
       realTrading: false,
       walletAuthority: false,
+      timeBoundary: {
+        visibleHistoryStart: '2017-12-01',
+        visibleHistoryEnd: '2017-12-16',
+        decisionTime: '2017-12-17T00:00:00Z',
+        asOfTime: '2017-12-17T00:00:00Z',
+      },
       hindsightWithheldFromProposalEngine: true,
     });
     expect(contextText).not.toContain('hindsightCard');
     expect(contextText).not.toContain('patternOutcome');
     expect(contextText).not.toContain('landfallRisk');
+    expect(contextText).not.toContain('2017-12-22');
     expect(contextText).not.toContain('terminal reveal');
     expect(contextText).not.toContain('navigationLineage');
     expect(contextText).not.toContain('sourcePressurePacketId');

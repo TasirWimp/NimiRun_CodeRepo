@@ -1952,7 +1952,13 @@ Acceptance:
 
 PB-POLISH-004 Witness-backed action response layer:
 
-Status: planned.
+Status: first contract foundation implemented. `marketWorldLevels.js` now
+declares Golden Signal `decisionTime` / `asOfTime`, as-of-visible history,
+hindsight locks, and action-response metadata for Ask Hidden, Wide Scan, Check
+Exit, Support Check, Approve Enter, and Ask Bot. Validation rejects missing
+timing, missing response fields, and current-source claims for restricted
+candidate sources before fixtures are adopted. Rendering/action-response polish
+and new GDELT/Wikimedia/Coin Metrics fixtures remain planned.
 
 Goal:
 
@@ -1977,8 +1983,8 @@ action intent
 
 Required data contract:
 
-- Add explicit `decisionTime` / `asOfTime` metadata to the Golden Signal level
-  before source-backed action results ship.
+- Golden Signal level has explicit `decisionTime` / `asOfTime` metadata before
+  source-backed action results ship.
 - Keep the visible opening scoped to the historical evidence available at or
   before the decision cut.
 - Keep post-decision fixture values, peak/reversal outcome, and hindsight-only
@@ -2034,6 +2040,8 @@ Expected files:
 Test plan:
 
 - Golden Signal level exposes explicit `decisionTime` / `asOfTime` metadata.
+  Status: implemented in `src/game/scenarios/marketWorldLevels.js` and covered
+  by `tests/game/marketWorldLevels.test.js`.
 - Proposal context and intro/action UI exclude post-decision price outcome,
   terminal reveal, and hidden relation answers before finish.
 - `Ask Hidden` names hidden categories without spending Bot Attention or

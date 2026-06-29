@@ -297,6 +297,12 @@ function createProposalContext(level, relationStates, arenaSpine) {
       playerSees: normalizeList(level.visibleOpening?.playerSees),
       botSees: normalizeList(level.visibleOpening?.botSees),
     },
+    timeBoundary: {
+      visibleHistoryStart: level.timeWindow?.visibleHistoryStart || null,
+      visibleHistoryEnd: level.timeWindow?.visibleHistoryEnd || null,
+      decisionTime: level.timeWindow?.decisionTime || null,
+      asOfTime: level.timeWindow?.asOfTime || null,
+    },
     hindsightWithheldFromProposalEngine: true,
     botPolicy: {
       activeOldHabits: normalizeList(level.botPolicy?.activeOldHabits),
@@ -372,6 +378,7 @@ export function createMarketWorldRuntimeSeed(level, {
     navigationLineage: clone(level.navigationLineage),
     relationStates,
     arenaSpine,
+    actionResponses: clone(level.actions?.responses),
     proposalPreview: createProposalPreview(level),
     proposalContext: createProposalContext(level, relationStates, arenaSpine),
     hindsightCard: createHindsightCard(level),

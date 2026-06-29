@@ -1145,9 +1145,15 @@ golden_signal_as_of_cut:
     - "2017-12-17 peak-high information"
     - "2017-12-22 reversal/drawdown information"
   implementation_requirement:
-    - "add an explicit decisionTime/asOfTime field before source-backed action data ships"
+    - "explicit decisionTime/asOfTime fields are required before source-backed action data ships"
     - "do not expose fixture fields after the decision cut to proposals or pre-finish UI"
 ```
+
+Current runtime status: Golden Signal now declares `decisionTime`,
+`asOfTime`, visible-history bounds, and hindsight unlock labels in
+`src/game/scenarios/marketWorldLevels.js`. This is the as-of contract
+foundation; source-specific GDELT/Wikimedia/Coin Metrics fixtures are still
+future work.
 
 Every adopted witness used by an action must carry enough timing metadata to
 defend the reveal:
