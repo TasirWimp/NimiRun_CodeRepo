@@ -33,6 +33,7 @@ import {
   getPathEndpoints,
 } from '../game/resourceMapScenario.js';
 import { createMarketSignalScoutScenario } from '../game/scenarios/marketSignalScoutScenario.js';
+import { createGoldenSignalIntroSequence } from '../game/scenarios/goldenSignalIntroSequence.js';
 import { MARKET_WORLD_ACTIONS } from '../game/scenarios/marketWorldLevels.js';
 import { createMarketWorldRenderPlan } from '../game/scenarios/marketWorldRenderPlan.js';
 import { requestRouteProposal } from '../llm/routeProposalClient.js';
@@ -257,6 +258,7 @@ export default class PocketBotWorkshop extends Phaser.Scene {
     this.nodeMarkers = new Map();
     this.attentionSegments = [];
     this.marketWorldOverlayElements = [];
+    this.introOverlayElements = [];
 
     this.drawBackground();
     this.drawHeader();
@@ -265,6 +267,7 @@ export default class PocketBotWorkshop extends Phaser.Scene {
     this.drawBottomPanels();
     this.selectNode(this.mapScenario.proposalPreview.targetNodeId, { redirectProposal: false });
     this.setStatus(this.getDefaultStatus());
+    this.startGoldenSignalIntro();
   }
 
   getNodePosition(node) {
@@ -836,6 +839,261 @@ export default class PocketBotWorkshop extends Phaser.Scene {
     this.proposalCheckText
       ?.setText(evaluation.allowed ? 'Resource check: allowed' : 'Resource check: blocked')
       .setColor(evaluation.allowed ? '#80c84d' : '#ff5a3d');
+  }
+
+  startGoldenSignalIntro() {
+    this.introSequence = createGoldenSignalIntroSequence();
+    this.introBeatIndex = 0;
+    this.renderGoldenSignalIntroBeat();
+  }
+
+  clearGoldenSignalIntroOverlay({ keepTimer = false } = {}) {
+    if (!keepTimer) {
+      this.introTimer?.remove(false);
+      this.introTimer = null;
+    }
+
+    for (const element of this.introOverlayElements || []) {
+      element?.destroy();
+    }
+
+    this.introOverlayElements = [];
+  }
+
+  finishGoldenSignalIntro() {
+    this.clearGoldenSignalIntroOverlay();
+    this.introComplete = true;
+    this.setStatus('Pocket Bot has a proposal. Redirect judgment before approval.');
+  }
+
+  advanceGoldenSignalIntro() {
+    if (!this.introSequence || this.introComplete) {
+      return;
+    }
+
+    if (this.introBeatIndex >= this.introSequence.beats.length - 1) {
+      this.finishGoldenSignalIntro();
+      return;
+    }
+
+    this.introBeatIndex += 1;
+    this.renderGoldenSignalIntroBeat();
+  }
+
+  renderGoldenSignalIntroBeat() {
+    const sequence = this.introSequence;
+    const beat = sequence?.beats?.[this.introBeatIndex];
+
+    if (!sequence || !beat) {
+      return;
+    }
+
+    this.clearGoldenSignalIntroOverlay();
+
+    const depth = 1000;
+    const width = this.scale.width;
+    const height = this.scale.height;
+    const margin = this.layout.isMobile ? 16 : 42;
+    const cardWidth = Math.min(width - margin * 2, this.layout.isMobile ? 440 : 760);
+    const cardHeight = Math.min(height - margin * 2, this.layout.isMobile ? 390 : 430);
+    const cardX = Math.round((width - cardWidth) / 2);
+    const cardY = Math.max(this.layout.isMobile ? 96 : 118, Math.round((height - cardHeight) / 2));
+    const chartHeight = this.layout.isMobile ? 104 : 138;
+    const contentX = cardX + 18;
+    const contentWidth = cardWidth - 36;
+    const beatNumber = this.introBeatIndex + 1;
+
+    const blocker = this.add
+      .rectangle(0, 0, width, height, COLORS.background, 0.76)
+      .setOrigin(0)
+      .setDepth(depth)
+      .setInteractive();
+    const panel = this.add
+      .rectangle(cardX, cardY, cardWidth, cardHeight, COLORS.panel, 0.98)
+      .setOrigin(0)
+      .setStrokeStyle(2, COLORS.panelStroke, 0.92)
+      .setDepth(depth + 1);
+    const title = this.add.text(contentX, cardY + 16, beat.title, {
+      ...createTextStyle({
+        fontSize: this.layout.isMobile ? '17px' : '22px',
+        color: '#f2b33d',
+        fontStyle: '700',
+      }),
+    }).setDepth(depth + 2);
+    const progress = this.add.text(cardX + cardWidth - 88, cardY + 19, `${beatNumber}/4`, {
+      ...createTextStyle({
+        fontSize: this.layout.isMobile ? '12px' : '14px',
+        color: '#48a8ff',
+        fontStyle: '700',
+        align: 'right',
+      }),
+    }).setDepth(depth + 2);
+
+    this.introOverlayElements.push(blocker, panel, title, progress);
+    this.drawIntroPlaceholderChart({
+      x: contentX,
+      y: cardY + (this.layout.isMobile ? 48 : 58),
+      width: contentWidth,
+      height: chartHeight,
+      beat,
+      depth,
+    });
+    this.drawIntroTextBlock({
+      x: contentX,
+      y: cardY + (this.layout.isMobile ? 166 : 210),
+      width: contentWidth,
+      beat,
+      sequence,
+      depth,
+    });
+    this.drawIntroButtons({
+      x: contentX,
+      y: cardY + cardHeight - (this.layout.isMobile ? 48 : 54),
+      width: contentWidth,
+      depth,
+    });
+
+    this.setStatus(`Opening beat ${beatNumber}: ${beat.title}`);
+    this.introTimer = this.time.delayedCall(beat.durationMs, () =>
+      this.advanceGoldenSignalIntro()
+    );
+  }
+
+  drawIntroPlaceholderChart({ x, y, width, height, beat, depth }) {
+    const points = beat.chartPoints || this.introSequence?.beats?.[0]?.chartPoints || [];
+    const graphics = this.add.graphics().setDepth(depth + 2);
+
+    graphics.fillStyle(0x071018, 0.96);
+    graphics.fillRect(x, y, width, height);
+    graphics.lineStyle(1, COLORS.panelDimStroke, 0.72);
+    graphics.strokeRect(x, y, width, height);
+
+    for (let index = 1; index < 4; index += 1) {
+      const lineY = y + (height / 4) * index;
+      graphics.lineStyle(1, COLORS.panelDimStroke, 0.24);
+      graphics.lineBetween(x + 8, lineY, x + width - 8, lineY);
+    }
+
+    if (points.length > 1) {
+      const values = points.map((point) => point.closeIndex);
+      const min = Math.min(...values);
+      const max = Math.max(...values);
+      const spread = Math.max(1, max - min);
+      const chartCoords = points.map((point, index) => ({
+        x: x + 16 + (index / (points.length - 1)) * (width - 32),
+        y: y + height - 16 - ((point.closeIndex - min) / spread) * (height - 32),
+      }));
+
+      graphics.lineStyle(4, COLORS.nimiqGold, 0.92);
+      chartCoords.forEach((point, index) => {
+        if (index === 0) {
+          return;
+        }
+
+        const previous = chartCoords[index - 1];
+        graphics.lineBetween(previous.x, previous.y, point.x, point.y);
+      });
+      for (const point of chartCoords) {
+        graphics.fillStyle(COLORS.nimiqGold, 0.95);
+        graphics.fillCircle(point.x, point.y, 4);
+      }
+
+      const lastPoint = chartCoords.at(-1);
+      graphics.fillStyle(COLORS.nimiqGold, beat.id === 'price_action_forms' ? 0.28 : 0.16);
+      graphics.fillCircle(lastPoint.x, lastPoint.y, this.layout.isMobile ? 30 : 42);
+    }
+
+    const decisionX = x + width - 18;
+    graphics.lineStyle(2, COLORS.warningRed, 0.72);
+    graphics.lineBetween(decisionX, y + 8, decisionX, y + height - 8);
+
+    const asOfText = this.add.text(x + 12, y + 10, 'as-of: Dec 16, 2017', {
+      ...createTextStyle({
+        fontSize: this.layout.isMobile ? '9px' : '12px',
+        color: '#aab4bd',
+        fontStyle: '700',
+      }),
+    }).setDepth(depth + 3);
+
+    const layerText = this.add.text(x + 12, y + height - 22, beat.layer, {
+      ...createTextStyle({
+        fontSize: this.layout.isMobile ? '9px' : '12px',
+        color: '#48a8ff',
+      }),
+    }).setDepth(depth + 3);
+
+    this.introOverlayElements.push(graphics, asOfText, layerText);
+  }
+
+  drawIntroTextBlock({ x, y, width, beat, sequence, depth }) {
+    const lines = this.add.text(x, y, beat.lines.join('\n'), {
+      ...createTextStyle({
+        fontSize: this.layout.isMobile ? '12px' : '15px',
+        color: '#f3e4c2',
+      }),
+      lineSpacing: this.layout.isMobile ? 4 : 6,
+      wordWrap: { width },
+    }).setDepth(depth + 2);
+    this.introOverlayElements.push(lines);
+
+    const chips = beat.hiddenLayers || beat.enabledControls || beat.visualCues || [];
+    const chipY = y + (this.layout.isMobile ? 82 : 92);
+    let offsetX = 0;
+
+    for (const chip of chips.slice(0, 5)) {
+      const chipWidth = Math.min(126, 34 + chip.length * 7);
+      if (offsetX + chipWidth > width) {
+        break;
+      }
+      const chipRect = this.add
+        .rectangle(x + offsetX, chipY, chipWidth, 22, COLORS.panelSoft, 0.94)
+        .setOrigin(0)
+        .setStrokeStyle(1, COLORS.panelDimStroke, 0.82)
+        .setDepth(depth + 2);
+      const chipText = this.add.text(x + offsetX + chipWidth / 2, chipY + 11, chip, {
+        ...createTextStyle({
+          fontSize: this.layout.isMobile ? '9px' : '11px',
+          color: '#d6c08f',
+          fontStyle: '700',
+        }),
+      }).setOrigin(0.5).setDepth(depth + 3);
+      this.introOverlayElements.push(chipRect, chipText);
+      offsetX += chipWidth + 8;
+    }
+
+    const gate = this.add.text(
+      x,
+      chipY + 34,
+      sequence.proposalHandoff.approveGate,
+      {
+        ...createTextStyle({
+          fontSize: this.layout.isMobile ? '10px' : '12px',
+          color: '#80c84d',
+          fontStyle: '700',
+        }),
+        wordWrap: { width },
+      }
+    ).setDepth(depth + 2);
+    this.introOverlayElements.push(gate);
+  }
+
+  drawIntroButtons({ x, y, width, depth }) {
+    const skipButton = createGuidanceButton(this, {
+      x,
+      y,
+      width: this.layout.isMobile ? 74 : 86,
+      label: 'Skip',
+      onClick: () => this.finishGoldenSignalIntro(),
+    }).setDepth(depth + 4);
+    const continueButton = createGuidanceButton(this, {
+      x: x + width - (this.layout.isMobile ? 94 : 112),
+      y,
+      width: this.layout.isMobile ? 94 : 112,
+      label: this.introBeatIndex >= this.introSequence.beats.length - 1 ? 'Start' : 'Continue',
+      onClick: () => this.advanceGoldenSignalIntro(),
+    }).setDepth(depth + 4);
+
+    this.introOverlayElements.push(skipButton, continueButton);
   }
 
   getPathStyle(path) {

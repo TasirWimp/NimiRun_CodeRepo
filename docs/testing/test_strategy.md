@@ -916,6 +916,12 @@ Then perform one browser/manual smoke in a phone-sized viewport. Hosted Vercel
 and Nimiq Pay checks are required again only before marking the polished
 submission slice ready.
 
+Current coverage: `tests/game/goldenSignalIntroSequence.test.js` verifies the
+four-beat deterministic sequence, as-of timing, pending proposal handoff, and
+hindsight-free/LLM-free boundary. The Phaser scene currently uses simple
+placeholder rendering for the intro; final visual polish and hosted/Nimiq Pay
+media checks remain future PB-POLISH work.
+
 ## PB-POLISH-004 Checks
 
 Witness-backed action response tests must verify:

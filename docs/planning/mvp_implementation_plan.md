@@ -1861,7 +1861,13 @@ card, and recorded `Trace 1: Open run` without any wallet authority prompt.
 
 PB-POLISH-003 Golden Signal opening cinematic:
 
-Status: planned.
+Status: simple placeholder implementation complete. The pure intro sequence is
+implemented in `src/game/scenarios/goldenSignalIntroSequence.js` and covered by
+`tests/game/goldenSignalIntroSequence.test.js`. `PocketBotWorkshop` now renders
+a skippable four-beat placeholder overlay with a stylized chart line,
+as-of marker, source/layer cues, proposal handoff, and Continue/Skip controls.
+Final artwork, animation polish, and hosted/Nimiq Pay media verification remain
+future PB-POLISH work.
 
 Goal:
 
@@ -1887,18 +1893,16 @@ Player-visible sequence:
 
 Implementation plan:
 
-- Add a pure intro-sequence contract, likely
-  `src/game/scenarios/goldenSignalIntroSequence.js`, derived from the Golden
-  Signal market-world level and fixture metadata rather than hardcoded scene
-  state.
-- Keep the intro deterministic and local; do not call the LLM, live market APIs,
-  wallet providers, or Nimiq Pay methods.
-- Include only player-visible opening information and the bot's price-layer
-  analysis. The intro must not reveal terminal hindsight, hidden relation
-  answers, exact future outcome, or post-finish witness details.
-- Add a small Phaser intro layer or state inside `PocketBotWorkshop` that plays
-  once at level start, is skippable, and hands off to the existing arena state
-  without mutating resources.
+- Pure intro-sequence contract is implemented and derived from the Golden Signal
+  market-world level and fixture metadata rather than unrelated scene state.
+- The intro is deterministic and local; it does not call the LLM, live market
+  APIs, wallet providers, or Nimiq Pay methods.
+- It includes only player-visible opening information and the bot's price-layer
+  analysis. It must not reveal terminal hindsight, hidden relation answers,
+  exact future outcome, or post-finish witness details.
+- A small Phaser intro layer inside `PocketBotWorkshop` plays once at level
+  start, is skippable, and hands off to the existing arena state without
+  mutating resources.
 - Use the existing render-plan / affordance data so the cinematic and the
   playable arena agree about signal, support, exit, crowd, event, trace, and
   finish surfaces.
