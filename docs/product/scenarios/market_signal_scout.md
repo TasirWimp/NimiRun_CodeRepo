@@ -1499,6 +1499,87 @@ Implementation stance:
 - keep CRPM and market-world design terms inside docs/tests, not first-contact
   UI.
 
+## Golden Signal As-Of Action Contract
+
+Golden Signal actions should be implemented as **as-of historical judgments**.
+The player is not solving the chart with full hindsight. The player stands at a
+decision cut, sees what Pocket Bot could have known then, spends attention on
+bounded checks, and receives a trace that says what was revealed and what still
+remains residue.
+
+Current level cut:
+
+```yaml
+golden_signal_time_cut:
+  historical_fixture: "Binance BTCUSDT 1d transformed static window"
+  fixture_range: "2017-12-01 through 2017-12-24"
+  visible_opening_price_points: "2017-12-01 through 2017-12-16"
+  decision_cut_target: "after the 2017-12-16 daily close, before the 2017-12-17 peak / later reversal outcome"
+  pre_finish_rule: "actions may reveal only evidence available at or before the decision cut"
+  post_finish_rule: "hindsight card may reveal later peak/reversal context after finish"
+  implementation_gap: "runtime fixture needs explicit decisionTime/asOfTime before source-backed action results ship"
+```
+
+Action contract:
+
+```yaml
+golden_signal_actions:
+  ask_hidden:
+    target_layer: "hidden relation categories"
+    evidence_basis: "authored level relation metadata, not a new market-data witness"
+    player_result: "support, exit, crowd/event unknowns pulse as silhouettes"
+    resource_result: "no Bot Attention spend"
+    trace_residue: "named fog; no answer proven"
+    runtime_result: "residualize named unknowns without revealing answers"
+
+  wide_scan:
+    target_layer: "crowd psychology / historical event weather"
+    evidence_basis:
+      current: "authored crowd/event pressure plus accepted headline witnesses"
+      planned: "GDELT metadata and Wikimedia Pageviews transformed static fixtures"
+    player_result: "scan arc widens; crowd/event weather wakes up"
+    resource_result: "spend Bot Attention only after Approve"
+    trace_residue: "attention pressure is not proof; support and exit remain residue"
+    runtime_result: "reveal or residualize signal_to_crowd"
+    source_gate: "do not claim GDELT/Wikimedia backing until fixture timing, attribution, and transformation are recorded"
+
+  check_exit:
+    target_layer: "execution / exit world"
+    evidence_basis:
+      current: "accepted public risk-context witness metadata plus authored exit pressure"
+      planned: "Coin Metrics transformed static network/fee/congestion witness if licensing gate is cleared"
+    player_result: "exit bridge/fog reveals friction, queue, fee spark, or route-back risk"
+    resource_result: "spend Bot Attention only after Approve"
+    trace_residue: "path forward is not the same as path back"
+    runtime_result: "reveal or residualize signal_to_exit"
+    source_gate: "Coin Metrics remains blocked for reward-bearing or commercial ambiguity until reviewed or permissioned"
+
+  support_check:
+    target_layer: "price terrain"
+    evidence_basis: "Binance Public Data BTCUSDT transformed static fixture"
+    player_result: "green/stone support foundation lights under the Golden Signal"
+    resource_result: "spend Bot Attention only after Approve"
+    trace_residue: "price-shape support is not exit safety or future outcome"
+    runtime_result: "reveal signal_to_support and preserve exit/crowd/event residue"
+
+  approve_enter:
+    target_layer: "finish gate / trace memory"
+    evidence_basis: "current as-of trace and revealed/residualized relations"
+    player_result: "Pocket Bot commits; unresolved layers cast shadows if unchecked"
+    resource_result: "apply the pending move cost only after approval"
+    trace_residue: "records what was known at commit time and what stayed hidden"
+    runtime_result: "create trace, apply relation mutation, classify safe/partial/false/open"
+    hindsight_gate: "post-decision fixture outcome unlocks only after finish"
+
+  ask_bot:
+    target_layer: "bot policy layer"
+    evidence_basis: "hindsight-free proposal context, visible relation state, traces, and session lessons"
+    player_result: "Pocket Bot thinks and proposes; no world surface clears"
+    resource_result: "no reveal/spend until the player approves a legal move"
+    trace_residue: "proposal is advice, not authority"
+    runtime_result: "update pending proposal only; deterministic rules keep authority"
+```
+
 The intended player lesson is not "find the winning market signal." It is:
 
 ```text

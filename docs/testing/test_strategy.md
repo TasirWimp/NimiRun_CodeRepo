@@ -877,3 +877,91 @@ June 9, 2026 hosted check result:
 - browser bundle scan found no `OPENAI_API_KEY`, `Bearer`, or `api.openai.com`;
   raw `sk-` substrings were checked and came from strings such as `ask-user`,
   `ask-bot`, and scenario text, not a secret.
+
+## PB-POLISH-003 Checks
+
+Golden Signal opening cinematic tests must verify:
+
+- a pure intro-sequence helper returns the four required beats in order:
+  price action forms, Pocket Bot detects, bot analysis concludes, pending
+  proposal handoff,
+- the sequence is derived from Golden Signal level/fixture metadata where
+  practical instead of duplicating an unrelated hardcoded story,
+- the intro-visible proposal matches the normal Golden Signal opening proposal
+  after the cinematic completes or is skipped,
+- completing or skipping the intro does not spend Bot Attention, create a trace,
+  mutate relation state, reveal hidden relation answers, or change finish
+  judgment,
+- intro copy contains no CRPM jargon, no investment advice, no exchange/wallet
+  authority, no live market implication, and no terminal hindsight,
+- the cinematic does not call the LLM relay, live market APIs, Nimiq Pay
+  provider methods, wallet/sign/send methods, checkout, top-up, or payment
+  methods,
+- phone portrait layout keeps skip/continue, proposal text, and first arena
+  controls readable without overlap,
+- browser/manual smoke still reaches:
+  `Ask Hidden -> Wide Scan -> Approve -> Trace`,
+  `Support Check -> Approve -> Historic Witness -> Trace Archive`,
+  `Approve default -> false finish`.
+
+For source changes in this slice, run:
+
+```text
+npm run check:no-secrets
+npm run test
+npm run build
+```
+
+Then perform one browser/manual smoke in a phone-sized viewport. Hosted Vercel
+and Nimiq Pay checks are required again only before marking the polished
+submission slice ready.
+
+## PB-POLISH-004 Checks
+
+Witness-backed action response tests must verify:
+
+- Golden Signal exposes explicit `decisionTime` / `asOfTime` metadata before
+  source-backed action results are enabled,
+- visible opening, intro, action UI, proposal context, and trace pre-finish
+  fields exclude post-decision price data, terminal reveal, hidden relation
+  answers, and hindsight-only witness fields,
+- every market-data action declares target layer, source witness basis, as-of
+  rule, reveal result, `doesNotProve` limits, trace text, and runtime mutation,
+- `Ask Hidden` names support, exit, crowd/event unknowns without spending Bot
+  Attention or claiming a market-data witness answer,
+- `Wide Scan` cannot claim GDELT or Wikimedia Pageviews backing unless a static
+  fixture records source URLs, license/terms evidence, query, fields, covered
+  dates, retrieval date, transformation method, and residue,
+- `Check Exit` cannot claim Coin Metrics backing unless the non-commercial /
+  reward-mode licensing gate has been reviewed or separate permission is
+  recorded,
+- `Support Check` uses only Binance BTCUSDT transformed fixture evidence
+  available through the decision cut,
+- approved action traces state both what was revealed and what it does not
+  prove,
+- visual response remains derived from runtime relation state and never becomes
+  the authority for resource spend, relation mutation, trace creation, or finish
+  classification,
+- `Ask Bot` sees only hindsight-free context and updates pending proposal only.
+
+Manual/browser checks for this slice:
+
+- `Ask Hidden` pulses hidden layers without spend,
+- `Wide Scan -> Approve` spends Bot Attention and reveals crowd/event pressure
+  while support and exit remain residue,
+- `Check Exit -> Approve` spends Bot Attention and reveals exit/friction
+  residue without claiming safe finish,
+- `Support Check -> Approve` spends Bot Attention and shows the price-terrain
+  witness path,
+- `Approve default` can still produce false/partial finish when blocking residue
+  remains,
+- phone portrait layout keeps action result, witness card, and trace controls
+  readable without overlap.
+
+For source changes in this slice, run:
+
+```text
+npm run check:no-secrets
+npm run test
+npm run build
+```

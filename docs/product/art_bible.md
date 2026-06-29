@@ -192,6 +192,71 @@ Required first:
 
 UI art should provide frames and icons only. Runtime text stays in code.
 
+### Opening Cinematic Assets
+
+The Golden Signal opening cinematic should use simple runtime animation before
+final art polish. It needs to establish the bot's default perception:
+
+- a stylized BTCUSDT price line or candle ridge that grows into a gold signal,
+- a bot detection pose with Bot Attention pips waking up,
+- faint support, exit, crowd, and event silhouettes behind fog,
+- a proposal-card formation effect,
+- a clear pause / handoff state where player controls appear.
+
+The chart surface should feel like a fictional market witness becoming a
+storybook arena. It should not look like a real exchange terminal, order form,
+portfolio screen, wallet approval, or investment-advice dashboard.
+
+Useful first-pass effects:
+
+- price-line draw,
+- signal glow bloom,
+- bot scan pulse,
+- fogged-layer parallax,
+- proposal card materialize,
+- handoff pulse around the available controls.
+
+### Action Response Visual Grammar
+
+Gameplay actions should use compact micro-beats rather than full cutscenes:
+
+```text
+intent highlight
+  -> cost / no-cost state
+  -> approval spend when needed
+  -> world-layer response
+  -> witness card / trace ribbon
+```
+
+Required visual responses:
+
+- `Ask Hidden`: hidden support, exit, crowd, and event silhouettes pulse under
+  fog; no Bot Attention pip moves.
+- `Wide Scan`: a scan arc widens from the Golden Signal; purple/red crowd
+  pressure and event weather wake up after approval; support and exit stay
+  fogged if unchecked.
+- `Check Exit`: exit bridge, door, or route-back surface pushes through fog;
+  approved spend reveals friction marks such as queue lights, broken planks,
+  fee sparks, or congestion haze.
+- `Support Check`: green/stone foundation lights beneath the signal; chart
+  support markers or a support well become stable after approval.
+- `Approve Enter`: Pocket Bot moves into the selected target; unresolved layers
+  cast residue shadows into the finish gate when the route is premature.
+- `Ask Bot`: Pocket Bot enters a thinking/proposing pose; no world surface
+  clears until a legal proposal is approved.
+
+Witness cards should be compact and source-scoped:
+
+```text
+Witness revealed
+Layer: Price terrain / Crowd weather / Exit route
+Shows: ...
+Does not show: ...
+```
+
+Do not show raw tables as the primary response. Market data should become
+terrain, weather, crowd pressure, exit friction, and trace marks.
+
 ### Effects
 
 Required first:

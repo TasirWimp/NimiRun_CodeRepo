@@ -125,6 +125,112 @@ market_arena:
     description: "record of proposal, player choice, reveal, cost, still-unknowns, and repair scope"
 ```
 
+### World-Layer Witness Sources
+
+Each market-world layer should have a witness source class before it becomes a
+runtime fixture. The source class licenses the *kind of pressure* the layer may
+show; it does not license trading claims, prediction claims, or broad raw-data
+redistribution.
+
+```yaml
+world_layer_witness_sources:
+  price_terrain:
+    primary_source: "Binance Public Data BTCUSDT"
+    license_or_terms: "MIT per binance/binance-public-data README"
+    use_status: "adopted for transformed static Golden Signal fixture"
+    may_support:
+      - chart surface
+      - price-shape clue
+      - post-finish hindsight comparison
+    residue:
+      - "Binance venue data, not global Bitcoin index"
+      - "BTCUSDT pair only"
+      - "not live trading data"
+
+  historical_event_weather:
+    adopted_sources:
+      - "Cboe/CME/CFTC public announcement titles and URLs"
+    candidate_source: "GDELT Project metadata"
+    license_or_terms: "GDELT database is described by GDELT as free and open"
+    use_status: "adoptable as transformed static metadata only"
+    may_support:
+      - event volume around a window
+      - media/weather pressure
+      - source URL/title witness prompts
+    residue:
+      - "media-index witness, not source truth"
+      - "do not copy article bodies or images"
+      - "record exact query, fields, date range, and retrieval date"
+
+  crowd_psychology_field:
+    candidate_sources:
+      - "Wikimedia Pageviews"
+      - "GDELT volume/tone/themes"
+    license_or_terms:
+      wikimedia_pageviews: "CC0 dedication for Wikimedia Analytics datasets"
+      gdelt: "free/open database statement from GDELT data page"
+    use_status: "adoptable as transformed static attention/weather metadata"
+    may_support:
+      - public attention pulse
+      - FOMO/crowd-pressure clue
+      - contrast between attention and support/exit evidence
+    residue:
+      - "pageviews are attention, not sentiment"
+      - "GDELT tone/themes are media signals, not player psychology diagnosis"
+      - "not proof of market direction"
+
+  execution_exit_world:
+    candidate_sources:
+      - "Coin Metrics Community Data / Community API"
+      - "official exchange/regulator announcements when event-specific"
+    license_or_terms:
+      coin_metrics: "Creative Commons / free non-commercial Community API terms"
+      official_announcements: "use only public title/URL/source metadata unless terms permit more"
+    use_status: "candidate; Coin Metrics needs non-commercial boundary or separate review"
+    may_support:
+      - network congestion clue
+      - fee-pressure clue
+      - exit route friction
+    residue:
+      - "network metrics are not exchange liquidity"
+      - "non-commercial restriction blocks reward-bearing or monetized use without review"
+      - "record metric ids, query window, transformation, and attribution"
+
+  bot_policy_layer:
+    source: "project-authored Pocket Bot habit model"
+    license_or_terms: "internal repo content under project license"
+    use_status: "adopted"
+    may_support:
+      - old habit: bright signal looks promising, act quickly
+      - repair lesson after trace
+
+  narrator_relation_layer:
+    source: "CRPM-derived design discipline, translated into player-facing game language"
+    license_or_terms: "local design source; attributed in source register"
+    use_status: "adopted as design discipline, not player UI terminology"
+    may_support:
+      - hidden relation reading
+      - residue/re-entry discipline
+      - finish classification boundaries
+
+  trace_memory_layer:
+    source: "project-authored runtime and trace-card rules"
+    license_or_terms: "internal repo content under project license"
+    use_status: "adopted"
+    may_support:
+      - action/cost/reveal/residue record
+      - bot lesson candidate
+```
+
+Current practical cut:
+
+```text
+Use Binance for price terrain, official announcement titles for the first
+event gate, and treat GDELT + Wikimedia as the next best immersion sources for
+event/crowd weather. Treat Coin Metrics as useful for exit/network pressure,
+but keep it behind a non-commercial/reward-mode licensing gate until reviewed.
+```
+
 The player should experience the arena as drama:
 
 ```text
@@ -477,6 +583,85 @@ false/safe finish gate state
 
 Each asset should have at least one mapped relation status or action effect
 before it is polished.
+
+### Golden Signal Opening Cinematic Contract
+
+The first Golden Signal view should begin with Pocket Bot's default trading-bot
+perception, not with a static control panel. The cinematic is a deterministic
+opening beat that makes the bot's inherited habit visible and then pauses before
+the habit executes.
+
+```text
+price action forms
+  -> Pocket Bot detects bright signal
+  -> Pocket Bot analyzes price-visible layer
+  -> Pocket Bot proposes enter
+  -> player receives control before execution
+```
+
+The cinematic should show only the bot's opening perception:
+
+```yaml
+opening_cinematic:
+  beat_1_price_action_forms:
+    player_sees:
+      - stylized BTCUSDT chart, line, or candle ridge
+      - price motion brightening into the Golden Signal
+    source_basis:
+      - transformed Golden Signal Binance BTCUSDT fixture
+    must_not_show:
+      - exchange order form
+      - live market terminal
+      - real buy/sell affordance
+
+  beat_2_bot_detects_signal:
+    player_sees:
+      - Pocket Bot notices the glow
+      - Bot Attention pips wake up
+      - price layer is emphasized
+    bot_reads:
+      - momentum rising
+      - strong signal
+      - volatility active
+    still_hidden:
+      - support depth
+      - exit path
+      - crowd pressure
+      - event pressure
+
+  beat_3_bot_forms_proposal:
+    deterministic_proposal:
+      action: "Enter the Golden Signal"
+      cost_preview: "Bot Attention"
+      reason: "Momentum looks strong."
+      still_hidden:
+        - support
+        - exit
+        - crowd pressure
+    authority_boundary:
+      - proposal only
+      - no Bot Attention spend yet
+      - no trace yet
+      - no hidden relation answer revealed
+
+  beat_4_handoff_to_player:
+    controls_enabled:
+      - Approve
+      - Ask Hidden
+      - Wide Scan
+      - Check Exit
+      - Support Check
+    runtime_requirement:
+      - pending proposal equals normal Golden Signal opening proposal
+      - resources unchanged
+      - relation state unchanged
+      - finish state unchanged
+```
+
+This cinematic should be short, skippable, and phone-readable. It belongs to
+first-contact immersion and PB-POLISH, not to core market-world authority. The
+domain runtime still owns proposal legality, resource spend, relation mutation,
+trace creation, and finish judgment.
 
 ## Historical Window To World Pipeline
 
@@ -936,6 +1121,252 @@ action_effect:
     false_finish_risk: down
     partial_finish_available: true
     safe_finish_possible: unchanged
+```
+
+## As-Of Time And Action Response Contract
+
+Market actions must be evaluated as historical decision-time judgments, not as
+hindsight puzzles. Each level needs an explicit **as-of cut**:
+
+```text
+The player stands at market time T.
+Pocket Bot may inspect only evidence that was available at or before T.
+Everything after T stays sealed until finish / hindsight reveal.
+```
+
+Golden Signal practical cut:
+
+```yaml
+golden_signal_as_of_cut:
+  source_window: "2017-12-01 through 2017-12-24 Binance BTCUSDT fixture"
+  visible_price_history: "2017-12-01 through 2017-12-16"
+  decision_cut_target: "after the 2017-12-16 daily close, before the later peak/reversal outcome"
+  hindsight_locked_until_finish:
+    - "2017-12-17 peak-high information"
+    - "2017-12-22 reversal/drawdown information"
+  implementation_requirement:
+    - "add an explicit decisionTime/asOfTime field before source-backed action data ships"
+    - "do not expose fixture fields after the decision cut to proposals or pre-finish UI"
+```
+
+Every adopted witness used by an action must carry enough timing metadata to
+defend the reveal:
+
+```yaml
+action_witness_time_fields:
+  observed_at: "when the underlying event/metric happened"
+  published_at: "when a historical observer could have known it"
+  available_to_player_at: "when the game allows the action to reveal it"
+  source_lag_note: "daily candle close, pageview aggregation delay, media-index delay, network-metric lag, etc."
+```
+
+Before finish:
+
+```text
+actions reveal only as-of evidence
+```
+
+After finish:
+
+```text
+hindsight cards may reveal what happened after the decision cut
+```
+
+### Golden Signal Action Response Table
+
+Each action response should follow the same player-visible rhythm:
+
+```text
+intent selected
+  -> target world layer highlights
+  -> cost / no-cost state is clear
+  -> approval commits spend when required
+  -> witness-backed layer responds
+  -> trace records reveal and residue
+```
+
+```yaml
+golden_signal_action_responses:
+  ask_hidden:
+    player_label: "Ask Hidden"
+    target_layer:
+      - narrator_relation_layer
+      - trace_memory_layer
+    source_witness_basis:
+      - "authored level relation metadata"
+      - "no new market-data witness is consumed"
+    as_of_rule: "names categories that are unknown at the decision cut; does not reveal answers"
+    cost_policy: "no Bot Attention spend"
+    prepare_visual:
+      - "support, exit, crowd, and event silhouettes pulse behind fog"
+      - "Golden Signal glow remains visible but incomplete"
+    approve_visual:
+      - "no approval gate required for Phase 1 no-cost version"
+    reveal_result:
+      - "support hidden"
+      - "exit hidden"
+      - "crowd/event pressure hidden or only hinted"
+    does_not_prove:
+      - "whether support exists"
+      - "whether exit is safe"
+      - "whether crowd pressure is harmful"
+    trace_text: "Named the fog. No answer was proven yet."
+    runtime_mutation:
+      - "residualize named unknowns"
+      - "do not spend Bot Attention"
+      - "do not create a normal spent-action trace unless explicitly designed as a light note"
+
+  wide_scan:
+    player_label: "Wide Scan"
+    target_layer:
+      - crowd_psychology_field
+      - historical_event_weather
+    source_witness_basis:
+      current_phase:
+        - "authored crowd/event pressure from Golden Signal level"
+        - "existing official headline witnesses where already accepted"
+      planned_source_backing:
+        - "GDELT transformed static media/event metadata"
+        - "Wikimedia Pageviews transformed static attention metadata"
+    as_of_rule: "may reveal only media/attention pressure available at or before decision cut"
+    cost_policy: "preview cost, spend Bot Attention only after Approve"
+    prepare_visual:
+      - "scan arc widens from signal to crowd/event surfaces"
+      - "purple/red crowd lights and event wind remain semi-fogged"
+    approve_visual:
+      - "one Bot Attention pip travels into the scan arc"
+      - "crowd/event weather wakes up"
+    reveal_result:
+      - "attention or media pressure is amplifying the signal"
+      - "support and exit remain unresolved unless separately checked"
+    does_not_prove:
+      - "crowd is correct"
+      - "media attention means future price direction"
+      - "support depth"
+      - "exit safety"
+    trace_text: "Wide Scan found pressure around the signal. Attention is not proof."
+    runtime_mutation:
+      - "reveal or residualize signal_to_crowd"
+      - "carry support/exit residue"
+      - "lower false-finish risk but keep safe finish unavailable"
+    implementation_gate:
+      - "do not claim GDELT/Wikimedia backing until a static fixture with timing and attribution metadata exists"
+
+  check_exit:
+    player_label: "Check Exit"
+    target_layer:
+      - execution_exit_world
+    source_witness_basis:
+      current_phase:
+        - "accepted CFTC/public risk-context witness metadata where applicable"
+        - "authored exit-friction pressure"
+      planned_source_backing:
+        - "Coin Metrics transformed static network/fee/congestion witness, only if licensing gate is cleared"
+        - "official exchange/regulatory title/URL metadata for event-specific exit pressure"
+    as_of_rule: "may reveal only exit/network/friction evidence knowable at or before decision cut"
+    cost_policy: "preview cost, spend Bot Attention only after Approve"
+    prepare_visual:
+      - "exit bridge or route-back door pulses through fog"
+      - "friction marks are hinted, not yet resolved"
+    approve_visual:
+      - "one Bot Attention pip moves into the exit surface"
+      - "bridge fog parts and shows friction, queue, fee spark, or route-back risk"
+    reveal_result:
+      - "exit path is checked or exit residue is named"
+    does_not_prove:
+      - "profit can be realized"
+      - "network pressure equals exchange liquidity"
+      - "future exit conditions"
+    trace_text: "Checked the way back. A bright path forward is not the same as an exit."
+    runtime_mutation:
+      - "reveal or residualize signal_to_exit"
+      - "carry support/event residue"
+      - "reduce false-finish risk but do not make finish safe alone"
+    implementation_gate:
+      - "Coin Metrics data stays blocked for reward-bearing or ambiguous commercial use until reviewed or separately permitted"
+
+  support_check:
+    player_label: "Support Check"
+    target_layer:
+      - price_terrain
+    source_witness_basis:
+      - "Binance Public Data BTCUSDT transformed static fixture"
+    as_of_rule: "may inspect support only from price history visible through the decision cut"
+    cost_policy: "preview cost, spend Bot Attention only after Approve"
+    prepare_visual:
+      - "green/stone foundation glows faintly under the Golden Signal"
+      - "chart ridge support markers are hinted"
+    approve_visual:
+      - "Bot Attention pip enters the support well"
+      - "foundation lights up and witness card may appear"
+    reveal_result:
+      - "signal has checked price-shape support or support residue is named"
+    does_not_prove:
+      - "exit safety"
+      - "crowd pressure"
+      - "future price outcome"
+      - "investment advice"
+    trace_text: "Checked support from the historic BTCUSDT price shape. Support is not full safety."
+    runtime_mutation:
+      - "reveal signal_to_support"
+      - "preserve exit/crowd/event residue"
+      - "enable partial or safer finish path, depending on remaining checks"
+
+  approve_enter:
+    player_label: "Approve"
+    target_layer:
+      - finish_gate
+      - trace_memory_layer
+    source_witness_basis:
+      - "current as-of trace and revealed/residualized relations"
+      - "post-decision fixture data only after finish for hindsight card"
+    as_of_rule: "commits under the current evidence horizon; cannot inspect future data"
+    cost_policy: "commit selected pending move; cost depends on pending action"
+    prepare_visual:
+      - "Pocket Bot faces the pending target"
+      - "unresolved layers remain visibly attached if unchecked"
+    approve_visual:
+      - "Pocket Bot moves into the target surface"
+      - "spent Bot Attention animates only for costed moves"
+      - "finish gate receives trace ribbons and residue shadows"
+    reveal_result:
+      - "safe, partial, false, or open finish classification"
+      - "hindsight card unlocks only after finish"
+    does_not_prove:
+      - "historical profit equals good judgment"
+      - "the route was safe if blocking residue remains"
+    trace_text: "Committed with this evidence. The trace decides what was known and what remained hidden."
+    runtime_mutation:
+      - "apply pending move"
+      - "spend approved resources"
+      - "create trace for accepted move"
+      - "derive finish pressure from relation state"
+
+  ask_bot:
+    player_label: "Ask Bot"
+    target_layer:
+      - bot_policy_layer
+    source_witness_basis:
+      - "hindsight-free proposal context"
+      - "visible relation state"
+      - "trace residue and session lessons"
+    as_of_rule: "LLM may reason only over current visible/as-of context; it must not receive hidden answers or terminal outcome"
+    cost_policy: "no game-world reveal or resource spend until a legal proposal is approved"
+    prepare_visual:
+      - "Pocket Bot thinking/proposing state"
+      - "no world layer clears yet"
+    approve_visual:
+      - "same as the selected pending action after player approval"
+    reveal_result:
+      - "proposal only"
+    does_not_prove:
+      - "correct market action"
+      - "safe finish"
+      - "hidden relation answer"
+    trace_text: "Bot proposed a route. The world changes only if you approve a legal move."
+    runtime_mutation:
+      - "update pending proposal only"
+      - "deterministic rules still decide legality, cost, relation mutation, trace, and finish"
 ```
 
 ## Narrator Source-Ocean Map

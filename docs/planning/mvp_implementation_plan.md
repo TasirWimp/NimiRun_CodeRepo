@@ -215,9 +215,10 @@ Golden Signal proof of concept. PB-014 and PB-015 now extend that proof of
 concept with market-world runtime state, relation-derived finish judgment,
 player-facing finish / hindsight cards, phone-readable trace polish, and a
 functional runtime-to-render affordance layer. The current active lane is
-**PB-POLISH**: rerun local, hosted, and Nimiq Pay regressions after the PB-015
-visual-surface change, tune phone-portrait readability, and prepare final
-screenshots/demo media.
+**PB-POLISH**: add the Golden Signal opening cinematic / first-contact
+immersion path and witness-backed action response layer, then rerun local,
+hosted, and Nimiq Pay regressions after the PB-015 visual-surface change, tune
+phone-portrait readability, and prepare final screenshots/demo media.
 
 PB-012A Desktop/Mobile Browser TestAlbatross Status is postponed. The hosted
 web app should still remain playable in ordinary desktop/mobile browsers with
@@ -1857,6 +1858,211 @@ card, and recorded `Trace 1: Open run` without any wallet authority prompt.
   mainnet authority,
 - verified: update the test strategy and competition scorecard with the hosted
   verification result.
+
+PB-POLISH-003 Golden Signal opening cinematic:
+
+Status: planned.
+
+Goal:
+
+Make the first seconds of Golden Signal show the trading-bot premise before the
+player touches any control. The intro should expose Pocket Bot's default loop:
+it watches Bitcoin price action, detects a bright signal, analyzes only the
+price-visible layer, forms an enter proposal, and pauses before execution so the
+player can redirect judgment.
+
+Player-visible sequence:
+
+1. Price action forms: a stylized BTCUSDT chart, line, or candle ridge animates
+   from the transformed Golden Signal fixture into a bright gold signal.
+2. Pocket Bot detects: Bot Attention pips light, Pocket Bot focuses on the
+   price terrain, and support/exit/crowd/event pressure remain fogged or only
+   hinted in the background.
+3. Bot analysis concludes: a deterministic proposal card forms with `Enter the
+   Golden Signal`, cost preview, short price-based reason, and still-hidden
+   fields.
+4. Execution pauses: the proposal stays pending, no Bot Attention is spent, no
+   trace is created, and the scene hands control to `Approve`, `Ask Hidden`,
+   `Wide Scan`, `Check Exit`, and `Support Check`.
+
+Implementation plan:
+
+- Add a pure intro-sequence contract, likely
+  `src/game/scenarios/goldenSignalIntroSequence.js`, derived from the Golden
+  Signal market-world level and fixture metadata rather than hardcoded scene
+  state.
+- Keep the intro deterministic and local; do not call the LLM, live market APIs,
+  wallet providers, or Nimiq Pay methods.
+- Include only player-visible opening information and the bot's price-layer
+  analysis. The intro must not reveal terminal hindsight, hidden relation
+  answers, exact future outcome, or post-finish witness details.
+- Add a small Phaser intro layer or state inside `PocketBotWorkshop` that plays
+  once at level start, is skippable, and hands off to the existing arena state
+  without mutating resources.
+- Use the existing render-plan / affordance data so the cinematic and the
+  playable arena agree about signal, support, exit, crowd, event, trace, and
+  finish surfaces.
+- Treat the chart as fictionalized/stylized historical witness art, not a real
+  trading terminal. Avoid exchange UI, order forms, real buy/sell buttons,
+  portfolio language, or advice wording.
+- Keep the phone portrait target short and readable: about 8-12 seconds if
+  unskipped, with a visible skip/continue affordance and no long text blocks.
+
+Expected files:
+
+- `src/game/scenarios/goldenSignalIntroSequence.js`
+- `src/scenes/PocketBotWorkshop.js`
+- `src/ui/` helper only if the scene code would otherwise grow too large
+- `tests/game/goldenSignalIntroSequence.test.js`
+- `tests/scenes/` or `tests/ui/` coverage if a separable scene/UI helper is
+  introduced
+- `docs/product/market_world_model.md`
+- `docs/product/art_bible.md`
+- `docs/testing/test_strategy.md`
+
+Test plan:
+
+- Intro sequence derives from the Golden Signal level/fixture and returns the
+  four beats in order: price formation, bot detection, bot analysis, pending
+  proposal handoff.
+- Intro copy contains no CRPM jargon, no live-trading implication, no investment
+  advice, and no exchange/wallet authority.
+- Intro-visible state excludes hidden relation answers and terminal hindsight.
+- Completing or skipping the intro leaves the same pending default proposal as
+  the current Golden Signal start state.
+- Completing or skipping the intro does not spend Bot Attention, create a trace,
+  change relation state, or alter finish judgment.
+- Mobile viewport check confirms controls become reachable after the intro and
+  do not overlap the proposal card.
+- Regression smoke remains:
+  `Ask Hidden -> Wide Scan -> Approve -> Trace`,
+  `Support Check -> Approve -> Historic Witness -> Trace Archive`,
+  `Approve default -> false finish`.
+
+Acceptance:
+
+- A new player can understand that Pocket Bot is a signal-driven trading helper
+  before they see the map controls.
+- The intro makes the default bot habit visible without teaching the player to
+  trade.
+- The player receives agency at the correct moment: after proposal formation,
+  before execution.
+- The existing Golden Signal gameplay loop, resource authority, trace cards,
+  LLM relay boundary, and Nimiq Pay boundary remain unchanged.
+
+PB-POLISH-004 Witness-backed action response layer:
+
+Status: planned.
+
+Goal:
+
+Make each Golden Signal action feel like directing Bot Attention into a
+historical market-world layer. Action results should come from explicit witness
+sources and an explicit as-of decision cut, not from arbitrary fog reveals or
+full hindsight.
+
+Design cut:
+
+```text
+action intent
+  -> target world layer
+  -> as-of time cutoff
+  -> allowed witness source
+  -> cost preview
+  -> approve gate
+  -> world response
+  -> trace residue
+  -> finish-pressure effect
+```
+
+Required data contract:
+
+- Add explicit `decisionTime` / `asOfTime` metadata to the Golden Signal level
+  before source-backed action results ship.
+- Keep the visible opening scoped to the historical evidence available at or
+  before the decision cut.
+- Keep post-decision fixture values, peak/reversal outcome, and hindsight-only
+  source fields locked until finish.
+- Add per-action response metadata for:
+  - target layer,
+  - source witness basis,
+  - as-of rule,
+  - prepare visual,
+  - approved visual,
+  - reveal result,
+  - `doesNotProve` limits,
+  - trace text,
+  - runtime mutation.
+
+Action source plan:
+
+- `Ask Hidden`: uses authored level relation metadata only; names hidden
+  categories without spending Bot Attention or proving answers.
+- `Wide Scan`: targets crowd/event weather. Current implementation may use
+  authored pressure and accepted headline witnesses; GDELT and Wikimedia
+  Pageviews backing requires a transformed static fixture with timing,
+  attribution, and residue metadata first.
+- `Check Exit`: targets exit/friction. Current implementation may use authored
+  exit pressure and accepted public risk-context witnesses; Coin Metrics backing
+  remains gated by non-commercial/reward-mode licensing review.
+- `Support Check`: targets price terrain and uses the Binance BTCUSDT
+  transformed static fixture, scoped to data visible before the decision cut.
+- `Approve Enter`: commits the current pending move under the current as-of
+  evidence horizon, creates trace, and then unlocks finish/hindsight as allowed.
+- `Ask Bot`: updates the pending proposal only from hindsight-free context; it
+  never reveals a world layer or owns runtime authority.
+
+Expected files:
+
+- `src/game/scenarios/marketWorldLevels.js`
+- `src/game/scenarios/marketWorldLevelAdapter.js`
+- `src/game/scenarios/marketSignalScoutScenario.js`
+- `src/domain/marketWorldRuntime.js`
+- `src/game/scenarios/data/` fixture modules if GDELT/Wikimedia/Coin Metrics
+  static witnesses are adopted
+- `src/scenes/PocketBotWorkshop.js`
+- `src/ui/marketWorldAffordanceOverlay.js`
+- `src/ui/tracePanel.js`
+- `tests/game/marketWorldLevels.test.js`
+- `tests/game/marketWorldLevelAdapter.test.js`
+- `tests/domain/marketWorldRuntime.test.js`
+- `tests/game/marketSignalScoutScenario.test.js`
+- `tests/ui/marketWorldAffordanceOverlay.test.js`
+- `tests/ui/tracePanel.test.js`
+- `docs/product/source_attribution.md` whenever a new source fixture is adopted
+
+Test plan:
+
+- Golden Signal level exposes explicit `decisionTime` / `asOfTime` metadata.
+- Proposal context and intro/action UI exclude post-decision price outcome,
+  terminal reveal, and hidden relation answers before finish.
+- `Ask Hidden` names hidden categories without spending Bot Attention or
+  claiming a witness-backed reveal.
+- `Wide Scan` cannot claim GDELT/Wikimedia backing unless a static fixture with
+  source, license/terms, query, fields, covered dates, retrieval date, and
+  transformation metadata exists.
+- `Check Exit` cannot claim Coin Metrics backing unless licensing/reward-mode
+  constraints are satisfied and fixture metadata is recorded.
+- `Support Check` uses only Binance BTCUSDT price evidence available through
+  the decision cut.
+- Each approved market-data action emits trace text that names what was shown
+  and what it does not prove.
+- Finish judgment still derives from deterministic relation state, not from
+  visuals, LLM output, or source labels.
+- Browser/manual smoke confirms action responses are readable on phone portrait:
+  `Ask Hidden`, `Wide Scan -> Approve`, `Check Exit -> Approve`,
+  `Support Check -> Approve`, `Approve default`, and `Ask Bot -> Approve`.
+
+Acceptance:
+
+- The player sees attention being directed into a specific world layer before
+  spend and sees the layer answer after spend.
+- Each reveal has an evidence basis and an as-of time boundary.
+- Hindsight remains unavailable until finish.
+- Data becomes terrain, weather, crowd, exit friction, and trace, not tables or
+  trading advice.
+- Existing Nimiq Pay, LLM relay, no-secrets, no-wallet-authority, and no-live-
+  market-data boundaries remain unchanged.
 
 Acceptance:
 

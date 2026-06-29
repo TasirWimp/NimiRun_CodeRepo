@@ -153,6 +153,13 @@ market_witness:
     transformed_fixture_shipped: true | false
     authoring_reference_only: true | false
 
+  timing_record:
+    observed_at:
+    published_at:
+    available_to_player_at:
+    source_lag_note:
+    decision_cut_compatible: true | false
+
   source_claim:
     raw_claim:
     confidence_note:
@@ -193,12 +200,13 @@ market_witness:
 1. Re-enter source material.
 2. Classify the witness.
 3. Record attribution and use rights.
-4. Declare which scenario surface it may affect.
-5. Transform it into a fictional clue, hidden pressure, or hindsight reveal.
-6. Declare what it does not establish.
-7. Store only the bounded fixture needed by the game.
-8. Keep terminal reveal fields unavailable to proposal generation before finish.
-9. Preserve residue in the trace or hindsight card.
+4. Record observed/published/available timing and decision-cut compatibility.
+5. Declare which scenario surface it may affect.
+6. Transform it into a fictional clue, hidden pressure, or hindsight reveal.
+7. Declare what it does not establish.
+8. Store only the bounded fixture needed by the game.
+9. Keep terminal reveal fields unavailable to proposal generation before finish.
+10. Preserve residue in the trace or hindsight card.
 ```
 
 ## Visibility Rules
@@ -328,6 +336,64 @@ Actual headline/title witnesses may be player-visible when they are paired with
 a mechanics connector. The connector must explain what the headline changes in
 the level, such as event pressure, exit pressure, or FOMO pressure. It must not
 tell the player to trade.
+
+## Candidate World-Layer Witness Sources
+
+Use the following source classes for the next immersion fixtures. A source being
+listed here means it is usable for the stated world layer when the shipping mode
+and attribution duties are respected. It does not mean the game may ship broad
+raw archives, copy article bodies, fetch live market data during Phase 1, or
+make trading claims.
+
+```yaml
+world_layer_witness_source_policy:
+  price_terrain:
+    source: "Binance Public Data BTCUSDT"
+    licensing_gate: "MIT per binance/binance-public-data README"
+    status: "adopted"
+    shipping_mode: "small transformed static fixture"
+
+  historical_event_weather:
+    adopted_sources:
+      - "official public announcement title/URL witnesses from Cboe, CME, and CFTC"
+    candidate_source: "GDELT Project metadata"
+    licensing_gate: "GDELT database described by GDELT as free and open"
+    status: "usable candidate"
+    shipping_mode: "transformed static metadata only"
+    required_limits:
+      - "no copied article body text"
+      - "no copied news images"
+      - "record exact query, covered dates, retrieved fields, retrieval date"
+      - "label as media/event weather, not source truth"
+
+  crowd_psychology_field:
+    candidate_sources:
+      - "Wikimedia Pageviews"
+      - "GDELT volume/tone/theme metadata"
+    licensing_gate:
+      wikimedia_pageviews: "CC0 dedication for Wikimedia Analytics datasets"
+      gdelt: "free/open database statement from GDELT data page"
+    status: "usable candidate"
+    shipping_mode: "transformed static attention/weather fixture"
+    required_limits:
+      - "pageviews mean attention volume, not sentiment"
+      - "GDELT tone/themes mean media signal, not diagnosis of player psychology"
+      - "never present as proof that a trade should happen"
+
+  execution_exit_world:
+    candidate_sources:
+      - "Coin Metrics Community Data / Community API"
+      - "official public exchange/regulatory announcements for event-specific exit pressure"
+    licensing_gate:
+      coin_metrics: "Creative Commons / non-commercial Community API terms"
+      official_announcements: "title/URL metadata only unless source terms allow more"
+    status: "usable only behind non-commercial/reward-mode review"
+    shipping_mode: "transformed static network/exit-pressure fixture if adopted"
+    required_limits:
+      - "do not use in reward-bearing, monetized, or ambiguous commercial material without review or permission"
+      - "network metrics are not exchange liquidity"
+      - "record metric ids, query window, transformation, and residue"
+```
 
 ## Source Attribution Duty
 
