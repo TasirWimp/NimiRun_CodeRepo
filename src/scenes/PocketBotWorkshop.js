@@ -46,6 +46,7 @@ import {
   createGuidanceButton,
   layoutGuidanceButtons,
 } from '../ui/guidanceControls.js';
+import { createMarketWorldActionResponsePanel } from '../ui/marketWorldActionResponsePanel.js';
 import { createMarketWorldAffordanceDescriptors } from '../ui/marketWorldAffordanceOverlay.js';
 import { createNimiqPocketDisplay } from '../ui/resourceMeters.js';
 import {
@@ -211,6 +212,29 @@ function truncateText(value, limit = 120) {
   return `${value.slice(0, limit - 3)}...`;
 }
 
+function findLineByPrefix(lines, prefixes) {
+  return lines.find((line) => prefixes.some((prefix) => line.startsWith(prefix))) || null;
+}
+
+function formatActionResponseDetailLines(panel, isMobile) {
+  if (!isMobile) {
+    return panel.lines;
+  }
+
+  const lines = panel.lines || [];
+  const selected = [
+    findLineByPrefix(lines, ['World layer:']),
+    findLineByPrefix(lines, ['As-of:']),
+    findLineByPrefix(lines, ['Source:', 'Source gate:']),
+    findLineByPrefix(lines, ['No Bot Attention', 'Before spend:', 'After spend:']),
+    findLineByPrefix(lines, ['Revealed:']),
+    findLineByPrefix(lines, ['Still unknown:']),
+    findLineByPrefix(lines, ['Does not prove:']),
+  ].filter(Boolean);
+
+  return [...new Set(selected)].map((line) => truncateText(line, 56));
+}
+
 function createNodeDetailLines({ knownState, riskState, inspectSummary, remainingUnknowns, witnessPanel }) {
   if (!witnessPanel) {
     return [
@@ -258,6 +282,7 @@ export default class PocketBotWorkshop extends Phaser.Scene {
     this.nodeMarkers = new Map();
     this.attentionSegments = [];
     this.marketWorldOverlayElements = [];
+    this.actionResponseOverlayElements = [];
     this.introOverlayElements = [];
 
     this.drawBackground();
@@ -1231,6 +1256,103 @@ export default class PocketBotWorkshop extends Phaser.Scene {
     this.marketWorldOverlayElements = [];
   }
 
+  clearActionResponseOverlay() {
+    for (const element of this.actionResponseOverlayElements || []) {
+      element?.destroy();
+    }
+
+    this.actionResponseOverlayElements = [];
+  }
+
+  createActionResponsePanel(actionId = null) {
+    return createMarketWorldActionResponsePanel({
+      runtimeSeed: this.mapScenario?.marketWorldRuntime,
+      runtimeState: this.guidanceState?.marketWorldRuntime,
+      actionId,
+    });
+  }
+
+  renderActionResponsePanel(panel) {
+    if (!panel) {
+      return false;
+    }
+
+    this.detailTitle.setText(panel.title);
+    this.detailBody.setText(formatActionResponseDetailLines(panel, this.layout.isMobile).join('\n'));
+    this.drawActionResponseOverlay(panel);
+    return true;
+  }
+
+  getActionResponseToneColor(tone) {
+    const toneColors = {
+      blue: COLORS.attentionBlue,
+      gold: COLORS.nimiqGold,
+      green: COLORS.contextGreen,
+      purple: COLORS.cluePurple,
+      red: COLORS.warningRed,
+    };
+
+    return toneColors[tone] || COLORS.panelStroke;
+  }
+
+  drawActionResponseOverlay(panel) {
+    this.clearActionResponseOverlay();
+
+    const node = getNodeById(this.mapScenario, panel.targetNodeId) ||
+      getNodeById(this.mapScenario, this.selectedNodeId);
+
+    if (!node) {
+      return;
+    }
+
+    const position = this.getNodePosition(node);
+    const { map, isMobile } = this.layout;
+    const tone = this.getActionResponseToneColor(panel.tone);
+    const width = Math.min(isMobile ? 190 : 250, map.width - 24);
+    const height = isMobile ? 54 : 62;
+    const x = Phaser.Math.Clamp(
+      position.x + this.scaleMapValue(isMobile ? 76 : 96, 56),
+      map.x + width / 2 + 6,
+      map.x + map.width - width / 2 - 6
+    );
+    const y = Phaser.Math.Clamp(
+      position.y - this.scaleMapValue(isMobile ? 58 : 68, 38),
+      map.y + height / 2 + 8,
+      map.y + map.height - height / 2 - 8
+    );
+    const layerLine = panel.lines.find((line) => line.startsWith('World layer:')) ||
+      'World layer response';
+
+    const background = this.add
+      .rectangle(x, y, width, height, COLORS.panel, 0.96)
+      .setStrokeStyle(1, tone, 0.9)
+      .setDepth(34);
+    const title = this.add
+      .text(x - width / 2 + 10, y - height / 2 + 8, panel.title, {
+        ...createTextStyle({
+          fontSize: isMobile ? '9px' : '12px',
+          color: '#f2b33d',
+          fontStyle: '700',
+        }),
+      })
+      .setDepth(35);
+    const body = this.add
+      .text(x - width / 2 + 10, y - height / 2 + (isMobile ? 26 : 30), layerLine, {
+        ...createTextStyle({
+          fontSize: isMobile ? '8px' : '10px',
+          color: '#f3e4c2',
+        }),
+        wordWrap: { width: width - 20 },
+      })
+      .setDepth(35);
+    const anchor = this.add
+      .line(0, 0, position.x, position.y, x - width / 2, y, tone, 0.72)
+      .setOrigin(0)
+      .setDepth(33);
+
+    this.actionResponseOverlayElements.push(anchor, background, title, body);
+  }
+
   refreshMarketWorldAffordanceOverlays() {
     if (!this.mapScenario || !this.layout?.map) {
       return;
@@ -1327,6 +1449,7 @@ export default class PocketBotWorkshop extends Phaser.Scene {
       return;
     }
 
+    this.clearActionResponseOverlay();
     this.selectedNodeId = nodeId;
     const position = this.getNodePosition(node);
 
@@ -1382,6 +1505,7 @@ export default class PocketBotWorkshop extends Phaser.Scene {
   renderGuidancePanel() {
     const panel = this.guidanceState.guidancePanel;
 
+    this.clearActionResponseOverlay();
     this.detailTitle.setText(panel.title);
     this.detailBody.setText(panel.lines.join('\n'));
   }
@@ -1425,6 +1549,7 @@ export default class PocketBotWorkshop extends Phaser.Scene {
     const traceCard = this.guidanceState.traceCards.at(-1);
     const panel = createTracePanelContent(traceCard);
 
+    this.clearActionResponseOverlay();
     this.detailTitle.setText(panel.title);
     this.detailBody.setText(panel.lines.join('\n'));
     this.setStatus(traceCard ? 'Latest trace card shown.' : 'No trace card recorded yet.');
@@ -1440,6 +1565,7 @@ export default class PocketBotWorkshop extends Phaser.Scene {
       return false;
     }
 
+    this.clearActionResponseOverlay();
     this.detailTitle.setText(panel.title);
     this.detailBody.setText(panel.lines.join('\n'));
     this.setStatus(`${panel.title} recorded. Hindsight card unlocked.`);
@@ -1454,6 +1580,7 @@ export default class PocketBotWorkshop extends Phaser.Scene {
       return false;
     }
 
+    this.clearActionResponseOverlay();
     this.detailTitle.setText(panel.title);
     this.detailBody.setText(panel.lines.join('\n'));
     this.setStatus(`Historic witness revealed for ${node.label}.`);
@@ -1471,11 +1598,13 @@ export default class PocketBotWorkshop extends Phaser.Scene {
     if (result.applied) {
       this.selectNode(targetNodeId, { redirectProposal: false });
       const finishShown = this.renderFinishCardIfAvailable();
-      const witnessShown = !finishShown &&
+      const actionResponseShown = !finishShown &&
+        this.renderActionResponsePanel(this.createActionResponsePanel());
+      const witnessShown = !finishShown && !actionResponseShown &&
         result.state.mapState.inspectedNodeIds.includes(targetNodeId) &&
         this.renderWitnessCardForNode(targetNodeId);
 
-      if (!finishShown && !witnessShown) {
+      if (!finishShown && !actionResponseShown && !witnessShown) {
         this.renderLatestTraceCard();
       }
       if (finishShown) {
@@ -1521,6 +1650,7 @@ export default class PocketBotWorkshop extends Phaser.Scene {
     this.updateProposalPanel();
     this.renderGuidancePanel();
     this.refreshMarketWorldAffordanceOverlays();
+    this.renderActionResponsePanel(this.createActionResponsePanel(actionId));
 
     if (action?.behavior === 'show_unknowns') {
       this.setStatus('Hidden assumptions exposed before spending attention.');

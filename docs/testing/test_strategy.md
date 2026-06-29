@@ -945,6 +945,9 @@ Witness-backed action response tests must verify:
   available through the decision cut,
 - approved action traces state both what was revealed and what it does not
   prove,
+- action-response panels are pure view-model output from level response
+  contracts plus runtime transition state, and never become authority for
+  resource spend, relation mutation, trace creation, or finish classification,
 - visual response remains derived from runtime relation state and never becomes
   the authority for resource spend, relation mutation, trace creation, or finish
   classification,
@@ -978,3 +981,13 @@ Current coverage: the as-of contract foundation is covered in
 timing metadata, action-response fields, source gates for unadopted
 GDELT/Wikimedia/Coin Metrics claims, Support Check's Binance fixture basis, and
 adapter carry-through into the runtime seed/proposal context.
+`tests/ui/marketWorldActionResponsePanel.test.js` covers the first placeholder
+response layer for Ask Hidden, Wide Scan, Check Exit, and Support Check:
+no-spend unknown naming, approve-gated prepared responses, as-of source lines,
+gated candidate-source wording, adopted Binance fixture wording, still-unknown
+residue, and `doesNotProve` limits without hindsight leakage.
+Local Playwright phone-viewport smoke after the placeholder response wiring
+confirmed `Ask Hidden`, `Wide Scan -> Approve`, `Check Exit -> Approve`, and
+`Support -> Approve` render a response detail panel plus a small map-layer badge
+on a 390x844 canvas without console/page errors. This is a local rendering
+check only; hosted Vercel/Nimiq Pay media capture remains a later final pass.

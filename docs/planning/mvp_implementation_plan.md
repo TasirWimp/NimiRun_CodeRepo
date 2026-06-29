@@ -1956,13 +1956,18 @@ Acceptance:
 
 PB-POLISH-004 Witness-backed action response layer:
 
-Status: first contract foundation implemented. `marketWorldLevels.js` now
+Status: first placeholder response layer implemented. `marketWorldLevels.js`
 declares Golden Signal `decisionTime` / `asOfTime`, as-of-visible history,
 hindsight locks, and action-response metadata for Ask Hidden, Wide Scan, Check
 Exit, Support Check, Approve Enter, and Ask Bot. Validation rejects missing
 timing, missing response fields, and current-source claims for restricted
-candidate sources before fixtures are adopted. Rendering/action-response polish
-and new GDELT/Wikimedia/Coin Metrics fixtures remain planned.
+candidate sources before fixtures are adopted. `marketWorldActionResponsePanel`
+now converts the response contract plus runtime transition state into
+player-facing response text for prepared, unknowns-named, and approved actions.
+`PocketBotWorkshop` renders that text in the detail panel and adds a small
+map-layer badge near the affected node. This is intentionally simple placeholder
+visualization; final artwork, animation, hosted/Nimiq Pay media checks, and new
+GDELT/Wikimedia/Coin Metrics fixtures remain planned.
 
 Goal:
 
@@ -2031,12 +2036,14 @@ Expected files:
 - `src/game/scenarios/data/` fixture modules if GDELT/Wikimedia/Coin Metrics
   static witnesses are adopted
 - `src/scenes/PocketBotWorkshop.js`
+- `src/ui/marketWorldActionResponsePanel.js`
 - `src/ui/marketWorldAffordanceOverlay.js`
 - `src/ui/tracePanel.js`
 - `tests/game/marketWorldLevels.test.js`
 - `tests/game/marketWorldLevelAdapter.test.js`
 - `tests/domain/marketWorldRuntime.test.js`
 - `tests/game/marketSignalScoutScenario.test.js`
+- `tests/ui/marketWorldActionResponsePanel.test.js`
 - `tests/ui/marketWorldAffordanceOverlay.test.js`
 - `tests/ui/tracePanel.test.js`
 - `docs/product/source_attribution.md` whenever a new source fixture is adopted
@@ -2050,6 +2057,9 @@ Test plan:
   terminal reveal, and hidden relation answers before finish.
 - `Ask Hidden` names hidden categories without spending Bot Attention or
   claiming a witness-backed reveal.
+- Action responses render as view-model output from the level contract and
+  runtime transition state; they do not decide legality, cost, mutation, trace,
+  or finish judgment.
 - `Wide Scan` cannot claim GDELT/Wikimedia backing unless a static fixture with
   source, license/terms, query, fields, covered dates, retrieval date, and
   transformation metadata exists.
@@ -2073,6 +2083,8 @@ Acceptance:
 - Hindsight remains unavailable until finish.
 - Data becomes terrain, weather, crowd, exit friction, and trace, not tables or
   trading advice.
+- The first implemented version may use simple UI placeholders: detail-panel
+  response text and a small map badge are enough until the final art pass.
 - Existing Nimiq Pay, LLM relay, no-secrets, no-wallet-authority, and no-live-
   market-data boundaries remain unchanged.
 
