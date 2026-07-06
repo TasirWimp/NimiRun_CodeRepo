@@ -1796,6 +1796,52 @@ Test plan:
 - screenshots/demo assets are attributed if used.
 - competition scorecard reflects the current vertical-slice status.
 
+PB-POLISH-000 PocketBotWorkshop V1 scene freeze:
+
+Status: implemented as the regression boundary for the upcoming presentation
+overhaul. The current `PocketBotWorkshop` Golden Signal scene remains the live
+V1 playable baseline while future visual/world-presentation work is explored.
+
+V1 protected surface:
+
+- Golden Signal first contact: title, support line, default bot habit, pending
+  bright-signal proposal, and intro handoff before execution.
+- Arena spine actions: `Ask Hidden`, `Wide Scan`, `Check Exit`, `Support
+  Check`, and `Approve Enter`.
+- Existing proposal controls remain reachable: `Ask Bot`, `Approve`, `Ask
+  Hidden`, `Wide Scan`, `Check Exit`, `Support`, `Why`, `Inspect 1st`, and
+  `Partial`.
+- Resource authority stays deterministic: `Ask Hidden` and prepared scans do
+  not spend Bot Attention; approval spends the scenario move cost.
+- Response surface stays player-facing: no CRPM jargon, no internal relation
+  IDs, no `residualized` wording, and no live trading, wallet, or investment
+  authority.
+- Required playable regressions stay recoverable:
+  `Ask Hidden -> Wide Scan -> Approve -> Trace`,
+  `Check Exit -> Approve -> Trace`,
+  `Support Check -> Approve -> Historic Witness -> Trace Archive`,
+  `Ask Bot -> bounded proposal -> Approve`, and
+  direct `Approve Enter -> false finish`.
+
+V2 presentation rule:
+
+- Build the next presentation layer as a parity-preserving refinement over V1.
+- Do not retire or heavily rewrite the current scene path until the V2 shell can
+  pass the V1 regression suite and a phone-portrait browser smoke.
+- If a visual overhaul needs different layout, animation, or art direction,
+  keep legality, spending, relation mutation, trace creation, finish judgment,
+  LLM proposal validation, and Nimiq Pay boundaries in the existing domain,
+  scenario, UI view-model, and platform modules.
+
+Current automated guards:
+
+- `tests/game/pocketBotWorkshopV1Regression.test.js` freezes the first-contact
+  contract, approve-gated action responses, render-state descriptors, and false
+  finish feedback for the current scene.
+- `tests/game/goldenSignalPlayableBaseline.test.js` continues to freeze the
+  longer gameplay paths, trace cards, witness card, Ask Bot proposal flow, and
+  no-wallet/no-trading authority boundary.
+
 PB-POLISH-001 Golden Signal 60-second path and witness-card polish:
 
 Status: implemented for local browser, mobile viewport, and Android emulator

@@ -922,6 +922,48 @@ hindsight-free/LLM-free boundary. The Phaser scene currently uses simple
 placeholder rendering for the intro; final visual polish and hosted/Nimiq Pay
 media checks remain future PB-POLISH work.
 
+## PocketBotWorkshop V1 Freeze Checks
+
+The current `PocketBotWorkshop` Golden Signal scene is the V1 playable baseline
+for the next presentation overhaul. New visual work may change rendering,
+layout, animation, and art direction, but it must preserve the V1 gameplay
+contract until a replacement passes the same checks.
+
+Automated V1 freeze coverage:
+
+- `tests/game/pocketBotWorkshopV1Regression.test.js` freezes:
+  - the first-contact title, support line, default bright-signal proposal, and
+    intro handoff controls,
+  - first-slice arena actions: `Ask Hidden`, `Wide Scan`, `Check Exit`,
+    `Support Check`, and `Approve Enter`,
+  - no-spend prepare gates for `Ask Hidden`, `Wide Scan`, and `Check Exit`,
+  - approved response panels for `Wide Scan`, `Check Exit`, and `Support
+    Check`,
+  - render-state descriptors for support, exit, crowd pressure, trace memory,
+    and false finish,
+  - direct `Approve Enter` as false-finish feedback rather than success,
+  - player-facing response wording without CRPM jargon, internal relation IDs,
+    or `residualized` terminology.
+- `tests/game/goldenSignalPlayableBaseline.test.js` freezes the longer playable
+  V1 paths:
+  `Ask Hidden -> Wide Scan -> Approve -> Trace`,
+  `Support Check -> Approve -> Historic Witness -> Trace Archive`,
+  `Ask Bot -> bounded proposal -> Approve`, and
+  direct bright-signal entry as a false finish.
+
+Manual/browser V1 smoke before replacing the scene shell:
+
+- phone portrait opens on the Golden Signal scene with reachable controls,
+- `Ask Hidden` names hidden support, exit, and crowd pressure without spending
+  Bot Attention,
+- `Wide Scan -> Approve` spends Bot Attention and records a trace,
+- `Check Exit -> Approve` spends Bot Attention and keeps safe finish locked,
+- `Support Check -> Approve` opens the Historic Witness/Trace path,
+- direct `Approve` creates false-finish feedback,
+- `Ask Bot -> Approve` still goes through the bounded relay/mock proposal path,
+- Nimiq pocket status remains visible without sign, send, checkout, top-up,
+  payment, or mainnet authority prompts.
+
 ## PB-POLISH-004 Checks
 
 Witness-backed action response tests must verify:

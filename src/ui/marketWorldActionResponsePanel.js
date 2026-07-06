@@ -47,6 +47,18 @@ function firstItems(values = [], limit = 2) {
   return normalizeList(values).slice(0, limit);
 }
 
+function formatPlayerFacingRuntimeText(value) {
+  return String(value || '')
+    .replace(/revealed\/residualized relations/gi, 'checked and still-hidden pressure')
+    .replace(/residualized relations/gi, 'still-hidden pressure')
+    .replace(/residualized relation/gi, 'still-hidden pressure')
+    .replace(/residualize(?:d)?/gi, 'carry forward')
+    .replace(/signal_to_support/gi, 'support pressure')
+    .replace(/signal_to_exit/gi, 'exit pressure')
+    .replace(/signal_to_crowd/gi, 'crowd pressure')
+    .replace(/signal_to_event/gi, 'event pressure');
+}
+
 function getActionId({ runtimeState, actionId }) {
   return actionId || runtimeState?.lastTransition?.actionId || null;
 }
@@ -65,7 +77,7 @@ function getResponse(runtimeSeed, actionId) {
 
 function createSourceLine(response) {
   const basis = response?.sourceWitnessBasis || {};
-  const current = firstItems(basis.current, 2);
+  const current = firstItems(basis.current, 2).map(formatPlayerFacingRuntimeText);
 
   if (basis.status === SOURCE_FIXTURE_STATUSES.ADOPTED_STATIC_FIXTURE) {
     return `Source: ${current.join('; ')}.`;
@@ -136,7 +148,9 @@ function createRuntimeMutationLines(response, phase) {
     return [];
   }
 
-  return firstItems(response.runtimeMutation, 1).map((line) => `Runtime reflected: ${line}`);
+  return firstItems(response.runtimeMutation, 1).map(
+    (line) => `State change: ${formatPlayerFacingRuntimeText(line)}`
+  );
 }
 
 function createTitle(action, phase) {
