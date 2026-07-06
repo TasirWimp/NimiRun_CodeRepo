@@ -964,6 +964,35 @@ Manual/browser V1 smoke before replacing the scene shell:
 - Nimiq pocket status remains visible without sign, send, checkout, top-up,
   payment, or mainnet authority prompts.
 
+## PocketBotWorkshop V2 Decision Scene Checks
+
+V2 is an opt-in presentation scaffold opened with `?v2=1`. It must remain a
+renderer over the existing V1 mechanics until it passes the V1 regression paths.
+
+Automated V2 coverage:
+
+- `tests/ui/marketWorldDecisionViewModel.test.js` verifies the four-action
+  first-contact tray, contextual `Support Check`, resource/trace mapping,
+  render-plan surface states, trace drawer output, and no player-facing internal
+  terminology.
+- `tests/ui/pocketBotDecisionSceneLayout.test.js` verifies the phone-first
+  390x844 layout, 2x2 action tray, and centered desktop fallback frame.
+- `tests/game/sceneSelection.test.js` verifies V1 remains first by default and
+  V2 is first only when `?v2=1` is present.
+- `tests/game/nimirunV2AssetManifest.test.js` verifies all V2 assets preload
+  and SVG placeholders contain no baked `<text>` labels.
+
+Manual/browser V2 smoke:
+
+- open `http://127.0.0.1:<port>/?v2=1` in a phone portrait viewport,
+- confirm the first screen shows one proposal, one narrator insight, four
+  primary actions, and no always-visible node-map dashboard,
+- run `Ask Hidden`, then confirm the trace drawer opens and `Support Check`
+  appears only as a contextual action,
+- run `Wide Scan -> Approve` and confirm Bot Attention decreases, crowd
+  pressure changes, and the trace drawer records the result,
+- reload without `?v2=1` and confirm V1 still opens first.
+
 ## PB-POLISH-004 Checks
 
 Witness-backed action response tests must verify:

@@ -1,11 +1,19 @@
 
 import Phaser from 'phaser';
 
+import { createSceneList, isV2DecisionSceneRequested } from './game/sceneSelection.js';
 import PocketBotWorkshop from './scenes/PocketBotWorkshop.js';
+import PocketBotWorkshopV2 from './scenes/PocketBotWorkshopV2.js';
 import SideScrollerScene from './scenes/Street.js';
 import { getInitialGameSize } from './ui/gameViewport.js';
 
 const gameSize = getInitialGameSize(window);
+const scene = createSceneList({
+    useV2: isV2DecisionSceneRequested(window.location.search),
+    PocketBotWorkshop,
+    PocketBotWorkshopV2,
+    SideScrollerScene,
+});
 
 const config = {
     type: Phaser.AUTO,
@@ -17,7 +25,7 @@ const config = {
         mode: Phaser.Scale.FIT,
         autoCenter: Phaser.Scale.CENTER_BOTH,
     },
-    scene: [PocketBotWorkshop, SideScrollerScene],
+    scene,
     physics: {
         default: 'arcade',
         arcade: {

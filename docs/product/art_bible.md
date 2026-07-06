@@ -393,8 +393,24 @@ Use it as the working art layer for the Phaser-native node-map scaffold:
 - `bot_v2_idle` for the current Pocket Bot marker,
 - UI frames and context-slot icons for the HUD and panels.
 
-The pack supports the current Phase 1 cut: node -> path -> node gameplay, not
-free tile movement. It is acceptable as the working runtime art, but final
+The pack also includes a first V2 phone decision-scene placeholder set:
+
+- `decision_arena_card_bg_720x520`,
+- `btc_signal_glow_512x180`,
+- `surface_support_fog_160`,
+- `surface_exit_fog_160`,
+- `surface_crowd_pressure_160`,
+- `narrator_sigil_96`,
+- `bot_v2_excited`,
+- `bot_v2_learning`,
+- `action_button_primary_220x72`,
+- `action_button_secondary_220x72`,
+- `trace_drawer_frame_720x360`.
+
+These SVG placeholders are sanitized to avoid baked UI text; Phaser renders all
+labels dynamically. The pack supports the current Phase 1 cut: node -> path ->
+node gameplay for V1 and phone decision-card gameplay for opt-in V2, not free
+tile movement. It is acceptable as the working runtime art, but final
 competition attribution should still confirm the generation tool/model and
 license note.
 

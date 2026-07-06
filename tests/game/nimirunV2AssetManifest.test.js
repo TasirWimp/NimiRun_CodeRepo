@@ -1,4 +1,4 @@
-import { existsSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -65,5 +65,18 @@ describe('NimiRun V2 asset manifest', () => {
       key: manifest.assets[0].key,
       path: manifest.assets[0].path,
     });
+  });
+
+  it('keeps V2 SVG placeholders free of baked UI text labels', () => {
+    const svgAssets = manifest.assets.filter((asset) => asset.path.endsWith('.svg'));
+
+    expect(svgAssets.length).toBeGreaterThan(0);
+
+    for (const asset of svgAssets) {
+      const source = readFileSync(resolvePublicAssetPath(asset.path), 'utf8');
+
+      expect(source, asset.path).not.toMatch(/<text\b/i);
+      expect(source, asset.path).not.toMatch(/font-family/i);
+    }
   });
 });

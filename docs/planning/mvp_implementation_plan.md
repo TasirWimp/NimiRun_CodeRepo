@@ -1842,6 +1842,30 @@ Current automated guards:
   longer gameplay paths, trace cards, witness card, Ask Bot proposal flow, and
   no-wallet/no-trading authority boundary.
 
+PB-POLISH-000A V2 phone decision scene scaffold:
+
+Status: implemented as an opt-in presentation layer behind `?v2=1`; V1 remains
+the default scene and competition-safe fallback.
+
+- `PocketBotWorkshopV2` renders the Golden Signal loop as a phone-native
+  decision scene: top resource bar, market arena card, bot proposal bubble,
+  narrator strip, four-action tray, and trace drawer.
+- The primary V2 action tray is limited to `Approve Enter`, `Ask Hidden`,
+  `Wide Scan`, and `Check Exit`. `Support Check`, `Ask Bot`, `Why`, `Inspect
+  1st`, and `Partial` remain contextual controls.
+- `marketWorldDecisionViewModel` is the pure render contract. It derives
+  resources, surfaces, proposal copy, narrator copy, primary/contextual actions,
+  and trace drawer content from existing scenario/runtime state.
+- `pocketBotDecisionSceneLayout` owns the phone-first geometry so Phaser drawing
+  does not own layout policy.
+- `sceneSelection` keeps `PocketBotWorkshop` first by default and places
+  `PocketBotWorkshopV2` first only for `?v2=1`.
+- Decision-scene SVG placeholders are sanitized so UI text stays dynamic in
+  Phaser rather than baked into images.
+- Gameplay authority remains in existing domain/platform modules: legality,
+  spending, relation mutation, trace creation, finish judgment, LLM proposal
+  validation, and Nimiq Pay status checks are not owned by V2 rendering.
+
 PB-POLISH-001 Golden Signal 60-second path and witness-card polish:
 
 Status: implemented for local browser, mobile viewport, and Android emulator
