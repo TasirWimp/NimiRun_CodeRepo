@@ -303,6 +303,21 @@
       "key": "trace_drawer_frame_720x360",
       "path": "/assets/nimirun-v2/ui/trace_drawer_frame_720x360.svg",
       "type": "image"
+    },
+    {
+      "key": "btc_signal_glow_512x180",
+      "path": "/assets/nimirun-v2/decision/btc_signal_glow_512x180.svg",
+      "type": "image"
+    },
+    {
+      "key": "action_button_primary_220x72",
+      "path": "/assets/nimirun-v2/ui/action_button_primary_220x72.svg",
+      "type": "image"
+    },
+    {
+      "key": "action_button_secondary_220x72",
+      "path": "/assets/nimirun-v2/ui/action_button_secondary_220x72.svg",
+      "type": "image"
     }
   ]
 }
