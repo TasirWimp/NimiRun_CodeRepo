@@ -15,7 +15,8 @@
     "Backgrounds and tiles provide atmosphere only; nodes and paths remain interactive runtime objects.",
     "Use node pads plus node icons/rings for selectable graph nodes.",
     "Path threads are horizontal segments; rotate/stretch/tile in Phaser as needed.",
-    "Fog overlays are transparent PNGs and can be alpha-blended over fogged nodes or paths."
+    "Fog overlays are transparent PNGs and can be alpha-blended over fogged nodes or paths.",
+    "Decision-scene SVG assets are lightweight placeholders intended for Phaser image loading and can be replaced by production PNGs later."
   ],
   "assets": [
     {
@@ -261,6 +262,46 @@
     {
       "key": "trace_card_frame_v2",
       "path": "/assets/nimirun-v2/ui/trace_card_frame_v2.png",
+      "type": "image"
+    },
+    {
+      "key": "decision_arena_card_bg_720x520",
+      "path": "/assets/nimirun-v2/decision/decision_arena_card_bg_720x520.svg",
+      "type": "image"
+    },
+    {
+      "key": "surface_support_fog_160",
+      "path": "/assets/nimirun-v2/decision/surface_support_fog_160.svg",
+      "type": "image"
+    },
+    {
+      "key": "surface_exit_fog_160",
+      "path": "/assets/nimirun-v2/decision/surface_exit_fog_160.svg",
+      "type": "image"
+    },
+    {
+      "key": "surface_crowd_pressure_160",
+      "path": "/assets/nimirun-v2/decision/surface_crowd_pressure_160.svg",
+      "type": "image"
+    },
+    {
+      "key": "narrator_sigil_96",
+      "path": "/assets/nimirun-v2/narrator/narrator_sigil_96.svg",
+      "type": "image"
+    },
+    {
+      "key": "bot_v2_excited",
+      "path": "/assets/nimirun-v2/pocket-bot/bot_v2_excited.svg",
+      "type": "image"
+    },
+    {
+      "key": "bot_v2_learning",
+      "path": "/assets/nimirun-v2/pocket-bot/bot_v2_learning.svg",
+      "type": "image"
+    },
+    {
+      "key": "trace_drawer_frame_720x360",
+      "path": "/assets/nimirun-v2/ui/trace_drawer_frame_720x360.svg",
       "type": "image"
     }
   ]
