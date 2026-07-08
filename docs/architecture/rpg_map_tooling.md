@@ -2,6 +2,28 @@
 
 Status: PB-005 decision.
 
+## 2026-07-08 Update
+
+The first multiplayer-ready RPG training world slice now adds an experimental
+Phaser/Grid Engine scene behind `?v2=world` while keeping the existing
+`PocketBotWorkshopV2` decision scene behind `?v2=1`.
+
+The new scene still uses authored JavaScript scenario/node data as the game
+authority, but it renders that data through a compact Phaser tilemap and Grid
+Engine character layer. This creates the next Tiled-ready step without making
+Tiled a required authoring dependency yet:
+
+```text
+market-world runtime and render plan
+  -> local training-session command adapter
+    -> Phaser tilemap + Grid Engine movement
+      -> world nodes dispatch existing market actions
+```
+
+Grid Engine is used for local grid movement and future room-friendly character
+state. The first slice does not add Colyseus, a multiplayer server, persistent
+pet stats, copied Monster Tamer code, or copied Monster Tamer assets.
+
 ## Decision
 
 Phase 1 uses a **Phaser-native custom node-map workflow**:

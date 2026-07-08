@@ -37,7 +37,8 @@ are backed by the URLs in the attribution table below.
 |---|---|---|---|
 | Pocket Bot repo code | Root `LICENSE` and `package.json` declare MIT. | Public app source and docs. | Repo license is explicit for reviewers. |
 | `@nimiq/mini-app-sdk` `0.1.0` | Installed package metadata declares MIT; package-lock pins `0.1.0`. | Runtime dependency behind `src/platform/nimiqMiniApp.js`. | Used for Mini App provider/status boundary only; no sign/send authority in Phase 1. |
-| Phaser `3.87.0` | Installed package metadata declares MIT; package-lock pins `3.87.0`. | Bundled client game framework. | Primary 2D scene/runtime framework. |
+| Phaser `3.88.2` | Installed package metadata declares MIT; package-lock pins `3.88.2`. | Bundled client game framework. | Primary 2D scene/runtime framework; bumped to match Grid Engine `2.47.1` peer dependency. |
+| Grid Engine `2.47.1` | Installed package metadata declares Apache-2.0; package-lock pins `2.47.1`; package peer dependency targets Phaser `~3.88.2`. | Bundled client movement/pathing plugin for the experimental `?v2=world` scene. | Used for grid movement and room-friendly character state; no server or Phaser 4 dependency added in this slice. |
 | Vite `7.3.3` and Vitest `3.2.4` | Installed package metadata declares MIT; package-lock pins both versions. | Build and test tooling. | Development tooling, not player-facing source material. |
 | Terser `5.31.2` | Installed package metadata declares BSD-2-Clause; package-lock pins `5.31.2`. | Production minifier through Vite config. | Build tooling. |
 | Binance Public Data BTCUSDT fixture | Binance Public Data README lists MIT; exact archive URL and checksum are recorded below. | Transformed static witness fixture only; raw archive is not shipped. | Venue-scoped Binance BTCUSDT witness, not global Bitcoin index or investment advice. |
@@ -65,7 +66,9 @@ are backed by the URLs in the attribution table below.
 | Nimiq Mini Apps Competition rules: https://miniappscompetition.com/rules | Competition requirement source | Supports the submission floor: public GitHub repo, Mini Apps Framework, no hardcoded secrets, original/attributed code, first-try usability, and meaningful Nimiq Pay integration with USDT or NIM support. | Documentation source only; not a software dependency. |
 | Nimiq Mini Apps Competition FAQ: https://miniappscompetition.com/faq | Competition requirement source | Supports the need for a working Mini App, a real user-facing story, community feedback, and NIM incentive consideration. | Documentation source only; not a software dependency. |
 | `@nimiq/mini-app-sdk` | Implementation dependency | Mini App provider initialization boundary. | Listed in `package.json`; runtime use stays behind the platform adapter. |
-| Phaser 3: https://phaser.io/ | Implementation dependency | 2D game framework for the playable Pocket Bot scene. | Listed in `package.json`; shipped in the client bundle. |
+| Phaser 3: https://phaser.io/ | Implementation dependency | 2D game framework for the playable Pocket Bot scene. | Listed in `package.json`; shipped in the client bundle. Current locked version is `3.88.2`. |
+| Grid Engine: https://github.com/Annoraaq/grid-engine | Implementation dependency | Grid-based Phaser movement and future room-friendly character state for the experimental RPG training world behind `?v2=world`. | Listed in `package.json` at `2.47.1`; shipped in the client bundle. Used only as a local scene plugin in this slice; no multiplayer server package is added. |
+| Monster Tamer: https://github.com/devshareacademy/monster-tamer | Gameplay/reference influence | Used as a Phaser/Pokemon-like reference while shaping the bot-training RPG direction. | Reference only; no code, assets, or data are copied or bundled. |
 | Vite: https://vite.dev/ | Build tooling | Local development and production bundling. | Listed in `package.json`; development/build dependency. |
 | Vitest: https://vitest.dev/ | Test tooling | Domain and integration-adjacent unit tests. | Listed in `package.json`; development/test dependency. |
 | Vercel Functions and environment variables: https://vercel.com/docs/functions, https://vercel.com/docs/environment-variables | Hosted deployment and secret-management source | Provides the first Phase 1 hosted deployment target: static Vite output plus same-origin `/api/route-proposal` serverless relay. Vercel environment variables hold provider keys for function execution. | Optional hosted deployment platform; no provider keys are committed or bundled. |
@@ -97,7 +100,7 @@ Add entries before or in the same commit that adopts any of these:
   method, observed/published/available timing where relevant, decision-cut
   compatibility, and whether raw data or only derived static fixtures are
   shipped.
-- RPG map authoring tool or framework, such as Tiled or LDtk.
+- Additional RPG map authoring tool or framework, such as Tiled or LDtk.
 - Additional asset packs, fonts, icon libraries, generated sprites, generated
   tiles, music, sound effects, or AI-generated images beyond the NimiRun V2
   pack above.

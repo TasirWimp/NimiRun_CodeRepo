@@ -62,6 +62,7 @@ The repository currently contains:
 - PB-010 session lesson application with trace-derived lessons, next-proposal rewrite, bounded prompt/relay pass-through, and no persistence beyond the active run,
 - PB-011 trace cards for accepted moves, receipt-backed money-like events, residue/re-entry context, latest-trace inspection, and landfall status labels,
 - PB-012 Nimiq testnet pocket surface with local fallback, emulator-verified Nimiq Pay NIM status check, pocket-status trace cards, and no sign/send/payment authority,
+- an experimental multiplayer-ready RPG training world behind `?v2=world`, using Grid Engine for local tile movement and a local command/state adapter for future network parity,
 - NimiRun V2 runtime assets under `public/assets/nimirun-v2/`,
 - organized product documentation under `docs/`,
 - project structure prepared for testable domain logic, LLM proposal boundaries, runtime-cycle rules, Nimiq pocket-status checks, and future desktop/mobile browser TestAlbatross work.
@@ -117,6 +118,11 @@ npm run build
 ```
 
 The development server uses Vite on `http://localhost:8080` by default.
+
+Scene flags:
+
+- `http://localhost:8080/?v2=1` opens the current V2 decision scene.
+- `http://localhost:8080/?v2=world` opens the experimental RPG training world.
 
 PB-007 LLM relay configuration:
 

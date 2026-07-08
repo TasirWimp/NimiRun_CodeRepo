@@ -214,7 +214,12 @@ PB-POLISH has a verified hosted/Nimiq Pay submission path for the earlier
 Golden Signal proof of concept. PB-014 and PB-015 now extend that proof of
 concept with market-world runtime state, relation-derived finish judgment,
 player-facing finish / hindsight cards, phone-readable trace polish, and a
-functional runtime-to-render affordance layer. The current active lane is
+functional runtime-to-render affordance layer. The multiplayer-ready RPG
+training world refactor now adds an experimental `?v2=world` scene with Grid
+Engine movement, local command/state envelopes, world-node bindings for the
+existing Golden Signal actions, and session-only bot companion posture. The
+existing `?v2=1` decision scene remains the stable regression surface until the
+world slice passes broader browser and submission checks. The current active lane is
 **PB-POLISH**: add the Golden Signal opening cinematic / first-contact
 immersion path and witness-backed action response layer, then rerun local,
 hosted, and Nimiq Pay regressions after the PB-015 visual-surface change, tune
@@ -2228,10 +2233,13 @@ Revised next sequence:
 16. PB-014 Market World Runtime Seed - implemented.
 17. PB-015 Golden Signal World-Affordance Seed - implemented as a functional
     runtime-to-render affordance layer.
-18. PB-POLISH Submission Vertical Slice regression and final media pass - next
+18. PB-015A Multiplayer-Ready RPG Training World Refactor - implemented as an
+    experimental `?v2=world` scene with Grid Engine movement and local
+    training-session command envelopes.
+19. PB-POLISH Submission Vertical Slice regression and final media pass - next
     active lane.
-19. PB-MARKET Early Access And Community Feedback.
-20. PB-012A Desktop/Mobile Browser TestAlbatross Status, postponed until after
+20. PB-MARKET Early Access And Community Feedback.
+21. PB-012A Desktop/Mobile Browser TestAlbatross Status, postponed until after
     the Android/Nimiq Pay submission path is stable.
 
 This order keeps CRPM/resource-judgment mechanics as the spine, keeps
