@@ -993,6 +993,48 @@ Manual/browser V2 smoke:
   pressure changes, and the trace drawer records the result,
 - reload without `?v2=1` and confirm V1 still opens first.
 
+## PocketBotTrainingWorld V2 World Checks
+
+The experimental RPG training world is opened with `?v2=world`. It is a
+multiplayer-ready presentation slice over the existing Golden Signal mechanics:
+Phaser dispatches command envelopes to the local training-session adapter and
+renders returned state/events. It must not own legality, spending, relation
+mutation, trace creation, finish judgment, LLM proposal validation, or Nimiq
+platform authority.
+
+Automated V2 world coverage:
+
+- `tests/game/sceneSelection.test.js` verifies default and `?v2=1` behavior
+  remain unchanged and `?v2=world` selects `PocketBotTrainingWorld`.
+- `tests/game/trainingWorldMap.test.js` verifies support, exit, crowd, signal,
+  bot, trace, and pocket world nodes map to the existing market actions or
+  command types, and player-facing node state does not leak internal relation
+  IDs or CRPM terminology.
+- `tests/game/localTrainingSession.test.js` verifies command envelopes require
+  `sessionId`, `playerId`, and `botId`; preparing a market action does not
+  spend Bot Attention before approval; approval creates the expected
+  trace/resource change; Ask Bot uses bounded relay/mock fallback without
+  spending; and returned render state remains player-facing.
+
+Manual/browser V2 world smoke:
+
+- open `http://127.0.0.1:<port>/?v2=world` in desktop and 390x844 portrait
+  viewports,
+- confirm the tile grid, Pocket Bot/player markers, node labels, resource bar,
+  proposal panel, selected-node panel, and bottom action strip fit without
+  overlap,
+- select world nodes and confirm Grid Engine movement/positioning remains
+  stable,
+- run `Ask Hidden` and confirm the response drawer opens without spending Bot
+  Attention,
+- run `Support Check -> Approve` and confirm Bot Attention decreases and Trace
+  1 appears,
+- run `Ask Bot` and confirm the proposal updates through relay/mock fallback
+  while approval remains the spending gate,
+- run the Pocket Terminal status check and confirm it does not request sign,
+  send, checkout, payment, top-up, or mainnet authority,
+- check the browser console for errors.
+
 ## PB-POLISH-004 Checks
 
 Witness-backed action response tests must verify:

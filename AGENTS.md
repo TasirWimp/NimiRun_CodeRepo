@@ -85,9 +85,10 @@ Current order:
 14. PB-013 Market Signal Scout Golden Signal foundation - implemented with transformed Binance BTCUSDT fixture evidence, accepted historic headline witnesses, Golden Signal scenario contract, and scene wiring.
 15. PB-014 Market World Runtime Seed - implemented.
 16. PB-015 Golden Signal World-Affordance Seed - implemented as a functional runtime-to-render affordance layer; final visual density/art tuning remains PB-POLISH work.
-17. PB-POLISH Submission Vertical Slice regression and final media pass - next active lane.
-18. PB-MARKET Early Access And Community Feedback.
-19. PB-012A Desktop/Mobile Browser TestAlbatross Status - postponed until after the Android/Nimiq Pay submission path is stable.
+17. PB-015A Multiplayer-Ready RPG Training World Refactor - implemented as an experimental `?v2=world` scene with Grid Engine movement and local training-session command envelopes.
+18. PB-POLISH Submission Vertical Slice regression and final media pass - next active lane.
+19. PB-MARKET Early Access And Community Feedback.
+20. PB-012A Desktop/Mobile Browser TestAlbatross Status - postponed until after the Android/Nimiq Pay submission path is stable.
 
 Use the subagent role plan in `docs/planning/mvp_implementation_plan.md`. `pocket_bot_nimiq_platform_worker` is active for Nimiq Mini App SDK/provider boundaries, local fallback, testnet status, and platform tests. Desktop/mobile browser TestAlbatross support is postponed.
 
